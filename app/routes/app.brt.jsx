@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import {
+  Frame,
   Page,
   Layout,
   Card,
@@ -10,6 +11,10 @@ import {
   TextContainer,
   Toast
 } from '@shopify/polaris';
+import { useFetcher, useLoaderData } from '@remix-run/react';
+
+// Backend routes in app/routes/api/brt.ts should handle loader and action
+// Loader returns existing BRTRegion records, Action upserts received JSON data
 
 const defaultRegions = [
   "VAL D'AOSTA",
@@ -35,19 +40,30 @@ const defaultRegions = [
 ];
 
 export default function BRTRegionEditor() {
-  const [data, setData] = useState(
-    defaultRegions.map((region, index) => ({ id: index.toString(), region, price: '' }))
-  );
+  const fetcher = useFetcher();
+  const loaderData = useLoaderData();
+  // Initialize table with backend data, or default regions with empty prices
+  const initialData = Array.isArray(loaderData) && loaderData.length > 0
+    ? loaderData
+    : defaultRegions.map((region, index) => ({ id: index.toString(), region, price: '' }));
+
+  const [data, setData] = useState(initialData);
   const [fileName, setFileName] = useState('');
   const [pendingUpdates, setPendingUpdates] = useState({});
   const [modalActive, setModalActive] = useState(false);
   const [toastContent, setToastContent] = useState(null);
 
-  // File input change handler
+  // Show toast when save to backend completes
+  useEffect(() => {
+    if (fetcher.type === 'done' && fetcher.data?.success) {
+      setToastContent('Saved to backend successfully');
+    }
+  }, [fetcher]);
+
+  // Handle Excel file upload via input
   const handleFile = useCallback((e) => {
     const file = e.target.files[0];
     if (!file) return;
-    console.log('File received:', file.name);
     setFileName(file.name);
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -55,46 +71,51 @@ export default function BRTRegionEditor() {
         const workbook = XLSX.read(evt.target.result, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        console.log('Parsed rows:', rows);
         const updates = {};
         rows.forEach(([region, price]) => {
           if (
-            typeof region === 'string' && (typeof price === 'number' || typeof price === 'string') &&
+            typeof region === 'string' &&
+            (typeof price === 'number' || typeof price === 'string') &&
+            region.trim().length > 0 &&
             region.trim().toUpperCase() !== 'REGION'
           ) {
             updates[region.trim().toUpperCase()] = price;
           }
         });
-        const validKeys = Object.keys(updates).filter(key => defaultRegions.includes(key));
-        console.log('Valid region keys:', validKeys);
-        if (!validKeys.length) {
-          setToastContent('Invalid file format. Please upload the correct BRT Excel file.');
+        const updateKeys = Object.keys(updates);
+        console.log('Found update keys:', updateKeys);
+        if (!updateKeys.length) {
+          setToastContent('Invalid file format. No matching regions found.');
           return;
         }
         setPendingUpdates(updates);
         setModalActive(true);
-      } catch (error) {
-        console.error('Error parsing file:', error);
+      } catch (err) {
+        console.error('Error parsing file:', err);
         setToastContent('Error reading Excel file. Please try again.');
       }
     };
     reader.readAsArrayBuffer(file);
   }, []);
 
-  // Apply Excel updates
+  // Apply pending updates, persist to backend
   const applyUpdates = useCallback(() => {
-    console.log('Applying updates:', pendingUpdates);
-    setData(prev => prev.map(row => ({
+    const updated = data.map(row => ({
       ...row,
-      price: pendingUpdates[row.region] ?? row.price
-    })));
+      price: pendingUpdates[row.region.toUpperCase()] ?? row.price
+    }));
+    setData(updated);
     setModalActive(false);
     setPendingUpdates({});
-  }, [pendingUpdates]);
+    // Post JSON array to backend action
+    fetcher.submit(
+      { data: JSON.stringify(updated) },
+      { method: 'post', action: '/api/brt' }
+    );
+  }, [data, pendingUpdates, fetcher]);
 
-  // Handle manual edits
-  const handleChange = useCallback((index, _, value) => {
-    console.log(`Manual change at row ${index}:`, value);
+  // Handle manual cell edits
+  const handleChange = useCallback((index, _key, value) => {
     setData(prev => {
       const copy = [...prev];
       copy[index].price = value;
@@ -102,7 +123,7 @@ export default function BRTRegionEditor() {
     });
   }, []);
 
-  // Table row markup
+  // Render table rows
   const rowMarkup = useMemo(() =>
     data.map(({ id, region, price }, index) => (
       <IndexTable.Row key={id} id={id} position={index}>
@@ -111,8 +132,9 @@ export default function BRTRegionEditor() {
           <TextField
             labelHidden
             type="number"
-            value={price}
+            value={price ?? ''}
             onChange={value => handleChange(index, 'price', value)}
+            autoComplete="off"
           />
         </IndexTable.Cell>
       </IndexTable.Row>
@@ -120,10 +142,13 @@ export default function BRTRegionEditor() {
   );
 
   return (
-    <>
+    <Frame>
       <Page
-        title="BRT Shipping Region Editor"
-        primaryAction={{ content: 'Save Changes', onAction: () => console.log('📦 Final data:', data) }}
+        title="BRT Shipping Regions Editor"
+        primaryAction={{
+          content: 'Save Changes',
+          onAction: applyUpdates
+        }}
       >
         <Layout>
           <Layout.Section>
@@ -134,9 +159,14 @@ export default function BRTRegionEditor() {
                 onChange={handleFile}
                 style={{ marginBottom: '1rem' }}
               />
-              {fileName && <TextContainer><p>Uploaded: {fileName}</p></TextContainer>}
+              {fileName && (
+                <TextContainer>
+                  <p>Uploaded: {fileName}</p>
+                </TextContainer>
+              )}
             </Card>
 
+            {/* Confirmation Modal */}
             <Modal
               open={modalActive}
               onClose={() => setModalActive(false)}
@@ -146,17 +176,21 @@ export default function BRTRegionEditor() {
             >
               <Modal.Section>
                 <TextContainer>
-                  <p>This will overwrite the table values based on the uploaded file. Continue?</p>
+                  This will overwrite the table values based on the uploaded file. Continue?
                 </TextContainer>
               </Modal.Section>
             </Modal>
 
+            {/* Editable Table */}
             <Card>
               <IndexTable
                 resourceName={{ singular: 'row', plural: 'rows' }}
                 itemCount={data.length}
                 selectable={false}
-                headings={[{ title: 'Region' }, { title: 'Price for 100 KG' }]}
+                headings={[
+                  { title: 'Region' },
+                  { title: 'Price for 100 KG' }
+                ]}
               >
                 {rowMarkup}
               </IndexTable>
@@ -164,7 +198,9 @@ export default function BRTRegionEditor() {
           </Layout.Section>
         </Layout>
       </Page>
-      {toastContent && <Toast content={toastContent} onDismiss={() => setToastContent(null)} />}
-    </>
+      {toastContent && (
+        <Toast content={toastContent} onDismiss={() => setToastContent(null)} />
+      )}
+    </Frame>
   );
 }

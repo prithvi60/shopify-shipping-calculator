@@ -60,3 +60,9 @@ model Config {
   wineSurcharge  Float
   vatRate        Float
 }
+
+model BRTRegion {
+  id     String @id @map("id")
+  region String
+  price  String
+}
