@@ -334,17 +334,17 @@ export default function AppDashboard() {
       <BlockStack gap="400">
         <Layout>
           <Layout.Section>
-            <Card title="Quick Access" sectioned>
+            <Card title="Quick Access - Couriers" sectioned>
               <BlockStack gap="300">
-                <Button variant="primary" url="/app/containers">
-                  Manage Containers
+                <Button variant="primary" url="/app/fedex">
+                  FEDEX
                 </Button>
-                <Button variant="primary" url="/app/couriers">
-                  Configure Couriers
+                <Button variant="primary" url="/app/tnt">
+                  TNT
                 </Button>
-                <Button variant="primary" url="/app/dryice">
+                {/* <Button variant="primary" url="/app/dryice">
                   Dry Ice Settings
-                </Button>
+                </Button> */}
               </BlockStack>
             </Card>
           </Layout.Section>

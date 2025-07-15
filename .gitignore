@@ -1,25 +1,49 @@
-node_modules
-.DS_Store
+# Node modules
+node_modules/
 
-/.cache
-/build
-/app/build
-/public/build/
-/public/_dev
-/app/public/build
-/prisma/dev.sqlite
-/prisma/dev.sqlite-journal
-database.sqlite
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
+# Environment files
 .env
-.env.*
+.env.*.local
 
+# OS-specific
+.DS_Store
+Thumbs.db
 
+# Build outputs
+dist/
+.build/
+.remix/
+.next/
+.vite/
 
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/
 
+# Remix
+public/build/
+remix.config.js.tsbuildinfo
 
-/extensions/*/dist
+# Docker
+docker-compose.override.yml
 
-# Ignore shopify files created during app dev
-.shopify/*
-.shopify.lock
+# Editor configs
+.vscode/
+.idea/
+*.sw?
+
+# Misc
+*.local
+*.log
+.cache/
+*.tgz
+
+# GitHub specific
+.github/

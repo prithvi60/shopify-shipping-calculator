@@ -66,3 +66,29 @@ model BRTRegion {
   region String
   price  String
 }
+model FedexRate {
+  id       Int     @id @default(autoincrement())
+  weight   String
+  ZONA_A   String?
+  ZONA_B   String?
+  ZONA_C   String?
+  ZONA_D   String?
+  ZONA_E   String?
+  ZONA_F   String?
+  ZONA_G   String?
+  ZONA_H   String?
+  ZONA_I   String?
+}
+model TntRate {
+  id       Int     @id @default(autoincrement())
+  weight   String
+  ZONA_A   String?
+  ZONA_B   String?
+  ZONA_C   String?
+  ZONA_D   String?
+  ZONA_E   String?
+  ZONA_F   String?
+  ZONA_G   String?
+  ZONA_H   String?
+  ZONA_I   String?
+}

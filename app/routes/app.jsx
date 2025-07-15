@@ -10,9 +10,12 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
+  // const callbackUrl = process.env.SHOPIFY_APP_URL + "/api/rates";
+  const callbackUrl = "https://shopifyapp.shop/api/rates";
 
   // ⚙️ Register carrier service on app load
-  const callbackUrl = process.env.SHOPIFY_APP_URL + "/api/rates";
+
+  // const callbackUrl = new URL("/api/rates", request.url).origin + "/api/rates";
   await registerCarrierService(admin, callbackUrl);
 
   return { apiKey: process.env.SHOPIFY_API_KEY || "" };
@@ -27,10 +30,14 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
+        <Link to="/app/fedex">FEDEX</Link>
+        <Link to="/app/tnt">TNT</Link>
+{/*
         <Link to="/app/brt">BRT data</Link>
         <Link to="/app/containers">Containers</Link>
         <Link to="/app/couriers">Couriers</Link>
         <Link to="/app/dryice">Dry Ice</Link>
+        <Link to="/app/dryice">Quick calculator</Link> */}
       </NavMenu>
       <Outlet />
     </AppProvider>
