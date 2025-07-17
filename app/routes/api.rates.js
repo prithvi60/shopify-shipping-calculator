@@ -1,48 +1,43 @@
-// app/routes/api.rates.js
-
-import { json } from "@remix-run/node";
-import { apiVersion } from "../shopify.server.js";
-import prisma from "../db.server.js";
-import { calculateVolume } from "../shipping/calculateVolume.js";
-import { selectContainers } from "../shipping/selectContainers.js";
-import { computeDryIce } from "../shipping/computeDryIce.js";
-import { finalizeRate } from "../shipping/finalizeRate.js";
+import { json } from '@remix-run/node';
+import { apiVersion } from '../shopify.server.js';
+import prisma          from '../db.server.js';
+import {  getCourierModule } from '../shipping/couriers/index.js';
 
 function formatVariantGID(variantId) {
   return `gid://shopify/ProductVariant/${variantId}`;
 }
 
 export const action = async ({ request }) => {
-  // 1️⃣ Parse payload & shop
+  // 1️⃣ Parse incoming payload & shop header
   const payload = await request.json();
-  const shop    = request.headers.get("X-Shopify-Shop-Domain");
-  if (!shop) return new Response("Missing shop header", { status: 400 });
+  const shop    = request.headers.get('X-Shopify-Shop-Domain');
+  if (!shop) return new Response('Missing shop header', { status: 400 });
 
-  // 2️⃣ Get accessToken
-  const record = await prisma.session.findFirst({
+  // 2️⃣ Load the Shopify access token for this shop
+  const session = await prisma.session.findFirst({
     where:  { shop },
-    select: { accessToken: true },
+    select: { accessToken: true }
   });
-  if (!record?.accessToken) {
+  if (!session?.accessToken) {
     console.error(`No token for ${shop}`);
-    return new Response("Session missing", { status: 500 });
+    return new Response('Session missing', { status: 500 });
   }
-  const token = record.accessToken;
+  const token = session.accessToken;
 
-  // 3️⃣ Build cartItems with product‑level metafields
-  const items     = payload.rate?.items || [];
+  // 3️⃣ Build our `cartItems` enriched with product metafields
+  const items    = payload.rate?.items || [];
   const cartItems = [];
 
   for (const item of items) {
-    // A) fetch product ID
+    // A) fetch the parent product ID
     const variantGID = formatVariantGID(item.variant_id);
-    const lookup = await fetch(
+    const lookupRes  = await fetch(
       `https://${shop}/admin/api/${apiVersion}/graphql.json`,
       {
-        method:  "POST",
+        method: 'POST',
         headers: {
-          "Content-Type":          "application/json",
-          "X-Shopify-Access-Token": token,
+          'Content-Type':          'application/json',
+          'X-Shopify-Access-Token': token
         },
         body: JSON.stringify({
           query: `
@@ -51,22 +46,22 @@ export const action = async ({ request }) => {
                 product { id }
               }
             }`,
-          variables: { id: variantGID },
-        }),
+          variables: { id: variantGID }
+        })
       }
     );
-    const { data: lookupData } = await lookup.json();
-    const productGID = lookupData.productVariant?.product?.id;
+    const lookupJson   = await lookupRes.json();
+    const productGID   = lookupJson.data?.productVariant?.product?.id;
     if (!productGID) continue;
 
-    // B) fetch shipping metafields on product
-    const mfResp = await fetch(
+    // B) fetch shipping metafields on that product
+    const mfRes = await fetch(
       `https://${shop}/admin/api/${apiVersion}/graphql.json`,
       {
-        method:  "POST",
+        method: 'POST',
         headers: {
-          "Content-Type":          "application/json",
-          "X-Shopify-Access-Token": token,
+          'Content-Type':          'application/json',
+          'X-Shopify-Access-Token': token
         },
         body: JSON.stringify({
           query: `
@@ -77,77 +72,69 @@ export const action = async ({ request }) => {
                 }
               }
             }`,
-          variables: { id: productGID },
-        }),
+          variables: { id: productGID }
+        })
       }
     );
-    const { data: mfData } = await mfResp.json();
-    const mf = (mfData.product?.metafields?.edges || []).reduce(
-      (acc, { node }) => ((acc[node.key] = node.value), acc),
-      {}
-    );
+    const mfJson = await mfRes.json();
+    const mfData = mfJson.data?.product?.metafields?.edges || [];
+    const mf     = mfData.reduce((acc, { node }) => {
+      acc[node.key] = node.value;
+      return acc;
+    }, {});
 
     cartItems.push({
-      name: item.name,
-      quantity: item.quantity,
+      name:       item.name,
+      quantity:   item.quantity,
       dimensions: {
-        length: parseFloat(mf.length_cm || "0"),
-        width:  parseFloat(mf.width_cm  || "0"),
-        height: parseFloat(mf.height_cm || "0"),
+        length: parseFloat(mf.length_cm || '0'),
+        width:  parseFloat(mf.width_cm  || '0'),
+        height: parseFloat(mf.height_cm || '0')
       },
-      weight:   parseFloat(item.grams || "0") / 1000,
-      category: mf.category?.toLowerCase() || "ambient",
+      weight:   parseFloat(item.grams || '0') / 1000,
+      category: mf.category?.toLowerCase() || 'ambient'
     });
   }
 
-  console.log("Cart items:", cartItems);
-// CUSTOM SHIPPING FEE CALCULATION
-  // 4️⃣ Calculate volume per category
-  const volumeByCategory = calculateVolume(cartItems);
+  console.log('Cart items:', cartItems);
 
-  // 5️⃣ Select optimal containers
-  const availableContainers = [
-    // replace with your real container data
-    { id: "box_small",  name: "Small Box",  volume: 0.03, weight: 0.5, cost_excl_vat: 3.5, cost_incl_vat: 4.3 },
-    { id: "box_medium", name: "Medium Box", volume: 0.06, weight: 0.8, cost_excl_vat: 5.5, cost_incl_vat: 6.7 },
-    { id: "box_large",  name: "Large Box",  volume: 0.09, weight: 1.2, cost_excl_vat: 7.0, cost_incl_vat: 8.5 },
-  ];
-  const containerPlan = selectContainers(volumeByCategory, availableContainers);
+  // 4️⃣ Loop through every courier, quote them, and concatenate
+  const allRates = [];
 
-  // 6️⃣ Compute dry‑ice needs (e.g. 2 days transit)
-  const transitDays = 2;
-  const dryIcePlan  = computeDryIce(containerPlan, transitDays);
 
-  // 7️⃣ Finalize rate breakdown
-  const shippingRateCalc = finalizeRate({
-    cartItems,
-    containerPlan,
-    dryIcePlan,
-    transitDays,
-    courier: "Fedex",
-  });
-console.log("shippingRateCalc:", shippingRateCalc);
+  for (const courierName of ['FedEx' /*, 'BRT','GLS',…*/]) {
+    const { loadFedexConfigAndRates, calculateFedex } = getCourierModule(courierName);
 
-  // 8️⃣ Build Shopify rate response
-  let rates;
-  if (Array.isArray(shippingRateCalc)) {
-    // multiple service options
-    rates = shippingRateCalc.map(r => ({
-      service_name: r.name,
-      service_code: r.code,
-      total_price:  Math.round(r.total * 100),
-      currency:     r.currency,
-      description:  r.description,
-    }));
-  } else {
-    // single-rate object
-    rates = [{
-      service_name: "Fedex",
-      service_code: "FEDEX_STANDARD",
-      total_price:  Math.round(shippingRateCalc.total * 100),
-      currency:     shippingRateCalc.currency || "EUR",
-      description:  shippingRateCalc.description,
-    }];
+    // 3️⃣ load config & brackets out of your DB
+    const { config, brackets } = await loadFedexConfigAndRates(prisma);
+
+    // 4️⃣ run that courier’s pricing routine
+    const quote = await calculateFedex({
+      cartItems,
+      config,
+      brackets,
+      transitDays: config.transitDays
+    });
+
+    // 5️⃣ format it for Shopify
+    const formatted = Array.isArray(quote)
+      ? quote.map(r => ({
+          service_name: r.name,
+          service_code: r.code,
+          total_price:  Math.round(r.total * 100),
+          currency:     r.currency,
+          description:  r.description,
+        }))
+      : [{
+          service_name: quote.name,
+          service_code: quote.code,
+          total_price:  Math.round(quote.total * 100),
+          currency:     quote.currency || 'EUR',
+          description:  quote.description,
+        }];
+
+    allRates.push(...formatted);
   }
-  return json({ rates });
+
+  return json({ rates: allRates });
 };
