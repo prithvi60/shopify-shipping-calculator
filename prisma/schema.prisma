@@ -35,6 +35,7 @@ model Session {
 model Courier {
   id           String          @id @default(cuid())
   name         String
+  description  String?
   logoUrl      String?
   config       Config?
   zones        Zone[]
@@ -64,6 +65,7 @@ model Config {
   fuelSurchargePct  Float
   /// VAT % (default 22%) :contentReference[oaicite:17]{index=17}
   vatPct            Float   @default(22)
+  transitDays       Int     @default(3)
   courier           Courier @relation(fields: [courierId], references: [id])
 }
 
