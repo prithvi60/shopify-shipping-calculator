@@ -111,7 +111,7 @@ export const action = async ({ request }) => {
 
   // 4️⃣ Loop through every courier, quote them, and concatenate
   const allRates = [];
-  for (const courierName of ['FedEx' /*, 'BRT','GLS',…*/]) {
+  for (const courierName of ['FedEx' /*,'TNT', 'BRT','GLS',…*/]) {
     const { loadFedexConfigAndRates, calculateFedex } = await getCourierModule(courierName);
 
     // load config & brackets

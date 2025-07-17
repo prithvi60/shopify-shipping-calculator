@@ -1,12 +1,12 @@
 // app/shipping/couriers/index.js
 import * as FedexModule from './fedex.js';
-// import * as BrtModule   from './brt.js'
+import * as TntModule   from './tnt.js'
 // import * as GlsModule   from './gls.js'
 // …etc.
 
 const courierModules = {
   FedEx: FedexModule,
-  // BRT:   BrtModule,
+  TNT:   TntModule,
   // GLS:   GlsModule,
   // …etc.
 };
