@@ -1,44 +1,117 @@
+// app/routes/api.fedex.js
 import { json } from '@remix-run/node';
-import { prisma } from '../db.server';
+import prisma from '../db.server';
+
+// Zone labels must match your Zone.value entries for FedEx
+const zoneLabels = [
+  'ZONA A','ZONA B','ZONA C',
+  'ZONA D','ZONA E','ZONA F',
+  'ZONA G','ZONA H','ZONA I'
+];
+
+// default config for initial empty state
+const defaultConfig = {
+  dryIceCostPerKg:   0,
+  dryIceVolumePerKg: 0,
+  freshIcePerDay:    0,
+  frozenIcePerDay:   0,
+  wineSurcharge:     0,
+  volumetricDivisor: 5000,
+  fuelSurchargePct:  0,
+  vatPct:            0,
+};
 
 export const loader = async () => {
-  const rates = await prisma.fedexRate.findMany({
-    orderBy: { id: 'asc' },
+  // 1️⃣ Try to find FedEx courier
+  const courier = await prisma.courier.findFirst({
+    where: { name: 'FedEx' }
   });
-  return json(rates);
+
+  // 2️⃣ If not yet configured, return empty defaults
+  if (!courier) {
+    return json({ config: defaultConfig, rates: [] });
+  }
+
+  // 3️⃣ Load its config (or fallback)
+  const config = await prisma.config.findFirst({
+    where: { courierId: courier.id }
+  }) || defaultConfig;
+
+  // 4️⃣ Load all weight brackets + their rates
+  const brackets = await prisma.weightBracket.findMany({
+    where: { courierId: courier.id },
+    orderBy: { minWeightKg: 'asc' },
+    include: { rates: { include: { zone: true } } }
+  });
+
+  // 5️⃣ Transform into flat rows
+  const rates = brackets.map(br => {
+    const row = { weight: `${br.minWeightKg}-${br.maxWeightKg}` };
+    for (const rate of br.rates) {
+      row[rate.zone.value] = String(rate.baseRate);
+    }
+    return row;
+  });
+
+  return json({ config, rates });
 };
 
 export const action = async ({ request }) => {
-  const form = await request.formData();
-  const raw = form.get('data');
+  const form      = await request.formData();
+  const rawConfig = form.get('config');
+  const rawRates  = form.get('rates');
 
-  if (!raw) {
-    return json({ success: false, error: 'No data received' }, { status: 400 });
+  if (!rawConfig || !rawRates) {
+    return json({ success: false, error: 'Missing config or rates payload' }, { status: 400 });
   }
 
-  let rows;
+  let configData, rows;
   try {
-    rows = JSON.parse(raw);
-  } catch (err) {
-    return json({ success: false, error: 'Invalid JSON' }, { status: 400 });
+    configData = JSON.parse(rawConfig);
+    rows       = JSON.parse(rawRates);
+  } catch {
+    return json({ success: false, error: 'Invalid JSON for config or rates' }, { status: 400 });
   }
 
-  // Optional: clear and replace strategy (simpler than row-by-row upsert)
-  await prisma.fedexRate.deleteMany({});
-  await prisma.fedexRate.createMany({
-    data: rows.map((r) => ({
-      weight: r.WEIGHT,
-      ZONA_A: r['ZONA A']?.toString() || '',
-      ZONA_B: r['ZONA B']?.toString() || '',
-      ZONA_C: r['ZONA C']?.toString() || '',
-      ZONA_D: r['ZONA D']?.toString() || '',
-      ZONA_E: r['ZONA E']?.toString() || '',
-      ZONA_F: r['ZONA F']?.toString() || '',
-      ZONA_G: r['ZONA G']?.toString() || '',
-      ZONA_H: r['ZONA H']?.toString() || '',
-      ZONA_I: r['ZONA I']?.toString() || '',
-    })),
+  // 1️⃣ Find or create FedEx courier
+  let courier = await prisma.courier.findFirst({ where: { name: 'FedEx' } });
+  if (!courier) {
+    courier = await prisma.courier.create({ data: { name: 'FedEx' } });
+  }
+
+  // 2️⃣ Upsert config for FedEx
+  await prisma.config.upsert({
+    where: { courierId: courier.id },
+    create: { courierId: courier.id, ...configData },
+    update: { ...configData }
   });
+
+  // 3️⃣ Wipe & rebuild brackets + rates
+  await prisma.rate.deleteMany({ where: { bracket: { courierId: courier.id } } });
+  await prisma.weightBracket.deleteMany({ where: { courierId: courier.id } });
+
+  // 4️⃣ Cache zone IDs
+  const zones = await prisma.zone.findMany({ where: { courierId: courier.id } });
+  const zoneMap = zones.reduce((m, z) => { m[z.value] = z.id; return m; }, {});
+
+  // 5️⃣ Recreate weight brackets + rates
+  for (const r of rows) {
+    const [min, max] = r.weight.split('-').map(Number);
+    const bracket = await prisma.weightBracket.create({
+      data: { courierId: courier.id, minWeightKg: min, maxWeightKg: max }
+    });
+
+    const creates = zoneLabels.map(label => {
+      const zoneId = zoneMap[label];
+      const val    = parseFloat(r[label] ?? '');
+      if (!zoneId || isNaN(val)) return null;
+      return prisma.rate.create({
+        data: { bracketId: bracket.id, zoneId, baseRate: val }
+      });
+    }).filter(Boolean);
+
+    await Promise.all(creates);
+  }
 
   return json({ success: true });
 };

@@ -30,65 +30,122 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+/// A shipping courier (FedEx, BRT, GLS, etc.)
 model Courier {
-  id               String   @id @default(cuid())
-  name             String
-  zones            Json
-  weightBrackets   Json
-  fuelSurcharge    Float
-  deliveryFees     Json
-  volumetricDivisor Int
-  vatPercent       Float
+  id           String          @id @default(cuid())
+  name         String
+  logoUrl      String?
+  config       Config?
+  zones        Zone[]
+  brackets     WeightBracket[]
+  timeSlotFees TimeSlotFee[]
+  containers   Container[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 }
 
-model Container {
-  id        String @id @default(cuid())
-  name      String
-  volume    Float
-  weight    Float
-  cost      Float
-  costVat   Float
-  dimensions Json
-}
-
+/// Global settings per courier
 model Config {
-  id             String @id @default(cuid())
-  dryIceCost     Float
-  dryIceVolume   Float
-  freshPerDay    Float
-  frozenPerDay   Float
-  wineSurcharge  Float
-  vatRate        Float
+  id                String  @id @default(cuid())
+  courierId         String  @unique
+  /// Cost per kg of dry ice (€2.30 + VAT) :contentReference[oaicite:11]{index=11}
+  dryIceCostPerKg   Float
+  /// Volume per kg dry ice (0.00068 m³) :contentReference[oaicite:12]{index=12}
+  dryIceVolumePerKg Float
+  /// Fresh: 1 kg/day; Frozen: 2.5 kg/day :contentReference[oaicite:13]{index=13}
+  freshIcePerDay    Float
+  frozenIcePerDay   Float
+  /// Wine surcharge per bottle (€0.77, VAT incl.) :contentReference[oaicite:14]{index=14}
+  wineSurcharge     Float
+  /// Volumetric divisor (e.g. totalVolume ÷ 5000) :contentReference[oaicite:15]{index=15}
+  volumetricDivisor Int     @default(5000)
+  /// Fuel surcharge % :contentReference[oaicite:16]{index=16}
+  fuelSurchargePct  Float
+  /// VAT % (default 22%) :contentReference[oaicite:17]{index=17}
+  vatPct            Float   @default(22)
+  courier           Courier @relation(fields: [courierId], references: [id])
 }
 
+/// Destination zones with priority (ZIP>City>Province>Region>Country)
+model Zone {
+  id           String        @id @default(cuid())
+  courierId    String
+  courier      Courier       @relation(fields: [courierId], references: [id])
+  type         ZoneType
+  value        String
+  transitDays  Int
+  rates        Rate[]
+  timeSlotFees TimeSlotFee[]
+}
+
+enum ZoneType {
+  ZIP
+  CITY
+  PROVINCE
+  REGION
+  COUNTRY
+}
+
+/// Defines a weight bracket (editable table) per courier
+model WeightBracket {
+  id          String  @id @default(cuid())
+  courierId   String
+  courier     Courier @relation(fields: [courierId], references: [id])
+  minWeightKg Float
+  maxWeightKg Float
+  rates       Rate[]
+}
+
+/// Rate for a given [WeightBracket × Zone]
+model Rate {
+  id        String        @id @default(cuid())
+  bracketId String
+  bracket   WeightBracket @relation(fields: [bracketId], references: [id])
+  zoneId    String
+  zone      Zone          @relation(fields: [zoneId], references: [id])
+  /// Base rate for this bracket/zone
+  baseRate  Float
+}
+
+/// Optional delivery‑time surcharges (e.g. “by 10:00 AM €5”, “by 12:00 PM €3”) :contentReference[oaicite:19]{index=19}
+model TimeSlotFee {
+  id         String  @id @default(cuid())
+  courierId  String
+  courier    Courier @relation(fields: [courierId], references: [id])
+  zoneId     String?
+  zone       Zone?   @relation(fields: [zoneId], references: [id])
+  cutoffTime String
+  fee        Float
+  feeType    FeeType
+}
+
+enum FeeType {
+  FIXED
+  PERCENT
+}
+
+/// Isothermal containers configuration :contentReference[oaicite:20]{index=20}
+model Container {
+  id               String  @id @default(cuid())
+  courierId        String
+  courier          Courier @relation(fields: [courierId], references: [id])
+  name             String
+  maxVolumeM3      Float
+  weightKg         Float
+  internalLengthMm Int
+  internalWidthMm  Int
+  internalHeightMm Int
+  externalLengthMm Int
+  externalWidthMm  Int
+  externalHeightMm Int
+  costVatExcluded  Float
+  costVatIncluded  Float
+}
+
+/// Example: legacy BRT region table (if still needed)
 model BRTRegion {
   id     String @id @map("id")
   region String
   price  String
-}
-model FedexRate {
-  id       Int     @id @default(autoincrement())
-  weight   String
-  ZONA_A   String?
-  ZONA_B   String?
-  ZONA_C   String?
-  ZONA_D   String?
-  ZONA_E   String?
-  ZONA_F   String?
-  ZONA_G   String?
-  ZONA_H   String?
-  ZONA_I   String?
-}
-model TntRate {
-  id       Int     @id @default(autoincrement())
-  weight   String
-  ZONA_A   String?
-  ZONA_B   String?
-  ZONA_C   String?
-  ZONA_D   String?
-  ZONA_E   String?
-  ZONA_F   String?
-  ZONA_G   String?
-  ZONA_H   String?
-  ZONA_I   String?
 }
