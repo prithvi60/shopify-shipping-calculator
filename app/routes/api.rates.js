@@ -1,7 +1,8 @@
+// app/routes/api.rates.js
 import { json } from '@remix-run/node';
 import { apiVersion } from '../shopify.server.js';
 import prisma          from '../db.server.js';
-import {  getCourierModule } from '../shipping/couriers/index.js';
+import { getCourierModule } from '../shipping/couriers/index.js';
 
 function formatVariantGID(variantId) {
   return `gid://shopify/ProductVariant/${variantId}`;
@@ -12,6 +13,10 @@ export const action = async ({ request }) => {
   const payload = await request.json();
   const shop    = request.headers.get('X-Shopify-Shop-Domain');
   if (!shop) return new Response('Missing shop header', { status: 400 });
+
+  // 🚩 extract destination postal code
+  const postalCode = payload.rate?.destination?.postal_code;
+  console.log('Shipping to postal code:', postalCode);
 
   // 2️⃣ Load the Shopify access token for this shop
   const session = await prisma.session.findFirst({
@@ -24,12 +29,12 @@ export const action = async ({ request }) => {
   }
   const token = session.accessToken;
 
-  // 3️⃣ Build our `cartItems` enriched with product metafields
-  const items    = payload.rate?.items || [];
+  // 3️⃣ Build our `cartItems` enriched with product metafields + sku + postalCode
+  const items     = payload.rate?.items || [];
   const cartItems = [];
 
   for (const item of items) {
-    // A) fetch the parent product ID
+    // A) fetch the parent product ID *and* SKU
     const variantGID = formatVariantGID(item.variant_id);
     const lookupRes  = await fetch(
       `https://${shop}/admin/api/${apiVersion}/graphql.json`,
@@ -43,6 +48,7 @@ export const action = async ({ request }) => {
           query: `
             query($id: ID!) {
               productVariant(id: $id) {
+                sku
                 product { id }
               }
             }`,
@@ -51,7 +57,9 @@ export const action = async ({ request }) => {
       }
     );
     const lookupJson   = await lookupRes.json();
-    const productGID   = lookupJson.data?.productVariant?.product?.id;
+    const variantNode  = lookupJson.data?.productVariant;
+    const productGID   = variantNode?.product?.id;
+    const sku          = variantNode?.sku;
     if (!productGID) continue;
 
     // B) fetch shipping metafields on that product
@@ -67,7 +75,7 @@ export const action = async ({ request }) => {
           query: `
             query($id: ID!) {
               product(id: $id) {
-                metafields(first: 10, namespace: "shipping") {
+                metafields(first: 10, namespace: "custom") {
                   edges { node { key value } }
                 }
               }
@@ -85,14 +93,17 @@ export const action = async ({ request }) => {
 
     cartItems.push({
       name:       item.name,
+      sku,                                 // ← SKU now available
       quantity:   item.quantity,
       dimensions: {
-        length: parseFloat(mf.length_cm || '0'),
-        width:  parseFloat(mf.width_cm  || '0'),
-        height: parseFloat(mf.height_cm || '0')
+        volume: parseFloat(mf.volume || '0'),
+        depth:  parseFloat(mf.depth  || '0'),
+        width:  parseFloat(mf.width  || '0'),
+        height: parseFloat(mf.height || '0')
       },
-      weight:   parseFloat(item.grams || '0') / 1000,
-      category: mf.category?.toLowerCase() || 'ambient'
+      weight:     parseFloat(item.grams || '0') / 1000,
+      category:   mf.category?.toLowerCase() || 'ambient',
+      postalCode                           // ← postal code on every item
     });
   }
 
@@ -100,23 +111,22 @@ export const action = async ({ request }) => {
 
   // 4️⃣ Loop through every courier, quote them, and concatenate
   const allRates = [];
-
-
   for (const courierName of ['FedEx' /*, 'BRT','GLS',…*/]) {
-    const { loadFedexConfigAndRates, calculateFedex } = getCourierModule(courierName);
+    const { loadFedexConfigAndRates, calculateFedex } = await getCourierModule(courierName);
 
-    // 3️⃣ load config & brackets out of your DB
-    const { config, brackets } = await loadFedexConfigAndRates(prisma);
+    // load config & brackets
+    const { config, brackets,zones  } = await loadFedexConfigAndRates(prisma);
 
-    // 4️⃣ run that courier’s pricing routine
+    // run that courier’s pricing
     const quote = await calculateFedex({
       cartItems,
       config,
       brackets,
+      zones,
       transitDays: config.transitDays
     });
 
-    // 5️⃣ format it for Shopify
+    // format for Shopify
     const formatted = Array.isArray(quote)
       ? quote.map(r => ({
           service_name: r.name,
@@ -136,5 +146,6 @@ export const action = async ({ request }) => {
     allRates.push(...formatted);
   }
 
+  console.log('allRates', allRates);
   return json({ rates: allRates });
 };
