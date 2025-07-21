@@ -1,12 +1,5 @@
 import { json } from '@remix-run/node';
-import prisma      from '../db.server.js';
-
-// Must match your tnt.js zoneLabels
-const zoneLabels = [
-  'ZONA 1','ZONA 2','ZONA 3',
-  'ZONA 4','ZONA 5','ZONA 6',
-  'ZONA 7','ZONA 8','ZONA 9'
-];
+import prisma from '../db.server.js';
 
 const defaultConfig = {
   volumetricDivisor: 5000,
@@ -23,29 +16,30 @@ const defaultConfig = {
 
 export const loader = async () => {
   const courier = await prisma.courier.findFirst({ where: { name: 'TNT' } });
-  if (!courier) {
-    return json({ config: defaultConfig, rates: [] });
-  }
+  if (!courier) return json({ config: defaultConfig, rates: [] });
 
   const cfg = await prisma.config.findFirst({ where: { courierId: courier.id } }) || {};
+
+  // When fetching, we need to include the related 'rates' to get the baseRate
   const brackets = await prisma.weightBracket.findMany({
     where: { courierId: courier.id },
-    orderBy: { minWeightKg: 'asc' },
-    include: { rates: { include: { zone: true } } }
+    include: {
+      rates: { // Include the related rates
+        select: { baseRate: true }, // Select 'baseRate' as per the schema
+      }
+    },
+    orderBy: { minWeightKg: 'asc' }
   });
 
-  const rates = brackets.map(br => {
-    const weight = br.minWeightKg === br.maxWeightKg
-      ? String(br.minWeightKg)
-      : `${br.minWeightKg}-${br.maxWeightKg}`;
-    const row = { weight };
-    zoneLabels.forEach(lbl => row[lbl.replace(' ', '_')] = '');
-    br.rates.forEach(r => {
-      const key = r.zone.value.replace(' ', '_');
-      row[key] = String(r.baseRate);
-    });
-    return row;
-  });
+  const rates = brackets.map(br => ({
+    weight: br.minWeightKg === br.maxWeightKg
+      ? `${br.minWeightKg}`
+      : br.maxWeightKg === 999999 // Check for the "greater than" representation
+        ? `>${br.minWeightKg}`
+        : `${br.minWeightKg}-${br.maxWeightKg}`,
+    // Access the baseRate from the nested rates array
+    price: br.rates && br.rates.length > 0 ? br.rates[0].baseRate?.toString() || '' : ''
+  }));
 
   return json({
     config: {
@@ -62,7 +56,8 @@ export const loader = async () => {
 export const action = async ({ request }) => {
   const form      = await request.formData();
   const rawConfig = form.get('config');
-  const rawRates  = form.get('rates');
+  const rawRates  = form.get('rates'); // This now contains the transformed rates from the frontend
+
   if (!rawConfig || !rawRates) {
     return json({ success: false, error: 'Missing payload' }, { status: 400 });
   }
@@ -70,8 +65,9 @@ export const action = async ({ request }) => {
   let cfg, rows;
   try {
     cfg  = JSON.parse(rawConfig);
-    rows = JSON.parse(rawRates);
-  } catch {
+    rows = JSON.parse(rawRates); // 'rows' now contains objects with minWeightKg, maxWeightKg, and nested 'rates'
+  } catch (e) {
+    console.error("JSON parsing error:", e);
     return json({ success: false, error: 'Invalid JSON' }, { status: 400 });
   }
 
@@ -88,8 +84,8 @@ export const action = async ({ request }) => {
     });
   }
 
-  // Strip name/desc/rates
-  const { name, description, rates, ...nums } = cfg;
+  // Strip extras
+  const { name, description, rates: frontendRates, ...nums } = cfg; // Destructure 'rates' to avoid conflict
 
   // Upsert config
   await prisma.config.upsert({
@@ -98,44 +94,81 @@ export const action = async ({ request }) => {
     update: { ...nums }
   });
 
-  // Ensure zones exist
-  let zones = await prisma.zone.findMany({ where: { courierId: courier.id } });
-  if (!zones.length) {
-    zones = await Promise.all(zoneLabels.map(lbl =>
-      prisma.zone.create({
-        data: {
-          courierId:   courier.id,
-          value:       lbl,
-          type:        'ZIP',
-          transitDays: nums.transitDays
-        }
-      })
-    ));
-  }
-  const zoneMap = Object.fromEntries(zones.map(z => [z.value, z.id]));
+  // Ensure a default zone exists for TNT, as Rate requires a zoneId
+  let defaultZone = await prisma.zone.findFirst({
+    where: {
+      courierId: courier.id,
+      value: 'DEFAULT_TNT_ZONE', // A unique identifier for the default zone for TNT
+      type: 'COUNTRY' // Assuming a default type for this zone
+    }
+  });
 
-  // Clear old
-  await prisma.rate.deleteMany({ where: { bracket: { courierId: courier.id } } });
+  if (!defaultZone) {
+    defaultZone = await prisma.zone.create({
+      data: {
+        courierId: courier.id,
+        value: 'DEFAULT_TNT_ZONE',
+        type: 'COUNTRY',
+        transitDays: nums.transitDays // Use transitDays from the config
+      }
+    });
+  }
+
+  // Clear old brackets and their associated rates
+  // First, delete rates associated with these brackets to avoid foreign key constraints
+  const existingBracketIds = (await prisma.weightBracket.findMany({
+    where: { courierId: courier.id },
+    select: { id: true }
+  })).map(b => b.id);
+
+  if (existingBracketIds.length > 0) {
+    await prisma.rate.deleteMany({
+      where: { bracketId: { in: existingBracketIds } }
+    });
+  }
+  // Then, delete the brackets themselves
   await prisma.weightBracket.deleteMany({ where: { courierId: courier.id } });
 
-  // Recreate brackets + rates
-  for (const r of rows) {
-    const parts   = r.weight.split('-').map(parseFloat);
-    const min     = parts[0];
-    const max     = isNaN(parts[1]) ? min : parts[1];
-    const bracket = await prisma.weightBracket.create({
-      data: { courierId: courier.id, minWeightKg: min, maxWeightKg: max }
+
+  // Insert new brackets with nested rates
+  // Use Promise.allSettled to handle potential individual errors without stopping the whole process
+  const results = await Promise.allSettled(rows.map(row => {
+    // 'row' now directly contains minWeightKg, maxWeightKg, and the nested rates object
+    const { minWeightKg, maxWeightKg, rates: nestedRates } = row;
+
+    // Validate if minWeightKg and maxWeightKg are valid numbers
+    if (isNaN(minWeightKg) || isNaN(maxWeightKg)) {
+      console.warn(`Skipping invalid weight bracket: minWeightKg=${minWeightKg}, maxWeightKg=${maxWeightKg}`);
+      return Promise.resolve(null); // Resolve with null for invalid entries
+    }
+
+    // Ensure nestedRates.create and nestedRates.create.price exist
+    if (!nestedRates || !nestedRates.create || typeof nestedRates.create.price === 'undefined') {
+      console.warn(`Skipping weight bracket due to missing price: ${JSON.stringify(row)}`);
+      return Promise.resolve(null); // Resolve with null if price is missing
+    }
+
+    return prisma.weightBracket.create({
+      data: {
+        courierId: courier.id,
+        minWeightKg: minWeightKg,
+        maxWeightKg: maxWeightKg,
+        rates: { // This is the key change to match Prisma's schema
+          create: {
+            baseRate: nestedRates.create.price, // Map frontend 'price' to backend 'baseRate'
+            zoneId: defaultZone.id // Associate with the default zone
+          }
+        }
+      }
     });
-    const tasks = zoneLabels.map(lbl => {
-      const key = lbl.replace(' ', '_');
-      const val = parseFloat((r[key]||'').replace(',', '.'));
-      const zid = zoneMap[lbl];
-      return (!isNaN(val) && zid)
-        ? prisma.rate.create({ data: { bracketId: bracket.id, zoneId: zid, baseRate: val } })
-        : null;
-    }).filter(Boolean);
-    await Promise.all(tasks);
-  }
+  }));
+
+  // Log any rejections from Promise.allSettled for debugging
+  results.forEach((result, index) => {
+    if (result.status === 'rejected') {
+      console.error(`Failed to create weight bracket at index ${index}:`, result.reason);
+    }
+  });
 
   return json({ success: true });
 };

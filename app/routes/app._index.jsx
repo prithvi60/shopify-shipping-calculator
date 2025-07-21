@@ -336,11 +336,14 @@ export default function AppDashboard() {
           <Layout.Section>
             <Card title="Quick Access - Couriers" sectioned>
               <BlockStack gap="300">
+                <Button variant="primary" url="/app/containers">
+                  Isothermal Container Config
+                </Button>
                 <Button variant="primary" url="/app/fedex">
-                  FEDEX
+                  FEDEX Config
                 </Button>
                 <Button variant="primary" url="/app/tnt">
-                  TNT
+                  TNT Config
                 </Button>
                 {/* <Button variant="primary" url="/app/dryice">
                   Dry Ice Settings
@@ -352,7 +355,7 @@ export default function AppDashboard() {
           <Layout.Section variant="oneThird">
             <Card title="About this app" sectioned>
               <Text as="p" variant="bodyMd">
-               Configure custom shipping rates for fresh, frozen, and ambient product categories based on volumetric calculations, containers, dry ice usage, and courier fees.
+                Custom Shipping Rates Configurations
               </Text>
             </Card>
           </Layout.Section>

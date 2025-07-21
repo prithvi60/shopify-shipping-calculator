@@ -1,7 +1,6 @@
-// app/routes/api.rates.js
 import { json } from '@remix-run/node';
 import { apiVersion } from '../shopify.server.js';
-import prisma          from '../db.server.js';
+import prisma from '../db.server.js';
 import { getCourierModule } from '../shipping/couriers/index.js';
 
 function formatVariantGID(variantId) {
@@ -11,16 +10,26 @@ function formatVariantGID(variantId) {
 export const action = async ({ request }) => {
   // 1️⃣ Parse incoming payload & shop header
   const payload = await request.json();
-  const shop    = request.headers.get('X-Shopify-Shop-Domain');
+  const shop = request.headers.get('X-Shopify-Shop-Domain');
   if (!shop) return new Response('Missing shop header', { status: 400 });
 
-  // 🚩 extract destination postal code
-  const postalCode = payload.rate?.destination?.postal_code;
-  console.log('Shipping to postal code:', postalCode);
+  // 🚩 Extract destination details
+  const destination = payload.rate?.destination || {};
+  const postalCode  = destination.postal_code;
+  const countryCode = destination.country;
+  const province    = destination.province;
+  const city        = destination.city;
+
+  // console.log('Shipping to:', {
+  //   postalCode,
+  //   countryCode,
+  //   province,
+  //   city
+  // });
 
   // 2️⃣ Load the Shopify access token for this shop
   const session = await prisma.session.findFirst({
-    where:  { shop },
+    where: { shop },
     select: { accessToken: true }
   });
   if (!session?.accessToken) {
@@ -29,19 +38,19 @@ export const action = async ({ request }) => {
   }
   const token = session.accessToken;
 
-  // 3️⃣ Build our `cartItems` enriched with product metafields + sku + postalCode
-  const items     = payload.rate?.items || [];
+  // 3️⃣ Build enriched `cartItems`
+  const items = payload.rate?.items || [];
   const cartItems = [];
 
   for (const item of items) {
-    // A) fetch the parent product ID *and* SKU
+    // A) fetch variant + product
     const variantGID = formatVariantGID(item.variant_id);
-    const lookupRes  = await fetch(
+    const lookupRes = await fetch(
       `https://${shop}/admin/api/${apiVersion}/graphql.json`,
       {
         method: 'POST',
         headers: {
-          'Content-Type':          'application/json',
+          'Content-Type': 'application/json',
           'X-Shopify-Access-Token': token
         },
         body: JSON.stringify({
@@ -56,19 +65,19 @@ export const action = async ({ request }) => {
         })
       }
     );
-    const lookupJson   = await lookupRes.json();
-    const variantNode  = lookupJson.data?.productVariant;
-    const productGID   = variantNode?.product?.id;
-    const sku          = variantNode?.sku;
+    const lookupJson = await lookupRes.json();
+    const variantNode = lookupJson.data?.productVariant;
+    const productGID = variantNode?.product?.id;
+    const sku = variantNode?.sku;
     if (!productGID) continue;
 
-    // B) fetch shipping metafields on that product
+    // B) fetch metafields
     const mfRes = await fetch(
       `https://${shop}/admin/api/${apiVersion}/graphql.json`,
       {
         method: 'POST',
         headers: {
-          'Content-Type':          'application/json',
+          'Content-Type': 'application/json',
           'X-Shopify-Access-Token': token
         },
         body: JSON.stringify({
@@ -86,66 +95,72 @@ export const action = async ({ request }) => {
     );
     const mfJson = await mfRes.json();
     const mfData = mfJson.data?.product?.metafields?.edges || [];
-    const mf     = mfData.reduce((acc, { node }) => {
+    const mf = mfData.reduce((acc, { node }) => {
       acc[node.key] = node.value;
       return acc;
     }, {});
 
+    // C) push enriched item
     cartItems.push({
-      name:       item.name,
-      sku,                                 // ← SKU now available
-      quantity:   item.quantity,
+      name: item.name,
+      sku,
+      quantity: item.quantity,
       dimensions: {
         volume: parseFloat(mf.volume || '0'),
         depth:  parseFloat(mf.depth  || '0'),
         width:  parseFloat(mf.width  || '0'),
         height: parseFloat(mf.height || '0')
       },
-      weight:     parseFloat(item.grams || '0') / 1000,
-      category:   mf.category?.toLowerCase() || 'ambient',
-      postalCode                           // ← postal code on every item
+      weight: parseFloat(item.grams || '0') / 1000,
+      category: mf.category?.toLowerCase() || 'ambient',
+      postalCode,
+      countryCode,
+      city,
+      province
     });
   }
 
-  console.log('Cart items:', cartItems);
+  // console.log('Cart items:', cartItems);
 
-  // 4️⃣ Loop through every courier, quote them, and concatenate
   const allRates = [];
-  for (const courierName of ['FedEx' /*,'TNT', 'BRT','GLS',…*/]) {
-    const { loadFedexConfigAndRates, calculateFedex } = await getCourierModule(courierName);
+  for (const courierName of ['FedEx' ,'TNT'/*,'BRT',...*/]) {
+    // Dynamically get the module and its standardized functions
+    const courierMod = getCourierModule(courierName);
+    const { loadConfigAndRates, calculate } = courierMod; // Destructure generic names
 
-    // load config & brackets
-    const { config, brackets,zones  } = await loadFedexConfigAndRates(prisma);
+    // Load config, brackets, and zones using the generic function
+    const { config, brackets, zones } = await loadConfigAndRates(prisma); // Pass prisma if needed by the module
 
-    // run that courier’s pricing
-    const quote = await calculateFedex({
+    // Calculate quote using the generic function
+    const quote = await calculate({
       cartItems,
       config,
       brackets,
-      zones,
+      zones, // zones might be null for TNT, handle in calculateTnt
       transitDays: config.transitDays
     });
 
-    // format for Shopify
+    // Format the quote into the expected Shopify Carrier Service API response format
     const formatted = Array.isArray(quote)
       ? quote.map(r => ({
           service_name: r.name,
           service_code: r.code,
-          total_price:  Math.round(r.total * 100),
-          currency:     r.currency,
-          description:  r.description,
+          total_price: Math.round(r.total * 100), // Prices are usually in cents for Shopify
+          currency: r.currency,
+          description: r.description,
         }))
       : [{
           service_name: quote.name,
           service_code: quote.code,
-          total_price:  Math.round(quote.total * 100),
-          currency:     quote.currency || 'EUR',
-          description:  quote.description,
+          total_price: Math.round(quote.total * 100),
+          currency: quote.currency || 'EUR', // Default to EUR if not provided
+          description: quote.description,
         }];
 
     allRates.push(...formatted);
   }
 
-  console.log('allRates', allRates);
+  // console.log('allRates', allRates);
+
   return json({ rates: allRates });
 };

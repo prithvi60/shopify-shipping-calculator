@@ -14,7 +14,7 @@ const defaultConfig = {
   transitDays:       3,
 };
 
-export async function loadFedexConfigAndRates() {
+export async function loadConfigAndRates () {
   const courier = await prisma.courier.findFirst({ where: { name: 'FedEx' } });
   if (!courier) {
     return { config: { ...defaultConfig }, brackets: [] };
@@ -37,7 +37,7 @@ export async function loadFedexConfigAndRates() {
   };
 }
 
-export async function calculateFedex({ cartItems, config, brackets, transitDays }) {
+export async function calculate({ cartItems, config, brackets, transitDays }) {
   console.log('calculateFedex',brackets);
   // — Step 1: total volumes per category (m³)
   const volByCat = cartItems.reduce((acc, { category, dimensions, quantity }) => {

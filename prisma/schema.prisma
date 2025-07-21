@@ -78,6 +78,7 @@ model Zone {
   value        String
   transitDays  Int
   rates        Rate[]
+  price       Float?    // ✅ Flat rate for this bracket (used for TNT)
   timeSlotFees TimeSlotFee[]
 }
 
