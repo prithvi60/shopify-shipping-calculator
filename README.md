@@ -16,18 +16,18 @@ This is a custom private Shopify app developed by Webibee for Hamashbir to calcu
 
 ## 📁 Key Features
 
-✅ Real-time shipping rate based on:
+ Real-time shipping rate based on:
 - Volume, weight, dry ice, and container logic
 - Courier zones and weight brackets
 - Optional delivery time fees (10AM/12PM)
 - VAT and fuel surcharge
 
-✅ Admin Panel with UI to manage:
+ Admin Panel with UI to manage:
 - Containers (`/app/containers`)
 - Couriers (`/app/couriers`)
-- Dry ice rules (`/app/dryice`)
 
-✅ Shopify Checkout Integration via CarrierService API
+
+ Shopify Checkout Integration via CarrierService API
 
 ---
 
