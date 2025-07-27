@@ -1,0 +1,197 @@
+{
+  "courierType": "FEDEX",
+  "version": "1.0",
+  "basicInfo": {
+    "name": "FedEx Express",
+    "description": "FedEx Express international shipping",
+    "isActive": true,
+    "supportedRegions": ["EU", "WORLDWIDE"]
+  },
+  "shippingConfig": {
+    "dryIce": {
+      "costPerKg": 12.0,
+      "volumePerKg": 2.0
+    },
+    "ice": {
+      "freshPerDay": 1.0,
+      "frozenPerDay": 2.0
+    },
+    "surcharges": {
+      "wine": 3.5,
+      "fuel": {
+        "percentage": 15.0
+      }
+    },
+    "calculations": {
+      "volumetricDivisor": 5000,
+      "vatPercentage": 22.0
+    },
+    "transitDays": 3
+  },
+  "zones": [
+    {
+      "code": "ZONA_A",
+      "name": "ZONA A",
+      "type": "COUNTRY",
+      "transitDays": 1,
+      "description": "Western Europe"
+    },
+    {
+      "code": "ZONA_B", 
+      "name": "ZONA B",
+      "type": "COUNTRY",
+      "transitDays": 2,
+      "description": "Eastern Europe"
+    },
+    {
+      "code": "ZONA_C",
+      "name": "ZONA C", 
+      "type": "COUNTRY",
+      "transitDays": 3,
+      "description": "North America"
+    },
+    {
+      "code": "ZONA_D",
+      "name": "ZONA D",
+      "type": "COUNTRY", 
+      "transitDays": 4,
+      "description": "Asia Pacific"
+    },
+    {
+      "code": "ZONA_E",
+      "name": "ZONA E",
+      "type": "COUNTRY",
+      "transitDays": 5,
+      "description": "Middle East"
+    },
+    {
+      "code": "ZONA_F",
+      "name": "ZONA F",
+      "type": "COUNTRY",
+      "transitDays": 6,
+      "description": "Africa"
+    },
+    {
+      "code": "ZONA_G",
+      "name": "ZONA G",
+      "type": "COUNTRY",
+      "transitDays": 7,
+      "description": "South America"
+    },
+    {
+      "code": "ZONA_H",
+      "name": "ZONA H",
+      "type": "COUNTRY",
+      "transitDays": 8,
+      "description": "Remote Areas"
+    },
+    {
+      "code": "ZONA_I",
+      "name": "ZONA I",
+      "type": "COUNTRY",
+      "transitDays": 10,
+      "description": "Very Remote Areas"
+    }
+  ],
+  "pricingBrackets": [
+    {
+      "minWeightKg": 0,
+      "maxWeightKg": 1,
+      "zoneRates": {
+        "ZONA_A": 25.00,
+        "ZONA_B": 30.00,
+        "ZONA_C": 35.00,
+        "ZONA_D": 40.00,
+        "ZONA_E": 45.00,
+        "ZONA_F": 50.00,
+        "ZONA_G": 55.00,
+        "ZONA_H": 60.00,
+        "ZONA_I": 65.00
+      },
+      "currency": "EUR"
+    },
+    {
+      "minWeightKg": 1,
+      "maxWeightKg": 2,
+      "zoneRates": {
+        "ZONA_A": 28.00,
+        "ZONA_B": 33.00,
+        "ZONA_C": 38.00,
+        "ZONA_D": 43.00,
+        "ZONA_E": 48.00,
+        "ZONA_F": 53.00,
+        "ZONA_G": 58.00,
+        "ZONA_H": 63.00,
+        "ZONA_I": 68.00
+      },
+      "currency": "EUR"
+    }
+  ],
+  "services": [
+    {
+      "code": "FEDEX_STANDARD",
+      "name": "FedEx Standard",
+      "description": "Standard delivery service",
+      "additionalCost": 0,
+      "isDefault": true
+    },
+    {
+      "code": "FEDEX_BEFORE_10",
+      "name": "FedEx Before 10:00",
+      "description": "Delivery before 10:00 AM",
+      "additionalCost": 5.00,
+      "isDefault": false
+    }
+  ],
+  "features": {
+    "supportsRealTimeTracking": true,
+    "supportsInsurance": true,
+    "supportsDryIce": true,
+    "supportsPickup": true,
+    "supportsZoneBased": true,
+    "maxDimensions": {
+      "length": 274,
+      "width": 172,
+      "height": 157,
+      "unit": "cm"
+    },
+    "maxWeight": {
+      "value": 68,
+      "unit": "kg"
+    }
+  },
+  "apiConfig": {
+    "endpoints": {
+      "rates": "/api/fedex/rates",
+      "tracking": "/api/fedex/track", 
+      "pickup": "/api/fedex/pickup"
+    },
+    "authentication": {
+      "type": "oauth",
+      "required": true
+    }
+  },
+  "ui": {
+    "displayOrder": 2,
+    "color": "#4B0082",
+    "logo": "/images/couriers/fedex.png",
+    "showInQuickQuote": true
+  },
+  "businessRules": {
+    "minimumOrder": 15.00,
+    "freeShippingThreshold": 150.00,
+    "allowedPaymentMethods": ["prepaid", "cod"],
+    "restrictedCountries": ["IR", "KP", "SY"],
+    "specialHandling": {
+      "fragile": {
+        "surcharge": 8.00,
+        "maxWeight": 25
+      },
+      "hazardous": {
+        "allowed": true,
+        "surcharge": 15.00,
+        "restrictions": ["DG_CATEGORY_1", "DG_CATEGORY_2"]
+      }
+    }
+  }
+} 

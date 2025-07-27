@@ -20,16 +20,16 @@ export default function ContainersPage() {
     if (fetcher.data?.containers) {
       setData(fetcher.data.containers.map(row => ({
         name: row.name,
-        volume: String(row.maxVolumeM3),
-        weight: String(row.weightKg),
-        extL: row.externalLengthMm,
-        extW: row.externalWidthMm,
-        extH: row.externalHeightMm,
-        intL: row.internalLengthMm,
-        intW: row.internalWidthMm,
-        intH: row.internalHeightMm,
-        costExcl: String(row.costVatExcluded),
-        costIncl: String(row.costVatIncluded),
+        volume: row.volume,        // ✅ Fixed: API returns 'volume', not 'maxVolumeM3'
+        weight: row.weight,        // ✅ Fixed: API returns 'weight', not 'weightKg'
+        extL: row.extL,           // ✅ Fixed: API returns 'extL', not 'externalLengthMm'
+        extW: row.extW,           // ✅ Fixed: API returns 'extW', not 'externalWidthMm'
+        extH: row.extH,           // ✅ Fixed: API returns 'extH', not 'externalHeightMm'
+        intL: row.intL,           // ✅ Fixed: API returns 'intL', not 'internalLengthMm'
+        intW: row.intW,           // ✅ Fixed: API returns 'intW', not 'internalWidthMm'
+        intH: row.intH,           // ✅ Fixed: API returns 'intH', not 'internalHeightMm'
+        costExcl: row.costExcl,   // ✅ Fixed: API returns 'costExcl', not 'costVatExcluded'
+        costIncl: row.costIncl,   // ✅ Fixed: API returns 'costIncl', not 'costVatIncluded'
       })));
     }
   }, [fetcher.data]);

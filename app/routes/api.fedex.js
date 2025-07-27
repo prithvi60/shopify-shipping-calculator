@@ -1,162 +1,267 @@
-// app/routes/api.fedex.js
+// app/routes/api.fedex.js - JSON-based FedEx API
 import { json } from '@remix-run/node';
 import prisma from '../db.server';
 
-// must exactly match your Zone.value in the DB
+// Zone labels that match the UI expectations
 const zoneLabels = [
   'ZONA A','ZONA B','ZONA C',
   'ZONA D','ZONA E','ZONA F',
   'ZONA G','ZONA H','ZONA I'
 ];
 
-// default config when FedEx isn’t yet in the DB
-const defaultConfig = {
-  dryIceCostPerKg:   0,
-  dryIceVolumePerKg: 0,
-  freshIcePerDay:    0,
-  frozenIcePerDay:   0,
-  wineSurcharge:     0,
-  volumetricDivisor: 5000,
-  fuelSurchargePct:  0,
-  vatPct:            0,
-  transitDays:       3
+// Default FedEx configuration template
+const defaultFedexConfig = {
+  courierType: "FEDEX",
+  version: "1.0",
+  basicInfo: {
+    name: "FedEx Express",
+    description: "FedEx Express international shipping",
+    isActive: true,
+    supportedRegions: ["EU", "WORLDWIDE"]
+  },
+  shippingConfig: {
+    dryIce: {
+      costPerKg: 12.0,
+      volumePerKg: 2.0
+    },
+    ice: {
+      freshPerDay: 1.0,
+      frozenPerDay: 2.0
+    },
+    surcharges: {
+      wine: 3.5,
+      fuel: {
+        percentage: 15.0
+      }
+    },
+    calculations: {
+      volumetricDivisor: 5000,
+      vatPercentage: 22.0
+    },
+    transitDays: 3
+  },
+  zones: zoneLabels.map((label, index) => ({
+    code: label.replace(' ', '_'),
+    name: label,
+    type: "COUNTRY",
+    transitDays: index + 1,
+    description: `Zone ${label}`
+  })),
+  pricingBrackets: [
+    {
+      minWeightKg: 0,
+      maxWeightKg: 1,
+      zoneRates: Object.fromEntries(zoneLabels.map((label, i) => [
+        label.replace(' ', '_'), 
+        25.00 + (i * 5)
+      ])),
+      currency: "EUR"
+    }
+  ]
 };
 
 export const loader = async () => {
-  // 1️⃣ find FedEx courier
-  const courier = await prisma.courier.findFirst({ where: { name: 'FedEx' } });
-  if (!courier) {
-    return json({ config: defaultConfig, rates: [] });
+  try {
+    // Find FedEx courier with JSON config
+    const courier = await prisma.courier.findUnique({
+      where: { name: 'FEDEX' }
+    });
+
+    if (!courier) {
+      // Return default config if courier doesn't exist
+      return json({
+        config: {
+          name: defaultFedexConfig.basicInfo.name,
+          description: defaultFedexConfig.basicInfo.description,
+          ...flattenShippingConfig(defaultFedexConfig.shippingConfig)
+        },
+        rates: formatRatesForUI(defaultFedexConfig.pricingBrackets)
+      });
+    }
+
+    const config = courier.config;
+    
+    // Transform JSON config to format expected by existing UI
+    const response = {
+      config: {
+        name: config.basicInfo?.name || defaultFedexConfig.basicInfo.name,
+        description: config.basicInfo?.description || defaultFedexConfig.basicInfo.description,
+        ...flattenShippingConfig(config.shippingConfig || defaultFedexConfig.shippingConfig)
+      },
+      rates: formatRatesForUI(config.pricingBrackets || [])
+    };
+
+    return json(response);
+  } catch (error) {
+    console.error('FedEx API loader error:', error);
+    return json({ error: 'Failed to load FedEx configuration' }, { status: 500 });
   }
-
-  // 2️⃣ load its config (or empty)
-  const cfg = await prisma.config.findFirst({ where: { courierId: courier.id } }) || {};
-
-  // 3️⃣ load brackets + rates
-  const brackets = await prisma.weightBracket.findMany({
-    where: { courierId: courier.id },
-    orderBy: { minWeightKg: 'asc' },
-    include: { rates: { include: { zone: true } } }
-  });
-
-  // 4️⃣ flatten for UI
-  const rates = brackets.map(br => {
-    const min    = br.minWeightKg;
-    const max    = br.maxWeightKg;
-    const weight = min === max ? `${min}` : `${min}-${max}`;
-    const row    = { weight };
-    // initialize blanks
-    for (const lbl of zoneLabels) {
-      row[lbl.replace(/\s+/g, '_')] = '';
-    }
-    // fill existing
-    for (const rate of br.rates) {
-      const key = rate.zone.value.replace(/\s+/g, '_');
-      if (row.hasOwnProperty(key)) row[key] = String(rate.baseRate);
-    }
-    return row;
-  });
-
-  return json({
-    config: {
-      name:        courier.name,
-      description: courier.description || '',
-      ...defaultConfig,
-      ...cfg,
-      transitDays: cfg.transitDays ?? defaultConfig.transitDays
-    },
-    rates
-  });
 };
 
 export const action = async ({ request }) => {
-  const form      = await request.formData();
-  const rawConfig = form.get('config');
-  const rawRates  = form.get('rates');
-
-  if (!rawConfig || !rawRates) {
-    return json({ success: false, error: 'Missing config or rates payload' }, { status: 400 });
-  }
-
-  let fullConfig, rows;
   try {
-    fullConfig = JSON.parse(rawConfig);
-    rows       = JSON.parse(rawRates);
-  } catch {
-    return json({ success: false, error: 'Invalid JSON for config or rates' }, { status: 400 });
-  }
+    const form = await request.formData();
+    const rawConfig = form.get('config');
+    const rawRates = form.get('rates');
 
-  // ① Upsert the FedEx courier
-  let courier = await prisma.courier.findFirst({ where: { name: 'FedEx' } });
-  if (!courier) {
-    courier = await prisma.courier.create({
-      data: {
-        name:        'FedEx',
-        description: fullConfig.description
+    if (!rawConfig || !rawRates) {
+      return json({ success: false, error: 'Missing config or rates payload' }, { status: 400 });
+    }
+
+    const updateData = JSON.parse(rawConfig);
+    const rates = JSON.parse(rawRates);
+    
+    // Transform UI format back to JSON config structure
+    const jsonConfig = {
+      courierType: "FEDEX",
+      version: "1.0",
+      basicInfo: {
+        name: updateData.name?.trim() || "FedEx Express",
+        description: updateData.description?.trim() || "FedEx Express international shipping",
+        isActive: true,
+        supportedRegions: ["EU", "WORLDWIDE"]
+      },
+      shippingConfig: {
+        dryIce: {
+          costPerKg: parseFloat(updateData.dryIceCostPerKg) || 0,
+          volumePerKg: parseFloat(updateData.dryIceVolumePerKg) || 0
+        },
+        ice: {
+          freshPerDay: parseFloat(updateData.freshIcePerDay) || 0,
+          frozenPerDay: parseFloat(updateData.frozenIcePerDay) || 0
+        },
+        surcharges: {
+          wine: parseFloat(updateData.wineSurcharge) || 0,
+          fuel: {
+            percentage: parseFloat(updateData.fuelSurchargePct) || 0
+          }
+        },
+        calculations: {
+          volumetricDivisor: parseInt(updateData.volumetricDivisor) || 5000,
+          vatPercentage: parseFloat(updateData.vatPct) || 22
+        },
+        transitDays: parseInt(updateData.transitDays) || 3
+      },
+      zones: zoneLabels.map((label, index) => ({
+        code: label.replace(' ', '_'),
+        name: label,
+        type: "COUNTRY",
+        transitDays: index + 1,
+        description: `Zone ${label}`
+      })),
+      pricingBrackets: formatRatesFromUI(rates),
+      services: [
+        {
+          code: "FEDEX_STANDARD",
+          name: "FedEx Standard",
+          description: "Standard delivery service",
+          additionalCost: 0,
+          isDefault: true
+        },
+        {
+          code: "FEDEX_BEFORE_10",
+          name: "FedEx Before 10:00",
+          description: "Delivery before 10:00 AM",
+          additionalCost: 5.00,
+          isDefault: false
+        }
+      ]
+    };
+
+    // Upsert courier with JSON config
+    const courier = await prisma.courier.upsert({
+      where: { name: 'FEDEX' },
+      create: {
+        name: 'FEDEX',
+        config: jsonConfig,
+        isActive: true
+      },
+      update: {
+        config: jsonConfig,
+        updatedAt: new Date()
       }
     });
-  } else {
-    await prisma.courier.update({
-      where: { id: courier.id },
-      data:  { description: fullConfig.description }
-    });
+
+    return json({ success: true, courierId: courier.id });
+  } catch (error) {
+    console.error('FedEx API action error:', error);
+    return json({ success: false, error: 'Failed to save FedEx configuration' }, { status: 500 });
   }
-
-  // ② Strip out name/description/rates before updating Config
-  const {
-    name, description, rates, /* discard */
-    ...cfgNumbers            /* keep only the numeric fields */
-  } = fullConfig;
-
-  await prisma.config.upsert({
-    where:  { courierId: courier.id },
-    create: { courierId: courier.id, ...cfgNumbers },
-    update: { ...cfgNumbers }
-  });
-
-  // ③ Ensure your 9 zones exist (with required type+transitDays)
-  let zones = await prisma.zone.findMany({ where: { courierId: courier.id } });
-  if (zones.length === 0) {
-    zones = await Promise.all(zoneLabels.map(lbl =>
-      prisma.zone.create({
-        data: {
-          courierId:   courier.id,
-          value:       lbl,
-          type:        'COUNTRY',               // adjust ZoneType if needed
-          transitDays: cfgNumbers.transitDays
-        }
-      })
-    ));
-  }
-  const zoneMap = Object.fromEntries(zones.map(z => [z.value, z.id]));
-
-  // ④ Clear old brackets & rates
-  await prisma.rate.deleteMany({ where: { bracket: { courierId: courier.id } } });
-  await prisma.weightBracket.deleteMany({ where: { courierId: courier.id } });
-
-  // ⑤ Recreate brackets + rates
-  for (const r of rows) {
-    const parts = r.weight.split('-').map(s => parseFloat(s.replace(',', '.')));
-    const min   = parts[0];
-    const max   = !isNaN(parts[1]) ? parts[1] : parts[0];
-
-    const bracket = await prisma.weightBracket.create({
-      data: { courierId: courier.id, minWeightKg: min, maxWeightKg: max }
-    });
-
-    const tasks = zoneLabels.map(lbl => {
-      const key      = lbl.replace(/\s+/g, '_');
-      const rawVal   = (r[key] ?? '').toString().replace(',', '.');
-      const baseRate = parseFloat(rawVal);
-      const zoneId   = zoneMap[lbl];
-      if (!zoneId || isNaN(baseRate)) return null;
-      return prisma.rate.create({
-        data: { bracketId: bracket.id, zoneId, baseRate }
-      });
-    }).filter(x => x);
-
-    await Promise.all(tasks);
-  }
-
-  return json({ success: true });
 };
+
+// Helper functions to transform data between JSON config and UI format
+function flattenShippingConfig(shippingConfig) {
+  return {
+    dryIceCostPerKg: shippingConfig?.dryIce?.costPerKg || 0,
+    dryIceVolumePerKg: shippingConfig?.dryIce?.volumePerKg || 0,
+    freshIcePerDay: shippingConfig?.ice?.freshPerDay || 0,
+    frozenIcePerDay: shippingConfig?.ice?.frozenPerDay || 0,
+    wineSurcharge: shippingConfig?.surcharges?.wine || 0,
+    volumetricDivisor: shippingConfig?.calculations?.volumetricDivisor || 5000,
+    fuelSurchargePct: shippingConfig?.surcharges?.fuel?.percentage || 0,
+    vatPct: shippingConfig?.calculations?.vatPercentage || 22,
+    transitDays: shippingConfig?.transitDays || 3
+  };
+}
+
+function formatRatesForUI(pricingBrackets) {
+  return pricingBrackets.map(bracket => {
+    const weight = bracket.minWeightKg === bracket.maxWeightKg 
+      ? String(bracket.minWeightKg)
+      : `${bracket.minWeightKg}-${bracket.maxWeightKg}`;
+    
+    const row = { weight };
+    
+    // Initialize blanks for all zones
+    zoneLabels.forEach(label => {
+      const key = label.replace(/\s+/g, '_');
+      row[key] = '';
+    });
+    
+    // Fill in actual zone rates
+    if (bracket.zoneRates) {
+      Object.entries(bracket.zoneRates).forEach(([zoneCode, rate]) => {
+        if (row.hasOwnProperty(zoneCode)) {
+          row[zoneCode] = String(rate);
+        }
+      });
+    }
+    
+    return row;
+  });
+}
+
+function formatRatesFromUI(rates) {
+  return rates.map(rate => {
+    const weightStr = String(rate.weight).trim();
+    let minWeightKg, maxWeightKg;
+
+    if (weightStr.includes('-')) {
+      const parts = weightStr.split('-').map(s => parseFloat(s.replace(',', '.')));
+      minWeightKg = parts[0];
+      maxWeightKg = !isNaN(parts[1]) ? parts[1] : parts[0];
+    } else {
+      const weight = parseFloat(weightStr.replace(',', '.'));
+      minWeightKg = weight;
+      maxWeightKg = weight;
+    }
+
+    // Build zone rates object
+    const zoneRates = {};
+    zoneLabels.forEach(label => {
+      const key = label.replace(/\s+/g, '_');
+      const rawVal = (rate[key] ?? '').toString().replace(',', '.');
+      const rateValue = parseFloat(rawVal);
+      if (!isNaN(rateValue)) {
+        zoneRates[key] = rateValue;
+      }
+    });
+
+    return {
+      minWeightKg: isNaN(minWeightKg) ? 0 : minWeightKg,
+      maxWeightKg: isNaN(maxWeightKg) ? 0 : maxWeightKg,
+      zoneRates,
+      currency: "EUR"
+    };
+  });
+}

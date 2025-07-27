@@ -10,8 +10,8 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }) => {
   const { admin } = await authenticate.admin(request);
-  // const callbackUrl = process.env.SHOPIFY_APP_URL + "/api/rates";
-  const callbackUrl = "https://shopifyapp.shop/api/rates";
+  const callbackUrl = process.env.SHOPIFY_APP_URL + "/api/rates";
+  // const callbackUrl = "https://shopifyapp.shop/api/rates";
 
   // ⚙️ Register carrier service on app load
 
@@ -31,7 +31,7 @@ export default function App() {
           Home
         </Link>
         <Link to="/app/fedex">FEDEX</Link>
-        <Link to="/app/tnt">TNT</Link>
+        <Link to="/app/tnt">TNT V2</Link>
         <Link to="/app/containers">Isothermal Container</Link>
 {/*
         <Link to="/app/brt">BRT data</Link>

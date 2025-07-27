@@ -1,6 +1,7 @@
 // File: app/routes/api.brt.js
 import { json } from '@remix-run/node';
-import { prisma } from '../db.server';
+import  prisma  from '../db.server';
+
 
 export const loader = async () => {
   // Fetch all regions from the SQLite database

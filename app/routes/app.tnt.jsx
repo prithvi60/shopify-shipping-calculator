@@ -2,11 +2,11 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import {
   Frame, Page, Layout, Card, FormLayout,
-  TextField, IndexTable, Modal, Toast, TextContainer
+  TextField, IndexTable, Modal, Toast, TextContainer, Button, Select, Banner
 } from '@shopify/polaris';
 import { useFetcher } from '@remix-run/react';
 
-export default function TntRateEditor() {
+export default function TntRateEditorV2() {
   const fetcher = useFetcher();
 
   // Initialize data with a single empty row, allowing for dynamic additions/imports.
@@ -15,22 +15,36 @@ export default function TntRateEditor() {
   const [courierName, setCourierName] = useState('');
   const [courierDescription, setCourierDesc] = useState('');
   const [config, setConfig] = useState({
-    dryIceCostPerKg:'', dryIceVolumePerKg:'',
-    freshIcePerDay:'', frozenIcePerDay:'',
-    wineSurcharge:'', volumetricDivisor:'',
-    fuelSurchargePct:'', vatPct:'', transitDays:''
+    dryIceCostPerKg: '', dryIceVolumePerKg: '',
+    freshIcePerDay: '', frozenIcePerDay: '',
+    wineSurcharge: '', volumetricDivisor: '',
+    fuelSurchargePct: '', vatPct: ''
   });
-  const [pending, setPending] = useState([]); // Stores data from uploaded file before confirmation
+  // Transit days entries
+  const [transitDaysEntries, setTransitDaysEntries] = useState([{ zoneType: 'COUNTRY', name: '', day: '' }]);
+
+  // Separate pending states for rates and transit days from Excel uploads
+  const [pendingRates, setPendingRates] = useState([]);
+  const [pendingTransitDays, setPendingTransitDays] = useState([]);
   const [fileName, setFileName] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
-  // Fetch initial data from the API when the component mounts
+  // Memoized options for the Zone Type dropdown
+  const zoneTypeOptions = useMemo(() => ([
+    { label: 'ZIP', value: 'ZIP' },
+    { label: 'City', value: 'CITY' },
+    { label: 'Province', value: 'PROVINCE' },
+    { label: 'Region', value: 'REGION' },
+    { label: 'Country', value: 'COUNTRY' },
+  ]), []);
+
+  // Fetch initial data from the NEW JSON-based API
   useEffect(() => { fetcher.load('/api/tnt') }, []);
 
-  // Debug incoming fetcher data (for development purposes)
+  // Debug incoming fetcher data
   useEffect(() => {
-    if (fetcher.data) console.log('⚙️ DB fetch response:', fetcher.data);
+    if (fetcher.data) console.log('⚙️ JSON API fetch response:', fetcher.data);
   }, [fetcher.data]);
 
   // Populate form & table after data is fetched
@@ -42,33 +56,41 @@ export default function TntRateEditor() {
     setCourierName(cfg.name || '');
     setCourierDesc(cfg.description || '');
     setConfig({
-      dryIceCostPerKg:   String(cfg.dryIceCostPerKg ?? ''),
+      dryIceCostPerKg: String(cfg.dryIceCostPerKg ?? ''),
       dryIceVolumePerKg: String(cfg.dryIceVolumePerKg ?? ''),
-      freshIcePerDay:    String(cfg.freshIcePerDay ?? ''),
-      frozenIcePerDay:   String(cfg.frozenIcePerDay ?? ''),
-      wineSurcharge:     String(cfg.wineSurcharge ?? ''),
+      freshIcePerDay: String(cfg.freshIcePerDay ?? ''),
+      frozenIcePerDay: String(cfg.frozenIcePerDay ?? ''),
+      wineSurcharge: String(cfg.wineSurcharge ?? ''),
       volumetricDivisor: String(cfg.volumetricDivisor ?? ''),
-      fuelSurchargePct:  String(cfg.fuelSurchargePct ?? ''),
-      vatPct:            String(cfg.vatPct ?? ''),
-      transitDays:       String(cfg.transitDays ?? ''),
+      fuelSurchargePct: String(cfg.fuelSurchargePct ?? ''),
+      vatPct: String(cfg.vatPct ?? ''),
     });
 
-    // Directly use the fetched rates to populate the table.
-    // If no rates are fetched, initialize with a single empty row.
-    setData(rates.length ? rates : [{ weight: '', price: '' }]);
-  }, [fetcher.data]); // Depend on fetcher.data to react to its changes
+    // Populate transitDaysEntries from fetched data
+    if (cfg.transitDaysEntries && Array.isArray(cfg.transitDaysEntries) && cfg.transitDaysEntries.length > 0) {
+      setTransitDaysEntries(cfg.transitDaysEntries.map(entry => ({
+        zoneType: entry.zoneType,
+        name: String(entry.name ?? ''),
+        day: String(entry.day ?? entry.days ?? ''), // Support both 'day' and 'days'
+      })));
+    } else {
+      setTransitDaysEntries([{ zoneType: 'COUNTRY', name: '', day: '' }]);
+    }
 
-  // Show a toast message on save success, but DO NOT re-fetch data here.
-  // The data state is already updated by applyUpdates.
+    // Set rates data
+    setData(rates.length ? rates : [{ weight: '', price: '' }]);
+  }, [fetcher.data]);
+
+  // Show toast on save success and re-fetch
   useEffect(() => {
     if (fetcher.data?.success) {
-      setToast('Saved successfully');
-      fetcher.load('/api/tnt')
+      setToast('Saved successfully (JSON-based)');
+      fetcher.load('/api/tnt'); // Re-fetch from JSON API
     }
-  }, [ fetcher.data]); // Depend on fetcher.type and fetcher.data for toast
+  }, [fetcher.data]);
 
-  // Handles file upload and parses Excel data
-  const handleFile = useCallback(e => {
+  // Handle file upload for rates and transit days
+  const handleFile = useCallback((e, type) => {
     const file = e.target.files[0];
     if (!file) {
       setToast('No file selected');
@@ -78,109 +100,91 @@ export default function TntRateEditor() {
     const reader = new FileReader();
     reader.onload = evt => {
       try {
-        const wb    = XLSX.read(evt.target.result, { type:'array' });
-        const sheet = wb.Sheets[wb.SheetNames[0]]; // Get the first sheet
-        let raw   = XLSX.utils.sheet_to_json(sheet, { defval:'' }); // Convert sheet to JSON
+        const wb = XLSX.read(evt.target.result, { type: 'array' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        let raw = XLSX.utils.sheet_to_json(sheet, { defval: '' });
 
         if (!raw.length) throw new Error('No data found in the Excel file.');
 
-        // ⭐ NEW: Limit to the first 14 rows
-        raw = raw.slice(0, 11);
+        if (type === 'rates') {
+          raw = raw.slice(0, 11);
+          const headerMap = Object.keys(raw[0] || {}).reduce((map, h) => {
+            map[h.trim().toLowerCase()] = h;
+            return map;
+          }, {});
 
-        // Build header map for flexible column matching (case-insensitive)
-        const headerMap = Object.keys(raw[0] || {}).reduce((map, h) => {
-          map[h.trim().toLowerCase()] = h;
-          return map;
-        }, {});
+          const weightHdr = headerMap[Object.keys(headerMap).find(k => /weight/i.test(k)) || 'weight'] || 'weight';
+          const priceHdr = headerMap[Object.keys(headerMap).find(k => /price/i.test(k)) || 'price'] || 'price';
 
-        // Find the actual header names for 'weight' and 'price'
-        const weightHdr = headerMap[Object.keys(headerMap).find(k => /weight/i.test(k)) || 'weight'] || 'weight';
-        const priceHdr = headerMap[Object.keys(headerMap).find(k => /price/i.test(k)) || 'price'] || 'price';
+          const rows = raw.map(r => ({
+            weight: String(r[weightHdr] ?? '').trim(),
+            price: String(r[priceHdr] ?? '').replace(',', '.').trim()
+          }));
+          setPendingRates(rows);
+        } else if (type === 'transitDays') {
+          const headerMap = Object.keys(raw[0] || {}).reduce((map, h) => {
+            map[h.trim().toLowerCase()] = h;
+            return map;
+          }, {});
 
+          const zoneTypeHdr = headerMap[Object.keys(headerMap).find(k => /zone.*type/i.test(k)) || 'zoneType'] || 'zoneType';
+          const nameHdr = headerMap[Object.keys(headerMap).find(k => /name/i.test(k)) || 'name'] || 'name';
+          const dayHdr = headerMap[Object.keys(headerMap).find(k => /day/i.test(k)) || 'day'] || 'day';
 
-        // Map raw data to the desired format { weight: '...', price: '...' }
-        // This will now accept whatever weight values are in the Excel file.
-        const rows = raw.map(r => ({
-          weight: String(r[weightHdr] ?? '').trim(),
-          price: String(r[priceHdr] ?? '').replace(',', '.').trim() // Replace comma with dot for decimal parsing
-        }));
-
-        setPending(rows); // Store parsed rows in pending state for confirmation
-        setModalOpen(true); // Open confirmation modal
+          const entries = raw.map(r => ({
+            zoneType: String(r[zoneTypeHdr] ?? '').trim().toUpperCase(),
+            name: String(r[nameHdr] ?? '').trim(),
+            day: String(r[dayHdr] ?? '').trim(),
+          }));
+          setPendingTransitDays(entries);
+        }
+        setModalOpen(true);
       } catch (error) {
         console.error("Error parsing file:", error);
-        setToast('Excel parsing failed. Ensure the file has "weight" and "price" columns.');
+        setToast('Excel parsing failed. Ensure the file has correct columns.');
       }
     };
     reader.readAsArrayBuffer(file);
-  }, []); // No dependency on 'data' or 'weightSteps' here, as it directly processes the file
+  }, []);
 
-  // Applies the pending updates (from Excel upload or manual edits)
+  // Apply updates using the new JSON API
   const applyUpdates = useCallback(() => {
-    const newDataToSave = pending.length ? pending : data; // Use pending data if available, otherwise current data
-    setData(newDataToSave); // Update the main data state immediately
+    const finalTransitDaysEntries = pendingTransitDays.length > 0 ? pendingTransitDays : transitDaysEntries;
+    const finalRatesData = pendingRates.length > 0 ? pendingRates : data;
 
-    setPending([]); // Clear pending state
-    setModalOpen(false); // Close the modal
+    setPendingRates([]);
+    setPendingTransitDays([]);
+    setModalOpen(false);
 
-    // Convert config values to numbers for payload
-    const numericConfig = Object.entries(config).reduce((acc, [key, value]) => {
-      acc[key] = parseFloat(value) || 0; // Parse to float, default to 0 if invalid
-      return acc;
-    }, {});
-
-    // Transform rates data to match Prisma's expected structure for WeightBracket with nested Rate creation
-    const formattedRatesForPrisma = newDataToSave.map(item => {
-      let minWeightKg;
-      let maxWeightKg;
-
-      const weightStr = String(item.weight).trim();
-      const priceVal = parseFloat(item.price) || 0;
-
-      if (weightStr.includes('-')) {
-        const parts = weightStr.split('-');
-        minWeightKg = parseFloat(parts[0]);
-        maxWeightKg = parseFloat(parts[1]);
-      } else if (weightStr.startsWith('>')) {
-        minWeightKg = parseFloat(weightStr.substring(1));
-        maxWeightKg = 999999; // A sufficiently large number to represent "greater than"
-      } else {
-        // If it's a single number, treat min and max as that number
-        minWeightKg = parseFloat(weightStr);
-        maxWeightKg = parseFloat(weightStr);
-      }
-
-      // Ensure minWeightKg and maxWeightKg are valid numbers
-      minWeightKg = isNaN(minWeightKg) ? 0 : minWeightKg;
-      maxWeightKg = isNaN(maxWeightKg) ? 0 : maxWeightKg;
-
-      return {
-        minWeightKg: minWeightKg,
-        maxWeightKg: maxWeightKg,
-        // Nest the price within a 'create' object for the 'rates' relation
-        rates: {
-          create: {
-            price: priceVal,
-          }
-        }
-      };
-    });
-
-    // Prepare payload for submission
+    // Prepare payload in format expected by JSON API
     const payload = {
-      name:        courierName.trim(),
+      name: courierName.trim(),
       description: courierDescription.trim(),
-      ...numericConfig,
-      rates:       formattedRatesForPrisma // Include the updated rates
+      dryIceCostPerKg: parseFloat(config.dryIceCostPerKg) || 0,
+      dryIceVolumePerKg: parseFloat(config.dryIceVolumePerKg) || 0,
+      freshIcePerDay: parseFloat(config.freshIcePerDay) || 0,
+      frozenIcePerDay: parseFloat(config.frozenIcePerDay) || 0,
+      wineSurcharge: parseFloat(config.wineSurcharge) || 0,
+      volumetricDivisor: parseInt(config.volumetricDivisor) || 5000,
+      fuelSurchargePct: parseFloat(config.fuelSurchargePct) || 0,
+      vatPct: parseFloat(config.vatPct) || 21,
+      transitDaysEntries: finalTransitDaysEntries.map(entry => ({
+        zoneType: entry.zoneType,
+        name: entry.name,
+        days: parseInt(entry.day, 10) || 0,
+      })),
+      rates: finalRatesData
     };
+
+    console.log('JSON API Payload:', JSON.stringify(payload, null, 2));
 
     const form = new FormData();
     form.append('config', JSON.stringify(payload));
-    form.append('rates', JSON.stringify(formattedRatesForPrisma)); // Send rates separately if backend expects it
-    fetcher.submit(form, { method:'post', action:'/api/tnt' });
-  }, [courierName, courierDescription, config, data, pending]);
+    form.append('rates', JSON.stringify(finalRatesData));
+    fetcher.submit(form, { method: 'post', action: '/api/tnt' });
+  }, [courierName, courierDescription, config, data, pendingRates, transitDaysEntries, pendingTransitDays]);
 
-  // Handles manual cell editing for weight and price
+  // Handle manual cell editing
   const handleCell = useCallback((index, key, value) => {
     setData(currentData => {
       const newData = [...currentData];
@@ -189,30 +193,54 @@ export default function TntRateEditor() {
     });
   }, []);
 
-  // Handles manual config field editing
+  // Handle config field editing
   const handleConfigField = useCallback((field, value) => {
     setConfig(currentConfig => ({ ...currentConfig, [field]: value }));
   }, []);
 
-  // Memoize rows for IndexTable to prevent unnecessary re-renders
+  // Handle transit day changes
+  const handleTransitDayChange = useCallback((index, key, value) => {
+    setTransitDaysEntries(currentEntries => {
+      const newEntries = [...currentEntries];
+      newEntries[index] = { ...newEntries[index], [key]: value };
+      return newEntries;
+    });
+  }, []);
+
+  // Add transit day entry
+  const addTransitDayEntry = useCallback(() => {
+    setTransitDaysEntries(currentEntries => [...currentEntries, { zoneType: 'COUNTRY', name: '', day: '' }]);
+  }, []);
+
+  // Remove transit day entry
+  const removeTransitDayEntry = useCallback((index) => {
+    setTransitDaysEntries(currentEntries => currentEntries.filter((_, i) => i !== index));
+  }, []);
+
+  // Memoize table rows
   const rows = useMemo(() => data.map((r, i) => (
     <IndexTable.Row id={String(i)} key={i} position={i}>
       <IndexTable.Cell>
-        {/* Weight field is now editable */}
         <TextField labelHidden value={r.weight} onChange={v => handleCell(i, 'weight', v)} />
       </IndexTable.Cell>
       <IndexTable.Cell>
         <TextField labelHidden value={r.price} onChange={v => handleCell(i, 'price', v)} />
       </IndexTable.Cell>
     </IndexTable.Row>
-  )), [data, handleCell]); // Depend on 'data' and 'handleCell'
+  )), [data, handleCell]);
 
   return (
     <Frame>
-      <Page title="TNT Settings & Rates" primaryAction={{
-        content: 'Save All', onAction: () => setModalOpen(true) // Trigger save confirmation modal
+      <Page title="TNT Settings & Rates (JSON-based)" primaryAction={{
+        content: 'Save All', onAction: () => setModalOpen(true)
       }}>
         <Layout>
+          <Layout.Section>
+            <Banner status="info">
+              This is the new JSON-based version of the TNT configuration. Data is stored as structured JSON instead of separate database tables.
+            </Banner>
+          </Layout.Section>
+
           <Layout.Section>
             <Card sectioned title="Courier Details">
               <FormLayout>
@@ -227,18 +255,61 @@ export default function TntRateEditor() {
             <Card sectioned title="Shipping Config">
               <FormLayout>
                 {Object.entries(config).map(([k, v]) => (
-                  <TextField key={k} label={k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} // Format label for display
-                    type="number" value={v} onChange={val => handleConfigField(k, val)} />
+                  <TextField
+                    key={k}
+                    label={k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                    type="number"
+                    value={v}
+                    onChange={val => handleConfigField(k, val)}
+                  />
                 ))}
               </FormLayout>
             </Card>
           </Layout.Section>
 
           <Layout.Section>
+            <Card sectioned title="Transit Days">
+              <TextContainer>Define transit days for different zone types. Upload an Excel file with 'zoneType', 'name', and 'day' columns.</TextContainer>
+              <div style={{ marginBottom: '16px' }}>
+                <input type="file" accept=".xls,.xlsx" onChange={e => handleFile(e, 'transitDays')} />
+                {fileName && <TextContainer>Uploaded Transit Days: {fileName}</TextContainer>}
+              </div>
+              <div style={{ maxHeight: '800px', overflowY: 'auto', overflowX: "hidden" }}>
+                <FormLayout>
+                  {transitDaysEntries.map((entry, i) => (
+                    <FormLayout.Group key={i}>
+                      <Select
+                        label="Zone Type"
+                        labelHidden
+                        options={zoneTypeOptions}
+                        onChange={(value) => handleTransitDayChange(i, 'zoneType', value)}
+                        value={entry.zoneType}
+                      />
+                      <TextField
+                        label="Name"
+                        labelHidden
+                        value={entry.name}
+                        onChange={(value) => handleTransitDayChange(i, 'name', value)}
+                      />
+                      <TextField
+                        label="Day"
+                        labelHidden
+                        type="number"
+                        value={entry.day}
+                        onChange={(value) => handleTransitDayChange(i, 'day', value)}
+                      />
+                    </FormLayout.Group>
+                  ))}
+                </FormLayout>
+              </div>
+            </Card>
+          </Layout.Section>
+
+          <Layout.Section>
             <Card sectioned>
-              <TextContainer>Upload an Excel file (.xls, .xlsx) with 'weight' and 'price' columns to update rates. Only the first 14 rows will be processed.</TextContainer>
-              <input type="file" accept=".xls,.xlsx" onChange={handleFile} />
-              {fileName && <TextContainer>Uploaded: {fileName}</TextContainer>}
+              <TextContainer>Upload an Excel file (.xls, .xlsx) with 'weight' and 'price' columns to update rates. Only the first 11 rows will be processed.</TextContainer>
+              <input type="file" accept=".xls,.xlsx" onChange={e => handleFile(e, 'rates')} />
+              {fileName && <TextContainer>Uploaded Rates: {fileName}</TextContainer>}
             </Card>
           </Layout.Section>
 
@@ -259,19 +330,17 @@ export default function TntRateEditor() {
           </Layout.Section>
         </Layout>
 
-        {/* Confirmation Modal for saving changes */}
         <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Confirm Changes"
           primaryAction={{ content: 'Apply', onAction: applyUpdates }}
           secondaryActions={[{ content: 'Cancel', onAction: () => setModalOpen(false) }]}
         >
           <Modal.Section>
-            <TextContainer>This will overwrite TNT settings & rates. Proceed?</TextContainer>
+            <TextContainer>This will save configuration to the JSON-based courier system. Proceed?</TextContainer>
           </Modal.Section>
         </Modal>
 
-        {/* Toast message for feedback */}
         {toast && <Toast content={toast} onDismiss={() => setToast(null)} />}
       </Page>
     </Frame>
   );
-}
+} 

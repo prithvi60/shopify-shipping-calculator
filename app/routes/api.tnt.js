@@ -1,174 +1,208 @@
+// app/routes/api.tnt.js - JSON-based TNT API
 import { json } from '@remix-run/node';
-import prisma from '../db.server.js';
+import prisma from '../db.server';
 
-const defaultConfig = {
-  volumetricDivisor: 5000,
-  weightRounding:    0.5,
-  dryIceCostPerKg:   0,
-  dryIceVolumePerKg: 0,
-  freshIcePerDay:    0,
-  frozenIcePerDay:   0,
-  wineSurcharge:     0,
-  fuelSurchargePct:  0,
-  vatPct:            0,
-  transitDays:       3,
+// Default TNT configuration template
+const defaultTntConfig = {
+  courierType: "TNT",
+  version: "1.0",
+  basicInfo: {
+    name: "TNT Express",
+    description: "TNT Express courier service",
+    isActive: true,
+    supportedRegions: ["EU", "WORLDWIDE"]
+  },
+  shippingConfig: {
+    dryIce: {
+      costPerKg: 15.0,
+      volumePerKg: 2.5
+    },
+    ice: {
+      freshPerDay: 1.2,
+      frozenPerDay: 2.5
+    },
+    surcharges: {
+      wine: 5.0,
+      fuel: {
+        percentage: 12.5
+      }
+    },
+    calculations: {
+      volumetricDivisor: 5000,
+      vatPercentage: 21.0
+    }
+  },
+  transitDays: [
+    {
+      zoneType: "COUNTRY",
+      name: "Netherlands",
+      days: 1
+    }
+  ],
+  pricingBrackets: [
+    {
+      minWeightKg: 0,
+      maxWeightKg: 1,
+      price: 12.50,
+      currency: "EUR"
+    }
+  ]
 };
 
 export const loader = async () => {
-  const courier = await prisma.courier.findFirst({ where: { name: 'TNT' } });
-  if (!courier) return json({ config: defaultConfig, rates: [] });
+  try {
+    const courier = await prisma.courier.findUnique({
+      where: { name: 'TNT' }
+    });
 
-  const cfg = await prisma.config.findFirst({ where: { courierId: courier.id } }) || {};
+    if (!courier) {
+      // Return default config if courier doesn't exist
+      return json({
+        config: {
+          name: defaultTntConfig.basicInfo.name,
+          description: defaultTntConfig.basicInfo.description,
+          ...flattenShippingConfig(defaultTntConfig.shippingConfig),
+          transitDaysEntries: defaultTntConfig.transitDays
+        },
+        rates: formatRatesForUI(defaultTntConfig.pricingBrackets)
+      });
+    }
 
-  // When fetching, we need to include the related 'rates' to get the baseRate
-  const brackets = await prisma.weightBracket.findMany({
-    where: { courierId: courier.id },
-    include: {
-      rates: { // Include the related rates
-        select: { baseRate: true }, // Select 'baseRate' as per the schema
-      }
-    },
-    orderBy: { minWeightKg: 'asc' }
-  });
+    const config = courier.config;
+    
+    // Transform JSON config to format expected by existing UI
+    const response = {
+      config: {
+        name: config.basicInfo?.name || defaultTntConfig.basicInfo.name,
+        description: config.basicInfo?.description || defaultTntConfig.basicInfo.description,
+        ...flattenShippingConfig(config.shippingConfig || defaultTntConfig.shippingConfig),
+        transitDaysEntries: config.transitDays || []
+      },
+      rates: formatRatesForUI(config.pricingBrackets || [])
+    };
 
-  const rates = brackets.map(br => ({
-    weight: br.minWeightKg === br.maxWeightKg
-      ? `${br.minWeightKg}`
-      : br.maxWeightKg === 999999 // Check for the "greater than" representation
-        ? `>${br.minWeightKg}`
-        : `${br.minWeightKg}-${br.maxWeightKg}`,
-    // Access the baseRate from the nested rates array
-    price: br.rates && br.rates.length > 0 ? br.rates[0].baseRate?.toString() || '' : ''
-  }));
-
-  return json({
-    config: {
-      name:        courier.name,
-      description: courier.description || '',
-      ...defaultConfig,
-      ...cfg,
-      transitDays: cfg.transitDays ?? defaultConfig.transitDays
-    },
-    rates
-  });
+    return json(response);
+  } catch (error) {
+    console.error('TNT API loader error:', error);
+    return json({ error: 'Failed to load TNT configuration' }, { status: 500 });
+  }
 };
 
 export const action = async ({ request }) => {
-  const form      = await request.formData();
-  const rawConfig = form.get('config');
-  const rawRates  = form.get('rates'); // This now contains the transformed rates from the frontend
-
-  if (!rawConfig || !rawRates) {
-    return json({ success: false, error: 'Missing payload' }, { status: 400 });
-  }
-
-  let cfg, rows;
   try {
-    cfg  = JSON.parse(rawConfig);
-    rows = JSON.parse(rawRates); // 'rows' now contains objects with minWeightKg, maxWeightKg, and nested 'rates'
-  } catch (e) {
-    console.error("JSON parsing error:", e);
-    return json({ success: false, error: 'Invalid JSON' }, { status: 400 });
-  }
+    const form = await request.formData();
+    const rawConfig = form.get('config');
 
-  // Upsert courier
-  let courier = await prisma.courier.findFirst({ where: { name: 'TNT' } });
-  if (!courier) {
-    courier = await prisma.courier.create({
-      data: { name: 'TNT', description: cfg.description }
-    });
-  } else {
-    await prisma.courier.update({
-      where: { id: courier.id },
-      data:  { description: cfg.description }
-    });
-  }
-
-  // Strip extras
-  const { name, description, rates: frontendRates, ...nums } = cfg; // Destructure 'rates' to avoid conflict
-
-  // Upsert config
-  await prisma.config.upsert({
-    where:  { courierId: courier.id },
-    create: { courierId: courier.id, ...nums },
-    update: { ...nums }
-  });
-
-  // Ensure a default zone exists for TNT, as Rate requires a zoneId
-  let defaultZone = await prisma.zone.findFirst({
-    where: {
-      courierId: courier.id,
-      value: 'DEFAULT_TNT_ZONE', // A unique identifier for the default zone for TNT
-      type: 'COUNTRY' // Assuming a default type for this zone
-    }
-  });
-
-  if (!defaultZone) {
-    defaultZone = await prisma.zone.create({
-      data: {
-        courierId: courier.id,
-        value: 'DEFAULT_TNT_ZONE',
-        type: 'COUNTRY',
-        transitDays: nums.transitDays // Use transitDays from the config
-      }
-    });
-  }
-
-  // Clear old brackets and their associated rates
-  // First, delete rates associated with these brackets to avoid foreign key constraints
-  const existingBracketIds = (await prisma.weightBracket.findMany({
-    where: { courierId: courier.id },
-    select: { id: true }
-  })).map(b => b.id);
-
-  if (existingBracketIds.length > 0) {
-    await prisma.rate.deleteMany({
-      where: { bracketId: { in: existingBracketIds } }
-    });
-  }
-  // Then, delete the brackets themselves
-  await prisma.weightBracket.deleteMany({ where: { courierId: courier.id } });
-
-
-  // Insert new brackets with nested rates
-  // Use Promise.allSettled to handle potential individual errors without stopping the whole process
-  const results = await Promise.allSettled(rows.map(row => {
-    // 'row' now directly contains minWeightKg, maxWeightKg, and the nested rates object
-    const { minWeightKg, maxWeightKg, rates: nestedRates } = row;
-
-    // Validate if minWeightKg and maxWeightKg are valid numbers
-    if (isNaN(minWeightKg) || isNaN(maxWeightKg)) {
-      console.warn(`Skipping invalid weight bracket: minWeightKg=${minWeightKg}, maxWeightKg=${maxWeightKg}`);
-      return Promise.resolve(null); // Resolve with null for invalid entries
+    if (!rawConfig) {
+      return json({ success: false, error: 'Missing config payload' }, { status: 400 });
     }
 
-    // Ensure nestedRates.create and nestedRates.create.price exist
-    if (!nestedRates || !nestedRates.create || typeof nestedRates.create.price === 'undefined') {
-      console.warn(`Skipping weight bracket due to missing price: ${JSON.stringify(row)}`);
-      return Promise.resolve(null); // Resolve with null if price is missing
-    }
-
-    return prisma.weightBracket.create({
-      data: {
-        courierId: courier.id,
-        minWeightKg: minWeightKg,
-        maxWeightKg: maxWeightKg,
-        rates: { // This is the key change to match Prisma's schema
-          create: {
-            baseRate: nestedRates.create.price, // Map frontend 'price' to backend 'baseRate'
-            zoneId: defaultZone.id // Associate with the default zone
+    const updateData = JSON.parse(rawConfig);
+    
+    // Transform UI format back to JSON config structure
+    const jsonConfig = {
+      courierType: "TNT",
+      version: "1.0",
+      basicInfo: {
+        name: updateData.name?.trim() || "TNT Express",
+        description: updateData.description?.trim() || "TNT Express courier service",
+        isActive: true,
+        supportedRegions: ["EU", "WORLDWIDE"]
+      },
+      shippingConfig: {
+        dryIce: {
+          costPerKg: parseFloat(updateData.dryIceCostPerKg) || 0,
+          volumePerKg: parseFloat(updateData.dryIceVolumePerKg) || 0
+        },
+        ice: {
+          freshPerDay: parseFloat(updateData.freshIcePerDay) || 0,
+          frozenPerDay: parseFloat(updateData.frozenIcePerDay) || 0
+        },
+        surcharges: {
+          wine: parseFloat(updateData.wineSurcharge) || 0,
+          fuel: {
+            percentage: parseFloat(updateData.fuelSurchargePct) || 0
           }
+        },
+        calculations: {
+          volumetricDivisor: parseInt(updateData.volumetricDivisor) || 5000,
+          vatPercentage: parseFloat(updateData.vatPct) || 21
         }
+      },
+      transitDays: updateData.transitDaysEntries?.map(entry => ({
+        zoneType: entry.zoneType,
+        name: entry.name,
+        days: parseInt(entry.day, 10) || 0,
+      })) || [],
+      pricingBrackets: updateData.rates ? formatRatesFromUI(updateData.rates) : []
+    };
+
+    // Upsert courier with JSON config
+    const courier = await prisma.courier.upsert({
+      where: { name: 'TNT' },
+      create: {
+        name: 'TNT',
+        config: jsonConfig,
+        isActive: true
+      },
+      update: {
+        config: jsonConfig,
+        updatedAt: new Date()
       }
     });
-  }));
 
-  // Log any rejections from Promise.allSettled for debugging
-  results.forEach((result, index) => {
-    if (result.status === 'rejected') {
-      console.error(`Failed to create weight bracket at index ${index}:`, result.reason);
-    }
-  });
-
-  return json({ success: true });
+    return json({ success: true, courierId: courier.id });
+  } catch (error) {
+    console.error('TNT API action error:', error);
+    return json({ success: false, error: 'Failed to save TNT configuration' }, { status: 500 });
+  }
 };
+
+// Helper functions to transform data between JSON config and UI format
+function flattenShippingConfig(shippingConfig) {
+  return {
+    dryIceCostPerKg: shippingConfig?.dryIce?.costPerKg || 0,
+    dryIceVolumePerKg: shippingConfig?.dryIce?.volumePerKg || 0,
+    freshIcePerDay: shippingConfig?.ice?.freshPerDay || 0,
+    frozenIcePerDay: shippingConfig?.ice?.frozenPerDay || 0,
+    wineSurcharge: shippingConfig?.surcharges?.wine || 0,
+    volumetricDivisor: shippingConfig?.calculations?.volumetricDivisor || 5000,
+    fuelSurchargePct: shippingConfig?.surcharges?.fuel?.percentage || 0,
+    vatPct: shippingConfig?.calculations?.vatPercentage || 21
+  };
+}
+
+function formatRatesForUI(pricingBrackets) {
+  return pricingBrackets.map(bracket => ({
+    weight: bracket.minWeightKg === bracket.maxWeightKg 
+      ? String(bracket.minWeightKg)
+      : `${bracket.minWeightKg}-${bracket.maxWeightKg}`,
+    price: String(bracket.price || 0)
+  }));
+}
+
+function formatRatesFromUI(rates) {
+  return rates.map(rate => {
+    const weightStr = String(rate.weight).trim();
+    let minWeightKg, maxWeightKg;
+
+    if (weightStr.includes('-')) {
+      const parts = weightStr.split('-').map(s => parseFloat(s.replace(',', '.')));
+      minWeightKg = parts[0];
+      maxWeightKg = !isNaN(parts[1]) ? parts[1] : parts[0];
+    } else {
+      const weight = parseFloat(weightStr.replace(',', '.'));
+      minWeightKg = weight;
+      maxWeightKg = weight;
+    }
+
+    const price = parseFloat(String(rate.price || '0').replace(',', '.'));
+
+    return {
+      minWeightKg: isNaN(minWeightKg) ? 0 : minWeightKg,
+      maxWeightKg: isNaN(maxWeightKg) ? 0 : maxWeightKg,
+      price: isNaN(price) ? 0 : price,
+      currency: "EUR"
+    };
+  });
+} 
