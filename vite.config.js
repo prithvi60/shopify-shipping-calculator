@@ -40,9 +40,9 @@ export default defineConfig({
     allowedHosts: [
       'localhost', // Always good to include
       'shopifyapp.shop', // The host that is being blocked
-    'app.shopifyapp.shop',
-    '.mukeshyadav.com',
-    new URL(process.env.SHOPIFY_APP_URL || "http://localhost").hostname,
+      'app.shopifyapp.shop',
+      '.mukeshyadav.com',
+      new URL(process.env.SHOPIFY_APP_URL || "http://localhost").hostname,
       // Add any other hosts that might access your dev server, e.g., your ngrok URL
     ], // Ensure localhost is always allowed
     cors: {

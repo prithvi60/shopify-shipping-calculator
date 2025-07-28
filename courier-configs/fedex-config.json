@@ -1,6 +1,6 @@
 {
   "courierType": "FEDEX",
-  "version": "1.0",
+  "version": "2.0",
   "basicInfo": {
     "name": "FedEx Express",
     "description": "FedEx Express international shipping",
@@ -28,121 +28,324 @@
     },
     "transitDays": 3
   },
-  "zones": [
-    {
-      "code": "ZONA_A",
-      "name": "ZONA A",
-      "type": "COUNTRY",
-      "transitDays": 1,
-      "description": "Western Europe"
-    },
-    {
-      "code": "ZONA_B", 
-      "name": "ZONA B",
-      "type": "COUNTRY",
-      "transitDays": 2,
-      "description": "Eastern Europe"
-    },
-    {
-      "code": "ZONA_C",
-      "name": "ZONA C", 
-      "type": "COUNTRY",
-      "transitDays": 3,
-      "description": "North America"
-    },
-    {
-      "code": "ZONA_D",
-      "name": "ZONA D",
-      "type": "COUNTRY", 
-      "transitDays": 4,
-      "description": "Asia Pacific"
-    },
-    {
-      "code": "ZONA_E",
-      "name": "ZONA E",
-      "type": "COUNTRY",
-      "transitDays": 5,
-      "description": "Middle East"
-    },
-    {
-      "code": "ZONA_F",
-      "name": "ZONA F",
-      "type": "COUNTRY",
-      "transitDays": 6,
-      "description": "Africa"
-    },
-    {
-      "code": "ZONA_G",
-      "name": "ZONA G",
-      "type": "COUNTRY",
-      "transitDays": 7,
-      "description": "South America"
-    },
-    {
-      "code": "ZONA_H",
-      "name": "ZONA H",
-      "type": "COUNTRY",
-      "transitDays": 8,
-      "description": "Remote Areas"
-    },
-    {
-      "code": "ZONA_I",
-      "name": "ZONA I",
-      "type": "COUNTRY",
-      "transitDays": 10,
-      "description": "Very Remote Areas"
-    }
-  ],
-  "pricingBrackets": [
-    {
-      "minWeightKg": 0,
-      "maxWeightKg": 1,
-      "zoneRates": {
-        "ZONA_A": 25.00,
-        "ZONA_B": 30.00,
-        "ZONA_C": 35.00,
-        "ZONA_D": 40.00,
-        "ZONA_E": 45.00,
-        "ZONA_F": 50.00,
-        "ZONA_G": 55.00,
-        "ZONA_H": 60.00,
-        "ZONA_I": 65.00
-      },
-      "currency": "EUR"
-    },
-    {
-      "minWeightKg": 1,
-      "maxWeightKg": 2,
-      "zoneRates": {
-        "ZONA_A": 28.00,
-        "ZONA_B": 33.00,
-        "ZONA_C": 38.00,
-        "ZONA_D": 43.00,
-        "ZONA_E": 48.00,
-        "ZONA_F": 53.00,
-        "ZONA_G": 58.00,
-        "ZONA_H": 63.00,
-        "ZONA_I": 68.00
-      },
-      "currency": "EUR"
-    }
-  ],
   "services": [
     {
-      "code": "FEDEX_STANDARD",
-      "name": "FedEx Standard",
-      "description": "Standard delivery service",
-      "additionalCost": 0,
-      "isDefault": true
+      "code": "IPE_INT",
+      "name": "INT Priority Express",
+      "description": "International Priority Express",
+      "isActive": true,
+      "zoneSet": "INTERNATIONAL",
+      "transitDays": 1,
+      "pricingStructure": {
+        "brackets": [
+          {
+            "minWeight": 0.5,
+            "maxWeight": 0.5,
+            "zoneRates": {
+              "ZONA_A": 23.05,
+              "ZONA_B": 31.1,
+              "ZONA_C": 26.72,
+              "ZONA_D": 33.03,
+              "ZONA_E": 37.61,
+              "ZONA_F": 28.79,
+              "ZONA_G": 34.95,
+              "ZONA_H": 21.95,
+              "ZONA_I": 31.1
+            }
+          },
+          {
+            "minWeight": 1,
+            "maxWeight": 1,
+            "zoneRates": {
+              "ZONA_A": 26.57,
+              "ZONA_B": 35.84,
+              "ZONA_C": 30.79,
+              "ZONA_D": 37.99,
+              "ZONA_E": 43.28,
+              "ZONA_F": 33.17,
+              "ZONA_G": 40.18,
+              "ZONA_H": 25.31,
+              "ZONA_I": 35.84
+            }
+          }
+        ],
+        "weightTiers": [
+          {
+            "range": "21-30",
+            "description": "Up to 21kg plus 0.5kg increments",
+            "baseWeightKg": 21,
+            "incrementalRates": {
+              "ZONA_A": 4.8,
+              "ZONA_B": 6.48,
+              "ZONA_C": 5.18,
+              "ZONA_D": 6.76,
+              "ZONA_E": 7.81,
+              "ZONA_F": 5.77,
+              "ZONA_G": 7.19,
+              "ZONA_H": 4.57,
+              "ZONA_I": 6.48
+            }
+          },
+          {
+            "range": "71-99",
+            "description": "Per kg rate",
+            "type": "PER_KG",
+            "rates": {
+              "ZONA_A": 10.81,
+              "ZONA_B": 12.45,
+              "ZONA_C": 9.84,
+              "ZONA_D": 13.07,
+              "ZONA_E": 14.88,
+              "ZONA_F": 10.5,
+              "ZONA_G": 13.67,
+              "ZONA_H": 10.29,
+              "ZONA_I": 12.45
+            }
+          },
+          {
+            "range": "100-299",
+            "description": "Per kg rate",
+            "type": "PER_KG",
+            "rates": {
+              "ZONA_A": 10.7,
+              "ZONA_B": 12.33,
+              "ZONA_C": 9.81,
+              "ZONA_D": 12.8,
+              "ZONA_E": 14.73,
+              "ZONA_F": 10.18,
+              "ZONA_G": 13.53,
+              "ZONA_H": 10.19,
+              "ZONA_I": 12.33
+            }
+          }
+        ]
+      }
     },
     {
-      "code": "FEDEX_BEFORE_10",
-      "name": "FedEx Before 10:00",
-      "description": "Delivery before 10:00 AM",
-      "additionalCost": 5.00,
-      "isDefault": false
+      "code": "IPE_EU",
+      "name": "EU Priority Express", 
+      "description": "EU Priority Express",
+      "isActive": true,
+      "zoneSet": "EU",
+      "transitDays": 1,
+      "pricingStructure": {
+        "brackets": [
+          {
+            "minWeight": 0.5,
+            "maxWeight": 0.5,
+            "zoneRates": {
+              "ZONA_R": 14.63,
+              "ZONA_S": 15.66,
+              "ZONA_T": 18.81,
+              "ZONA_U": 18.88,
+              "ZONA_V": 27.66,
+              "ZONA_W": 22.6,
+              "ZONA_X": 22.35
+            }
+          }
+        ],
+        "weightTiers": [
+          {
+            "range": "71-99",
+            "description": "Per kg rate",
+            "type": "PER_KG",
+            "rates": {
+              "ZONA_R": 5.85,
+              "ZONA_S": 6.55,
+              "ZONA_T": 8.36,
+              "ZONA_U": 8.72,
+              "ZONA_V": 13.53,
+              "ZONA_W": 5.91,
+              "ZONA_X": 8.54
+            }
+          }
+        ]
+      }
+    },
+    {
+      "code": "IP_EU",
+      "name": "EU International Priority",
+      "description": "EU International Priority",
+      "isActive": true,
+      "zoneSet": "EU",
+      "transitDays": 2,
+      "pricingStructure": {
+        "brackets": [
+          {
+            "minWeight": 0.5,
+            "maxWeight": 0.5,
+            "zoneRates": {
+              "ZONA_R": 13.93,
+              "ZONA_S": 14.92,
+              "ZONA_T": 17.91,
+              "ZONA_U": 17.98,
+              "ZONA_V": 26.35,
+              "ZONA_W": 21.53,
+              "ZONA_X": 21.29
+            }
+          }
+        ]
+      }
+    },
+    {
+      "code": "IE_INT",
+      "name": "International Economy",
+      "description": "International Economy Service", 
+      "isActive": true,
+      "zoneSet": "INTERNATIONAL",
+      "transitDays": 5,
+      "pricingStructure": {
+        "brackets": [
+          {
+            "minWeight": 0.5,
+            "maxWeight": 0.5,
+            "zoneRates": {
+              "ZONA_A": 18.7,
+              "ZONA_B": 25.21,
+              "ZONA_C": 21.66,
+              "ZONA_D": 26.39,
+              "ZONA_E": 30.15,
+              "ZONA_F": 23.18,
+              "ZONA_G": 27.77,
+              "ZONA_H": 18.7,
+              "ZONA_I": 25.21
+            }
+          }
+        ]
+      }
+    },
+    {
+      "code": "RE_EU",
+      "name": "Regional Economy",
+      "description": "Regional Economy Service",
+      "isActive": true,
+      "zoneSet": "EU", 
+      "transitDays": 7,
+      "pricingStructure": {
+        "brackets": [
+          {
+            "minWeight": 0.5,
+            "maxWeight": 5,
+            "zoneRates": {
+              "ZONA_R": 20.27,
+              "ZONA_S": 20.38,
+              "ZONA_T": 21.44,
+              "ZONA_U": 23.73,
+              "ZONA_V": 36.5,
+              "ZONA_W": 29.32,
+              "ZONA_X": 23.3
+            }
+          }
+        ]
+      }
     }
   ],
+  "zoneSets": {
+    "INTERNATIONAL": {
+      "zones": [
+        {
+          "code": "ZONA_A",
+          "name": "ZONA A",
+          "description": "North America",
+          "countries": ["CA", "US"]
+        },
+        {
+          "code": "ZONA_B", 
+          "name": "ZONA B",
+          "description": "Asia Pacific",
+          "countries": ["KH", "KR", "PH", "ID", "LA", "MO", "MY", "TH", "TW", "VN", "TL"]
+        },
+        {
+          "code": "ZONA_C",
+          "name": "ZONA C",
+          "description": "Middle East & North Africa",
+          "countries": ["DZ", "SA", "AM", "AZ", "BH", "BD", "BT", "BN", "EG", "AE", "GE", "JO", "IN", "IQ", "IL", "KZ", "KG", "KW", "LB", "LY", "MV", "MA", "NP", "OM", "PK", "QA", "LK", "TN"]
+        },
+        {
+          "code": "ZONA_D",
+          "name": "ZONA D", 
+          "description": "Central & South America",
+          "countries": ["AI", "AG", "AR", "AW", "BS", "BB", "BZ", "BO", "BQ", "BR", "CL", "CO", "CR", "CW", "DM", "EC", "SV", "GD", "GP", "GT", "GY", "GF", "HT", "HN", "JM", "KY", "MQ", "MX", "MS", "NI", "PA", "PY", "PE", "PR", "DO", "KN", "LC", "SX", "MF", "VC", "ZA", "SR", "TT", "UY", "VE", "VI", "VG"]
+        },
+        {
+          "code": "ZONA_E",
+          "name": "ZONA E",
+          "description": "Africa",
+          "countries": ["AO", "BJ", "BW", "BF", "BI", "CM", "CV", "TD", "CG", "CI", "ER", "ET", "GA", "GM", "GH", "DJ", "GN", "KE", "LS", "LR", "MG", "MW", "ML", "MR", "MU", "MN", "MZ", "NA", "NE", "NG", "NC", "PG", "PF", "CD", "RW", "MP", "WS", "SN", "SC", "SZ", "TZ", "TG", "TO", "UG", "UZ", "ZM", "ZW", "GU", "FJ", "IQ", "RE"]
+        },
+        {
+          "code": "ZONA_F",
+          "name": "ZONA F",
+          "description": "China & Hong Kong",
+          "countries": ["CN", "HK"]
+        },
+        {
+          "code": "ZONA_G",
+          "name": "ZONA G",
+          "description": "Australia & New Zealand", 
+          "countries": ["AU", "NZ"]
+        },
+        {
+          "code": "ZONA_H",
+          "name": "ZONA H",
+          "description": "United States",
+          "countries": ["US"]
+        },
+        {
+          "code": "ZONA_I",
+          "name": "ZONA I", 
+          "description": "Japan & Singapore",
+          "countries": ["JP", "SG"]
+        }
+      ]
+    },
+    "EU": {
+      "zones": [
+        {
+          "code": "ZONA_R",
+          "name": "ZONA R",
+          "description": "Core EU",
+          "countries": ["AT", "FR", "DE", "SI", "MC"]
+        },
+        {
+          "code": "ZONA_S",
+          "name": "ZONA S", 
+          "description": "Western EU",
+          "countries": ["BE", "LU", "PT", "IE", "ES"]
+        },
+        {
+          "code": "ZONA_T",
+          "name": "ZONA T",
+          "description": "Eastern EU",
+          "countries": ["BG", "CZ", "SK", "RO", "HU", "PL"]
+        },
+        {
+          "code": "ZONA_U",
+          "name": "ZONA U",
+          "description": "Northern EU",
+          "countries": ["DK", "EE", "FI", "GR", "IE", "LV", "LT", "SE", "HR"]
+        },
+        {
+          "code": "ZONA_V",
+          "name": "ZONA V",
+          "description": "Extended EU",
+          "countries": ["AL", "BY", "BA", "CY", "GI", "IS", "MK", "MT", "MD", "ME", "NO", "RS", "TR"]
+        },
+        {
+          "code": "ZONA_W",
+          "name": "ZONA W",
+          "description": "Switzerland & Liechtenstein",
+          "countries": ["CH", "LI"]
+        },
+        {
+          "code": "ZONA_X",
+          "name": "ZONA X",
+          "description": "United Kingdom", 
+          "countries": ["GB"]
+        }
+      ]
+    }
+  },
   "features": {
     "supportsRealTimeTracking": true,
     "supportsInsurance": true,
@@ -163,7 +366,7 @@
   "apiConfig": {
     "endpoints": {
       "rates": "/api/fedex/rates",
-      "tracking": "/api/fedex/track", 
+      "tracking": "/api/fedex/track",
       "pickup": "/api/fedex/pickup"
     },
     "authentication": {

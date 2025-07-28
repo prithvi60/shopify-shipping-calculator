@@ -1,18 +1,11 @@
-// app/routes/api.fedex.js - JSON-based FedEx API
+// app/routes/api.fedex.js - Enhanced JSON-based FedEx API with multiple services
 import { json } from '@remix-run/node';
 import prisma from '../db.server';
 
-// Zone labels that match the UI expectations
-const zoneLabels = [
-  'ZONA A','ZONA B','ZONA C',
-  'ZONA D','ZONA E','ZONA F',
-  'ZONA G','ZONA H','ZONA I'
-];
-
-// Default FedEx configuration template
-const defaultFedexConfig = {
+// Get default FedEx configuration from the updated config file
+const getDefaultFedexConfig = () => ({
   courierType: "FEDEX",
-  version: "1.0",
+  version: "2.0",
   basicInfo: {
     name: "FedEx Express",
     description: "FedEx Express international shipping",
@@ -40,25 +33,142 @@ const defaultFedexConfig = {
     },
     transitDays: 3
   },
-  zones: zoneLabels.map((label, index) => ({
-    code: label.replace(' ', '_'),
-    name: label,
-    type: "COUNTRY",
-    transitDays: index + 1,
-    description: `Zone ${label}`
-  })),
-  pricingBrackets: [
+  services: [
     {
-      minWeightKg: 0,
-      maxWeightKg: 1,
-      zoneRates: Object.fromEntries(zoneLabels.map((label, i) => [
-        label.replace(' ', '_'), 
-        25.00 + (i * 5)
-      ])),
-      currency: "EUR"
+      code: "IPE_INT",
+      name: "INT Priority Express",
+      description: "International Priority Express",
+      isActive: true,
+      zoneSet: "INTERNATIONAL",
+      transitDays: 1,
+      pricingStructure: {
+        brackets: [
+          {
+            minWeight: 0.5,
+            maxWeight: 0.5,
+            zoneRates: {
+              "ZONA_A": 23.05,
+              "ZONA_B": 31.1,
+              "ZONA_C": 26.72,
+              "ZONA_D": 33.03,
+              "ZONA_E": 37.61,
+              "ZONA_F": 28.79,
+              "ZONA_G": 34.95,
+              "ZONA_H": 21.95,
+              "ZONA_I": 31.1
+            }
+          }
+        ]
+      }
     }
-  ]
-};
+  ],
+  zoneSets: {
+    INTERNATIONAL: {
+      zones: [
+        {
+          code: "ZONA_A",
+          name: "ZONA A",
+          description: "North America",
+          countries: ["CA", "US"]
+        },
+        {
+          code: "ZONA_B", 
+          name: "ZONA B",
+          description: "Asia Pacific",
+          countries: ["KH", "KR", "PH", "ID", "LA", "MO", "MY", "TH", "TW", "VN", "TL"]
+        },
+        {
+          code: "ZONA_C",
+          name: "ZONA C", 
+          description: "Middle East & Africa",
+          countries: ["DZ", "SA", "AM", "AZ", "BH", "BD", "BT", "EG", "AE", "GE", "IL", "JO", "KW", "LB", "LY", "MA", "NP", "OM", "PK", "QA", "TN"]
+        },
+        {
+          code: "ZONA_D",
+          name: "ZONA D",
+          description: "Americas",
+          countries: ["AI", "AG", "AW", "BS", "BB", "BZ", "BQ", "BR", "CL", "CO", "CR", "CW", "DM", "EC", "SV", "JM", "GD", "GP", "GT", "GY", "GF", "HT", "HN", "KY", "TC", "VI", "VG", "MQ", "MX", "MS", "NI", "PA", "PY", "PE", "PR", "DO", "KN", "LC", "SX", "MF", "VC", "ZA", "SR", "TT", "UY", "VE"]
+        },
+        {
+          code: "ZONA_E",
+          name: "ZONA E",
+          description: "Africa",
+          countries: ["AO", "BJ", "BW", "BF", "BI", "CV", "TD", "CG", "CI", "ER", "ET", "GA", "GM", "DJ", "GH", "GN", "GY", "IQ", "RE", "FJ", "KE", "LS", "LR", "MG", "MW", "MV", "ML", "MR", "MU", "MZ", "NA", "NE", "NG", "NC", "PG", "PF", "CD", "RW", "MP", "WS", "SN", "SC", "SZ", "TZ", "TG", "TO", "UG", "ZM", "ZW"]
+        },
+        {
+          code: "ZONA_F",
+          name: "ZONA F",
+          description: "Asia Pacific",
+          countries: ["CN", "HK"]
+        },
+        {
+          code: "ZONA_G",
+          name: "ZONA G",
+          description: "Oceania",
+          countries: ["AU", "NZ"]
+        },
+        {
+          code: "ZONA_H",
+          name: "ZONA H",
+          description: "United States",
+          countries: ["US"]
+        },
+        {
+          code: "ZONA_I",
+          name: "ZONA I",
+          description: "Asia Pacific",
+          countries: ["JP", "SG"]
+        }
+      ]
+    },
+    EU: {
+      zones: [
+        {
+          code: "ZONA_R",
+          name: "ZONA R",
+          description: "Western Europe",
+          countries: ["AT", "FR", "DE", "MC", "SI"]
+        },
+        {
+          code: "ZONA_S",
+          name: "ZONA S",
+          description: "Western Europe",
+          countries: ["BE", "LU", "PT", "ES"]
+        },
+        {
+          code: "ZONA_T",
+          name: "ZONA T",
+          description: "Eastern Europe",
+          countries: ["BG", "PL", "CZ", "SK", "RO", "HU"]
+        },
+        {
+          code: "ZONA_U",
+          name: "ZONA U",
+          description: "Northern Europe",
+          countries: ["HR", "DK", "EE", "FI", "GR", "IE", "LV", "LT", "SE"]
+        },
+        {
+          code: "ZONA_V",
+          name: "ZONA V",
+          description: "Eastern Europe & Balkans",
+          countries: ["AL", "BY", "BA", "CY", "GI", "IS", "MK", "MT", "MD", "ME", "NO", "RS"]
+        },
+        {
+          code: "ZONA_W",
+          name: "ZONA W",
+          description: "Central Europe",
+          countries: ["LI", "CH"]
+        },
+        {
+          code: "ZONA_X",
+          name: "ZONA X",
+          description: "United Kingdom",
+          countries: ["GB"]
+        }
+      ]
+    }
+  }
+});
 
 export const loader = async () => {
   try {
@@ -67,34 +177,31 @@ export const loader = async () => {
       where: { name: 'FEDEX' }
     });
 
-    if (!courier) {
-      // Return default config if courier doesn't exist
-      return json({
-        config: {
-          name: defaultFedexConfig.basicInfo.name,
-          description: defaultFedexConfig.basicInfo.description,
-          ...flattenShippingConfig(defaultFedexConfig.shippingConfig)
-        },
-        rates: formatRatesForUI(defaultFedexConfig.pricingBrackets)
-      });
-    }
-
-    const config = courier.config;
+    const config = courier?.config || getDefaultFedexConfig();
     
-    // Transform JSON config to format expected by existing UI
+    // Transform JSON config to format expected by UI
     const response = {
       config: {
-        name: config.basicInfo?.name || defaultFedexConfig.basicInfo.name,
-        description: config.basicInfo?.description || defaultFedexConfig.basicInfo.description,
-        ...flattenShippingConfig(config.shippingConfig || defaultFedexConfig.shippingConfig)
+        name: config.basicInfo?.name || "FedEx Express",
+        description: config.basicInfo?.description || "FedEx Express international shipping",
+        ...flattenShippingConfig(config.shippingConfig || {})
       },
-      rates: formatRatesForUI(config.pricingBrackets || [])
+      services: config.services || [],
+      zoneSets: config.zoneSets || {},
+      // For backward compatibility, also provide rates in the old format
+      rates: formatServicesForLegacyUI(config.services || [])
     };
 
     return json(response);
   } catch (error) {
     console.error('FedEx API loader error:', error);
-    return json({ error: 'Failed to load FedEx configuration' }, { status: 500 });
+    return json({ 
+      error: 'Failed to load FedEx configuration',
+      config: { name: "FedEx Express", description: "FedEx Express international shipping" },
+      services: [],
+      zoneSets: {},
+      rates: []
+    }, { status: 500 });
   }
 };
 
@@ -102,19 +209,22 @@ export const action = async ({ request }) => {
   try {
     const form = await request.formData();
     const rawConfig = form.get('config');
-    const rawRates = form.get('rates');
+    const rawServices = form.get('services');
 
-    if (!rawConfig || !rawRates) {
-      return json({ success: false, error: 'Missing config or rates payload' }, { status: 400 });
+    if (!rawConfig) {
+      return json({ success: false, error: 'Missing config payload' }, { status: 400 });
     }
 
     const updateData = JSON.parse(rawConfig);
-    const rates = JSON.parse(rawRates);
+    const services = rawServices ? JSON.parse(rawServices) : [];
+    
+    console.log('API received updateData:', updateData);
+    console.log('API received services:', services);
     
     // Transform UI format back to JSON config structure
     const jsonConfig = {
       courierType: "FEDEX",
-      version: "1.0",
+      version: "2.0",
       basicInfo: {
         name: updateData.name?.trim() || "FedEx Express",
         description: updateData.description?.trim() || "FedEx Express international shipping",
@@ -142,30 +252,12 @@ export const action = async ({ request }) => {
         },
         transitDays: parseInt(updateData.transitDays) || 3
       },
-      zones: zoneLabels.map((label, index) => ({
-        code: label.replace(' ', '_'),
-        name: label,
-        type: "COUNTRY",
-        transitDays: index + 1,
-        description: `Zone ${label}`
-      })),
-      pricingBrackets: formatRatesFromUI(rates),
-      services: [
-        {
-          code: "FEDEX_STANDARD",
-          name: "FedEx Standard",
-          description: "Standard delivery service",
-          additionalCost: 0,
-          isDefault: true
-        },
-        {
-          code: "FEDEX_BEFORE_10",
-          name: "FedEx Before 10:00",
-          description: "Delivery before 10:00 AM",
-          additionalCost: 5.00,
-          isDefault: false
-        }
-      ]
+      services: services.length > 0 ? services : getDefaultFedexConfig().services,
+      zoneSets: updateData.zoneSets || getDefaultFedexConfig().zoneSets,
+      features: getDefaultFedexConfig().features,
+      apiConfig: getDefaultFedexConfig().apiConfig,
+      ui: getDefaultFedexConfig().ui,
+      businessRules: getDefaultFedexConfig().businessRules
     };
 
     // Upsert courier with JSON config
@@ -189,7 +281,7 @@ export const action = async ({ request }) => {
   }
 };
 
-// Helper functions to transform data between JSON config and UI format
+// Helper functions
 function flattenShippingConfig(shippingConfig) {
   return {
     dryIceCostPerKg: shippingConfig?.dryIce?.costPerKg || 0,
@@ -204,64 +296,144 @@ function flattenShippingConfig(shippingConfig) {
   };
 }
 
-function formatRatesForUI(pricingBrackets) {
-  return pricingBrackets.map(bracket => {
-    const weight = bracket.minWeightKg === bracket.maxWeightKg 
-      ? String(bracket.minWeightKg)
-      : `${bracket.minWeightKg}-${bracket.maxWeightKg}`;
-    
-    const row = { weight };
-    
-    // Initialize blanks for all zones
-    zoneLabels.forEach(label => {
-      const key = label.replace(/\s+/g, '_');
-      row[key] = '';
-    });
-    
-    // Fill in actual zone rates
-    if (bracket.zoneRates) {
-      Object.entries(bracket.zoneRates).forEach(([zoneCode, rate]) => {
-        if (row.hasOwnProperty(zoneCode)) {
-          row[zoneCode] = String(rate);
+// Convert new services structure to legacy rates format for backward compatibility
+function formatServicesForLegacyUI(services) {
+  const rates = [];
+  
+  services.forEach(service => {
+    if (service.pricingStructure?.brackets) {
+      service.pricingStructure.brackets.forEach(bracket => {
+        const weight = bracket.minWeight === bracket.maxWeight 
+          ? String(bracket.minWeight)
+          : `${bracket.minWeight}-${bracket.maxWeight}`;
+        
+        const row = { 
+          weight,
+          service: service.code,
+          serviceName: service.name
+        };
+        
+        // Add zone rates
+        if (bracket.zoneRates) {
+          Object.entries(bracket.zoneRates).forEach(([zoneCode, rate]) => {
+            row[zoneCode] = String(rate);
+          });
         }
+        
+        rates.push(row);
       });
     }
-    
-    return row;
   });
+  
+  return rates;
 }
 
-function formatRatesFromUI(rates) {
-  return rates.map(rate => {
-    const weightStr = String(rate.weight).trim();
-    let minWeightKg, maxWeightKg;
-
-    if (weightStr.includes('-')) {
-      const parts = weightStr.split('-').map(s => parseFloat(s.replace(',', '.')));
-      minWeightKg = parts[0];
-      maxWeightKg = !isNaN(parts[1]) ? parts[1] : parts[0];
-    } else {
-      const weight = parseFloat(weightStr.replace(',', '.'));
-      minWeightKg = weight;
-      maxWeightKg = weight;
+// Calculate shipping rate for given weight and destination
+export function calculateFedexRate(config, weight, countryCode, serviceCode = null) {
+  try {
+    if (!config.services || !config.zoneSets) {
+      throw new Error('Invalid FedEx configuration');
     }
 
-    // Build zone rates object
-    const zoneRates = {};
-    zoneLabels.forEach(label => {
-      const key = label.replace(/\s+/g, '_');
-      const rawVal = (rate[key] ?? '').toString().replace(',', '.');
-      const rateValue = parseFloat(rawVal);
-      if (!isNaN(rateValue)) {
-        zoneRates[key] = rateValue;
+    // Find the appropriate zone for the destination country
+    let targetZone = null;
+    let targetZoneSet = null;
+
+    for (const [zoneSetName, zoneSet] of Object.entries(config.zoneSets)) {
+      for (const zone of zoneSet.zones) {
+        if (zone.countries.includes(countryCode)) {
+          targetZone = zone.code;
+          targetZoneSet = zoneSetName;
+          break;
+        }
       }
+      if (targetZone) break;
+    }
+
+    if (!targetZone) {
+      throw new Error(`No zone found for country: ${countryCode}`);
+    }
+
+    // Filter services by zone set and service code (if specified)
+    const availableServices = config.services.filter(service => {
+      if (!service.isActive) return false;
+      if (service.zoneSet !== targetZoneSet) return false;
+      if (serviceCode && service.code !== serviceCode) return false;
+      return true;
     });
 
-    return {
-      minWeightKg: isNaN(minWeightKg) ? 0 : minWeightKg,
-      maxWeightKg: isNaN(maxWeightKg) ? 0 : maxWeightKg,
-      zoneRates,
-      currency: "EUR"
-    };
-  });
+    if (availableServices.length === 0) {
+      throw new Error(`No available services for zone set: ${targetZoneSet}`);
+    }
+
+    const quotes = [];
+
+    for (const service of availableServices) {
+      const rate = calculateServiceRate(service, weight, targetZone);
+      if (rate > 0) {
+        quotes.push({
+          code: service.code,
+          name: service.name,
+          description: service.description,
+          total: rate,
+          currency: 'EUR',
+          transitDays: service.transitDays
+        });
+      }
+    }
+
+    return quotes;
+  } catch (error) {
+    console.error('FedEx rate calculation error:', error);
+    return [];
+  }
+}
+
+function calculateServiceRate(service, weight, targetZone) {
+  const { pricingStructure } = service;
+  
+  if (!pricingStructure) return 0;
+
+  // Check regular brackets first
+  if (pricingStructure.brackets) {
+    // Sort brackets by weight for better matching
+    const sortedBrackets = [...pricingStructure.brackets].sort((a, b) => a.minWeight - b.minWeight);
+    
+    for (const bracket of sortedBrackets) {
+      // Handle floating point precision issues by using small tolerance
+      const tolerance = 0.001;
+      if (weight >= (bracket.minWeight - tolerance) && weight <= (bracket.maxWeight + tolerance)) {
+        return bracket.zoneRates[targetZone] || 0;
+      }
+    }
+    
+    // If no exact match found, find the closest bracket
+    const exactWeight = Math.round(weight * 10) / 10; // Round to 1 decimal place
+    for (const bracket of sortedBrackets) {
+      if (Math.abs(bracket.minWeight - exactWeight) < tolerance) {
+        return bracket.zoneRates[targetZone] || 0;
+      }
+    }
+  }
+
+  // Check weight tiers for higher weights
+  if (pricingStructure.weightTiers) {
+    for (const tier of pricingStructure.weightTiers) {
+      const [minRange, maxRange] = tier.range.split('-').map(r => parseInt(r));
+      
+      if (weight >= minRange && weight <= maxRange) {
+        if (tier.type === 'PER_KG') {
+          return (tier.rates[targetZone] || 0) * weight;
+        } else if (tier.incrementalRates) {
+          // Calculate base rate up to baseWeightKg, then add incremental
+          const baseRate = calculateServiceRate(service, tier.baseWeightKg, targetZone);
+          const extraWeight = weight - tier.baseWeightKg;
+          const incrementalRate = tier.incrementalRates[targetZone] || 0;
+          return baseRate + (extraWeight * incrementalRate);
+        }
+      }
+    }
+  }
+
+  return 0;
 }

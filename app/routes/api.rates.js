@@ -137,7 +137,13 @@ export const action = async ({ request }) => {
         const { loadConfigAndRates, calculate } = courierMod;
 
         // Load config and rates using the unified function
-        const { config } = await loadConfigAndRates();
+        const { config, isActive } = await loadConfigAndRates();
+
+        // Skip inactive couriers
+        if (isActive === false) {
+          console.log(`⏭️ ${courierName}: Courier is inactive, skipping`);
+          continue;
+        }
 
         // Calculate quote using the unified function
         const quote = await calculate({
@@ -145,21 +151,26 @@ export const action = async ({ request }) => {
           config
         });
 
+        if (!quote || (Array.isArray(quote) && quote.length === 0)) {
+          console.log(`⚠️ ${courierName}: No rates returned`);
+          continue;
+        }
+
         // Format the quote into the expected Shopify Carrier Service API response format
         const formatted = Array.isArray(quote)
           ? quote.map(r => ({
-              service_name: r.name,
-              service_code: r.code,
-              total_price: Math.round(r.total * 100), // Prices in cents for Shopify
+              service_name: r.name || `${courierName} Service`,
+              service_code: r.code || `${courierName}_STANDARD`,
+              total_price: Math.round((r.total || 0) * 100), // Prices in cents for Shopify
               currency: r.currency || 'EUR',
-              description: r.description,
+              description: r.description || `${courierName} shipping service`,
             }))
           : [{
-              service_name: quote.name,
-              service_code: quote.code,
-              total_price: Math.round(quote.total * 100),
+              service_name: quote.name || `${courierName} Service`,
+              service_code: quote.code || `${courierName}_STANDARD`,
+              total_price: Math.round((quote.total || 0) * 100),
               currency: quote.currency || 'EUR',
-              description: quote.description,
+              description: quote.description || `${courierName} shipping service`,
             }];
 
         allRates.push(...formatted);
@@ -170,6 +181,10 @@ export const action = async ({ request }) => {
         // Continue with other couriers even if one fails
       }
     }
+
+    // 🧪 Add additional test rates for comprehensive testing
+    const testRates = generateTestRates(cartItems);
+    allRates.push(...testRates);
 
     console.log(`📊 Total rates generated: ${allRates.length}`);
 
@@ -186,3 +201,47 @@ export const action = async ({ request }) => {
     }, { status: 500 });
   }
 };
+
+// Generate additional test rates for testing purposes
+function generateTestRates(cartItems) {
+  const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
+  const basePrice = Math.max(15, totalWeight * 8); // Base calculation
+  
+  return [
+    {
+      service_name: "Economy Express (Test)",
+      service_code: "TEST_ECONOMY",
+      total_price: Math.round(basePrice * 0.8 * 100), // 20% cheaper
+      currency: "EUR",
+      description: "Test economy service - 5-7 business days"
+    },
+    {
+      service_name: "Standard Express (Test)",
+      service_code: "TEST_STANDARD", 
+      total_price: Math.round(basePrice * 100),
+      currency: "EUR",
+      description: "Test standard service - 3-5 business days"
+    },
+    {
+      service_name: "Priority Express (Test)",
+      service_code: "TEST_PRIORITY",
+      total_price: Math.round(basePrice * 1.5 * 100), // 50% more expensive
+      currency: "EUR",
+      description: "Test priority service - 1-2 business days"
+    },
+    {
+      service_name: "Overnight Express (Test)",
+      service_code: "TEST_OVERNIGHT",
+      total_price: Math.round(basePrice * 2.2 * 100), // 120% more expensive
+      currency: "EUR",
+      description: "Test overnight service - Next business day"
+    },
+    {
+      service_name: "Weekend Delivery (Test)",
+      service_code: "TEST_WEEKEND",
+      total_price: Math.round(basePrice * 1.8 * 100), // 80% more expensive
+      currency: "EUR",
+      description: "Test weekend delivery - Saturday delivery available"
+    }
+  ];
+}

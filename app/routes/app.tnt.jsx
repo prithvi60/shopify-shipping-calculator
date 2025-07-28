@@ -1,13 +1,15 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import {
   Frame, Page, Layout, Card, FormLayout,
-  TextField, IndexTable, Modal, Toast, TextContainer, Button, Select, Banner
+  TextField, IndexTable, Modal, Toast, TextContainer, Button, Select, Banner,
+  BlockStack
 } from '@shopify/polaris';
 import { useFetcher } from '@remix-run/react';
 
 export default function TntRateEditorV2() {
   const fetcher = useFetcher();
+  const initialDataRef = useRef(null);
 
   // Initialize data with a single empty row, allowing for dynamic additions/imports.
   const [data, setData] = useState([{ weight: '', price: '' }]);
@@ -71,23 +73,47 @@ export default function TntRateEditorV2() {
       setTransitDaysEntries(cfg.transitDaysEntries.map(entry => ({
         zoneType: entry.zoneType,
         name: String(entry.name ?? ''),
-        day: String(entry.day ?? entry.days ?? ''), // Support both 'day' and 'days'
+        days: String(entry.days ?? ''),
       })));
     } else {
-      setTransitDaysEntries([{ zoneType: 'COUNTRY', name: '', day: '' }]);
+      setTransitDaysEntries([{ zoneType: 'COUNTRY', name: '', days: '' }]);
     }
 
     // Set rates data
     setData(rates.length ? rates : [{ weight: '', price: '' }]);
+
+    // Store initial data for change detection
+    initialDataRef.current = {
+      courierName: cfg.name || '',
+      courierDescription: cfg.description || '',
+      config: {
+        dryIceCostPerKg: String(cfg.dryIceCostPerKg ?? ''),
+        dryIceVolumePerKg: String(cfg.dryIceVolumePerKg ?? ''),
+        freshIcePerDay: String(cfg.freshIcePerDay ?? ''),
+        frozenIcePerDay: String(cfg.frozenIcePerDay ?? ''),
+        wineSurcharge: String(cfg.wineSurcharge ?? ''),
+        volumetricDivisor: String(cfg.volumetricDivisor ?? ''),
+        fuelSurchargePct: String(cfg.fuelSurchargePct ?? ''),
+        vatPct: String(cfg.vatPct ?? ''),
+      },
+      transitDaysEntries: cfg.transitDaysEntries ? cfg.transitDaysEntries.map(entry => ({
+        zoneType: entry.zoneType,
+        name: String(entry.name ?? ''),
+        days: String(entry.days ?? ''),
+      })) : [{ zoneType: 'COUNTRY', name: '', days: '' }],
+      data: rates.length ? rates : [{ weight: '', price: '' }]
+    };
   }, [fetcher.data]);
 
   // Show toast on save success and re-fetch
   useEffect(() => {
     if (fetcher.data?.success) {
-      setToast('Saved successfully (JSON-based)');
+      setToast('Saved successfully');
       fetcher.load('/api/tnt'); // Re-fetch from JSON API
     }
   }, [fetcher.data]);
+
+
 
   // Handle file upload for rates and transit days
   const handleFile = useCallback((e, type) => {
@@ -129,12 +155,12 @@ export default function TntRateEditorV2() {
 
           const zoneTypeHdr = headerMap[Object.keys(headerMap).find(k => /zone.*type/i.test(k)) || 'zoneType'] || 'zoneType';
           const nameHdr = headerMap[Object.keys(headerMap).find(k => /name/i.test(k)) || 'name'] || 'name';
-          const dayHdr = headerMap[Object.keys(headerMap).find(k => /day/i.test(k)) || 'day'] || 'day';
+          const daysHdr = headerMap[Object.keys(headerMap).find(k => /days/i.test(k)) || 'days'] || 'days';
 
           const entries = raw.map(r => ({
             zoneType: String(r[zoneTypeHdr] ?? '').trim().toUpperCase(),
             name: String(r[nameHdr] ?? '').trim(),
-            day: String(r[dayHdr] ?? '').trim(),
+            days: String(r[daysHdr] ?? '').trim(),
           }));
           setPendingTransitDays(entries);
         }
@@ -168,11 +194,17 @@ export default function TntRateEditorV2() {
       volumetricDivisor: parseInt(config.volumetricDivisor) || 5000,
       fuelSurchargePct: parseFloat(config.fuelSurchargePct) || 0,
       vatPct: parseFloat(config.vatPct) || 21,
-      transitDaysEntries: finalTransitDaysEntries.map(entry => ({
-        zoneType: entry.zoneType,
-        name: entry.name,
-        days: parseInt(entry.day, 10) || 0,
-      })),
+      transitDaysEntries: finalTransitDaysEntries
+        .filter(entry => entry.name && entry.name.trim() && entry.days && entry.days.trim()) // Filter out empty entries
+        .map(entry => {
+          const days = parseInt(entry.days, 10);
+          console.log(`🔍 Frontend sending transit day: ${entry.name}, days: ${days} (from ${entry.days})`);
+          return {
+            zoneType: entry.zoneType,
+            name: entry.name.trim(),
+            days: isNaN(days) ? 0 : days,
+          };
+        }),
       rates: finalRatesData
     };
 
@@ -209,13 +241,41 @@ export default function TntRateEditorV2() {
 
   // Add transit day entry
   const addTransitDayEntry = useCallback(() => {
-    setTransitDaysEntries(currentEntries => [...currentEntries, { zoneType: 'COUNTRY', name: '', day: '' }]);
+    setTransitDaysEntries(currentEntries => [...currentEntries, { zoneType: 'COUNTRY', name: '', days: '' }]);
   }, []);
 
   // Remove transit day entry
   const removeTransitDayEntry = useCallback((index) => {
     setTransitDaysEntries(currentEntries => currentEntries.filter((_, i) => i !== index));
   }, []);
+
+  // Handle discard changes
+  const handleDiscard = useCallback(() => {
+    console.log('🔍 Discard button clicked');
+    if (!initialDataRef.current) {
+      console.log('❌ No initial data available');
+      return;
+    }
+    
+    const initial = initialDataRef.current;
+    console.log('🔄 Discarding changes, reverting to:', initial);
+    
+    setCourierName(initial.courierName);
+    setCourierDesc(initial.courierDescription);
+    setConfig(initial.config);
+    setTransitDaysEntries(initial.transitDaysEntries);
+    setData(initial.data);
+    
+    setToast('Changes discarded');
+  }, []);
+
+  // Handle save changes
+  const handleSave = useCallback(() => {
+    console.log('🔍 Save button clicked');
+    setModalOpen(true);
+  }, []);
+
+
 
   // Memoize table rows
   const rows = useMemo(() => data.map((r, i) => (
@@ -231,15 +291,71 @@ export default function TntRateEditorV2() {
 
   return (
     <Frame>
-      <Page title="TNT Settings & Rates (JSON-based)" primaryAction={{
+      <Page title="TNT Settings & Rates" primaryAction={{
         content: 'Save All', onAction: () => setModalOpen(true)
       }}>
+        {/* Save Bar for unsaved changes */}
+        {(() => {
+          const hasChanges = () => {
+            if (!initialDataRef.current) return false;
+            
+            const current = {
+              courierName,
+              courierDescription,
+              config,
+              transitDaysEntries,
+              data
+            };
+            
+            const initial = initialDataRef.current;
+            
+            // Deep comparison of objects
+            const isEqual = (obj1, obj2) => {
+              if (obj1 === obj2) return true;
+              if (typeof obj1 !== typeof obj2) return false;
+              if (typeof obj1 !== 'object') return obj1 === obj2;
+              if (obj1 === null || obj2 === null) return obj1 === obj2;
+              
+              const keys1 = Object.keys(obj1);
+              const keys2 = Object.keys(obj2);
+              
+              if (keys1.length !== keys2.length) return false;
+              
+              return keys1.every(key => isEqual(obj1[key], obj2[key]));
+            };
+            
+            return !isEqual(current, initial);
+          };
+          
+          return hasChanges() ? (
+            <div style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: '#f6f6f7',
+              borderTop: '1px solid #c9cccf',
+              padding: '12px 24px',
+              zIndex: 1000,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ color: '#6d7175', fontWeight: 500 }}>
+                Unsaved changes
+              </span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Button onClick={handleDiscard} size="slim">
+                  Discard
+                </Button>
+                <Button onClick={handleSave} primary size="slim">
+                  Save
+                </Button>
+              </div>
+            </div>
+          ) : null;
+        })()}
         <Layout>
-          <Layout.Section>
-            <Banner status="info">
-              This is the new JSON-based version of the TNT configuration. Data is stored as structured JSON instead of separate database tables.
-            </Banner>
-          </Layout.Section>
 
           <Layout.Section>
             <Card sectioned title="Courier Details">
@@ -269,7 +385,7 @@ export default function TntRateEditorV2() {
 
           <Layout.Section>
             <Card sectioned title="Transit Days">
-              <TextContainer>Define transit days for different zone types. Upload an Excel file with 'zoneType', 'name', and 'day' columns.</TextContainer>
+              <TextContainer>Define transit days for different zone types. Upload an Excel file with 'zoneType', 'name', and 'days' columns.</TextContainer>
               <div style={{ marginBottom: '16px' }}>
                 <input type="file" accept=".xls,.xlsx" onChange={e => handleFile(e, 'transitDays')} />
                 {fileName && <TextContainer>Uploaded Transit Days: {fileName}</TextContainer>}
@@ -292,15 +408,27 @@ export default function TntRateEditorV2() {
                         onChange={(value) => handleTransitDayChange(i, 'name', value)}
                       />
                       <TextField
-                        label="Day"
+                        label="Days"
                         labelHidden
                         type="number"
-                        value={entry.day}
-                        onChange={(value) => handleTransitDayChange(i, 'day', value)}
+                        value={entry.days}
+                        onChange={(value) => handleTransitDayChange(i, 'days', value)}
                       />
+                      <Button
+                        onClick={() => removeTransitDayEntry(i)}
+                        destructive
+                        size="slim"
+                      >
+                        Remove
+                      </Button>
                     </FormLayout.Group>
                   ))}
                 </FormLayout>
+                <div style={{ marginTop: '16px' }}>
+                  <Button onClick={addTransitDayEntry} size="slim">
+                    Add Transit Day Entry
+                  </Button>
+                </div>
               </div>
             </Card>
           </Layout.Section>
@@ -335,7 +463,7 @@ export default function TntRateEditorV2() {
           secondaryActions={[{ content: 'Cancel', onAction: () => setModalOpen(false) }]}
         >
           <Modal.Section>
-            <TextContainer>This will save configuration to the JSON-based courier system. Proceed?</TextContainer>
+            <BlockStack>This will overwrite the current settings & rates. Proceed?</BlockStack>
           </Modal.Section>
         </Modal>
 

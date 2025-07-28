@@ -1,232 +1,241 @@
-// app/shipping/couriers/index.js - JSON-based courier system
-import prisma from '../../db.server.js';
+// app/shipping/couriers/index.js - Unified courier system
+import prisma from '../../db.server';
+import { calculateFedexRate } from '../../routes/api.fedex.js';
 
-// Unified JSON-based courier calculation
-export function getCourierModule(name) {
-  // Return a standardized module for all JSON-based couriers
-  return {
-    loadConfigAndRates: async () => loadJSONConfigAndRates(name),
-    calculate: (params) => calculateFromJSON(params)
-  };
+// Import existing courier modules
+import { default as jsonBasedModule } from './json-based.js';
+
+/**
+ * Get the appropriate courier module for calculations
+ */
+export function getCourierModule(courierName) {
+  switch (courierName.toUpperCase()) {
+    case 'FEDEX':
+      return {
+        loadConfigAndRates: () => loadFedexConfig(),
+        calculate: (params) => calculateFedexQuote(params)
+      };
+    
+    case 'TNT':
+      return {
+        loadConfigAndRates: () => jsonBasedModule.loadConfigAndRates('TNT'),
+        calculate: (params) => jsonBasedModule.calculate(params)
+      };
+    
+    case 'BRT':
+      return {
+        loadConfigAndRates: () => jsonBasedModule.loadConfigAndRates('BRT'),
+        calculate: (params) => jsonBasedModule.calculate(params)
+      };
+    
+    default:
+      throw new Error(`Unsupported courier: ${courierName}`);
+  }
 }
 
-// Load courier configuration from JSON
-async function loadJSONConfigAndRates(courierName) {
+/**
+ * Load FedEx configuration from database
+ */
+async function loadFedexConfig() {
   try {
     const courier = await prisma.courier.findUnique({
-      where: { name: courierName.toUpperCase() }
+      where: { name: 'FEDEX' }
     });
 
-    if (!courier) {
-      throw new Error(`Courier ${courierName} not found`);
+    if (!courier?.config) {
+      throw new Error('FedEx configuration not found');
     }
 
-    const config = courier.config;
-    
     return {
-      config: {
-        courierType: config.courierType,
-        name: config.basicInfo?.name || courierName,
-        description: config.basicInfo?.description || '',
-        ...config.shippingConfig?.calculations,
-        ...config.shippingConfig?.surcharges,
-        dryIce: config.shippingConfig?.dryIce,
-        ice: config.shippingConfig?.ice,
-        zones: config.zones || [],
-        pricingBrackets: config.pricingBrackets || [],
-        transitDays: config.transitDays || [],
-        services: config.services || []
-      },
-      brackets: config.pricingBrackets || [],
-      zones: config.zones || [],
-      containers: [], // Not used in JSON system
-      timeSlotFees: config.services || []
+      config: courier.config,
+      isActive: courier.isActive
     };
   } catch (error) {
-    console.error(`Error loading config for ${courierName}:`, error);
+    console.error('Error loading FedEx config:', error);
     throw error;
   }
 }
 
-// Calculate shipping rates from JSON configuration
-function calculateFromJSON({ cartItems, config }) {
-  const courierType = config.courierType;
-  
-  if (courierType === 'TNT') {
-    return calculateTNTFromJSON({ cartItems, config });
-  } else if (courierType === 'FEDEX') {
-    return calculateFedExFromJSON({ cartItems, config });
-  } else {
-    throw new Error(`Unknown courier type: ${courierType}`);
-  }
-}
-
-// TNT calculation from JSON config
-function calculateTNTFromJSON({ cartItems, config }) {
+/**
+ * Calculate FedEx shipping quote using the new system
+ */
+async function calculateFedexQuote({ cartItems, config }) {
   try {
-    // Get destination info from first cart item
-    const firstItem = cartItems[0];
-    if (!firstItem) {
+    if (!cartItems || cartItems.length === 0) {
       throw new Error('No cart items provided');
     }
 
-    const { countryCode, city, province, postalCode } = firstItem;
+    // Calculate total weight and determine destination
+    const totalWeight = cartItems.reduce((sum, item) => sum + (item.weight || 0), 0);
+    const destination = cartItems[0]; // Use first item for destination info
     
-    // Create destination zone object
-    const destinationZone = {
-      countryCode,
-      city,
-      province,
-      postalCode
-    };
-
-    // Find best transit match
-    const transitEntry = findBestTransitMatch(destinationZone, config.transitDays || []);
-    const transitDays = transitEntry?.days || 3;
-
-    // Calculate total weight
-    const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
-
-    // Find pricing bracket
-    const bracket = config.pricingBrackets?.find(b =>
-      totalWeight >= b.minWeightKg && totalWeight <= b.maxWeightKg
-    );
-
-    if (!bracket) {
-      throw new Error(`No pricing bracket found for weight ${totalWeight}kg`);
+    if (!destination.countryCode) {
+      throw new Error('Destination country not specified');
     }
 
-    let subtotal = bracket.price || 0;
-
-    // Apply fuel surcharge
-    if (config.fuel?.percentage > 0) {
-      subtotal += subtotal * (config.fuel.percentage / 100);
-    }
-
-    // Apply VAT
-    const vatRate = config.vatPercentage || 21;
-    const total = subtotal * (1 + vatRate / 100);
-
-    return {
-      name: `${config.name} (${transitDays} days)`,
-      code: 'TNT_STANDARD',
-      total,
-      currency: 'EUR',
-      description: `Delivery in ${transitDays} business days`,
-      transitDays
-    };
-  } catch (error) {
-    console.error('TNT calculation error:', error);
-    throw error;
-  }
-}
-
-// FedEx calculation from JSON config
-function calculateFedExFromJSON({ cartItems, config }) {
-  try {
-    // Get destination info from first cart item
-    const firstItem = cartItems[0];
-    if (!firstItem) {
-      throw new Error('No cart items provided');
-    }
-
-    const { countryCode, city, province, postalCode } = firstItem;
+    // Use the new FedEx calculation function
+    const quotes = calculateFedexRate(config, totalWeight, destination.countryCode);
     
-    // Find matching zone
-    const zone = config.zones?.find(z =>
-      z.type === 'COUNTRY' && 
-      (z.name.includes(countryCode) || z.code.includes(countryCode))
-    );
-
-    if (!zone) {
-      throw new Error(`No zone found for country ${countryCode}`);
+    if (!quotes || quotes.length === 0) {
+      console.warn(`No FedEx rates available for ${destination.countryCode}, weight: ${totalWeight}kg`);
+      return [];
     }
 
-    // Calculate total weight
-    const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
-
-    // Find pricing bracket
-    const bracket = config.pricingBrackets?.find(b =>
-      totalWeight >= b.minWeightKg && totalWeight <= b.maxWeightKg
-    );
-
-    if (!bracket) {
-      throw new Error(`No pricing bracket found for weight ${totalWeight}kg`);
-    }
-
-    // Get zone rate
-    const zoneCode = zone.code || zone.name.replace(' ', '_');
-    const baseRate = bracket.zoneRates?.[zoneCode];
-
-    if (!baseRate) {
-      throw new Error(`No rate found for zone ${zoneCode}`);
-    }
-
-    let subtotal = baseRate;
-    const transitDays = config.transitDays || zone.transitDays || 3;
-
-    // Apply fuel surcharge
-    if (config.fuel?.percentage > 0) {
-      subtotal += subtotal * (config.fuel.percentage / 100);
-    }
-
-    // Apply VAT
-    const vatRate = config.vatPercentage || 22;
-    const total = subtotal * (1 + vatRate / 100);
-
-    // Return multiple service options if available
-    const services = config.services || [{
-      code: "FEDEX_STANDARD",
-      name: "FedEx Standard",
-      description: "Standard delivery service",
-      additionalCost: 0,
-      isDefault: true
-    }];
-
-    return services.map(service => ({
-      name: `${service.name} (${transitDays} days)`,
-      code: service.code,
-      total: total + (service.additionalCost || 0),
-      currency: 'EUR',
-      description: `${service.description} - Delivery in ${transitDays} business days`,
-      transitDays
+    // Apply shipping configuration (surcharges, VAT, etc.)
+    return quotes.map(quote => ({
+      ...quote,
+      total: applyFedexSurcharges(quote.total, cartItems, config),
+      courierName: 'FEDEX'
     }));
+
   } catch (error) {
-    console.error('FedEx calculation error:', error);
-    throw error;
+    console.error('FedEx quote calculation error:', error);
+    return [];
   }
 }
 
-// Helper function to find best transit match
-function findBestTransitMatch(destinationZone, transitDays) {
-  if (!transitDays || transitDays.length === 0) {
-    return { days: 3 }; // Default
+/**
+ * Apply FedEx-specific surcharges and adjustments
+ */
+function applyFedexSurcharges(baseRate, cartItems, config) {
+  let finalRate = baseRate;
+  const shippingConfig = config.shippingConfig || {};
+
+  // Apply fuel surcharge
+  if (shippingConfig.surcharges?.fuel?.percentage) {
+    const fuelSurcharge = finalRate * (shippingConfig.surcharges.fuel.percentage / 100);
+    finalRate += fuelSurcharge;
   }
 
-  // Try to match in order of specificity: ZIP > CITY > PROVINCE > REGION > COUNTRY
-  const priorities = ['ZIP', 'CITY', 'PROVINCE', 'REGION', 'COUNTRY'];
-  
-  for (const priority of priorities) {
-    const match = transitDays.find(td => {
-      if (td.zoneType !== priority) return false;
-      
-      switch (priority) {
-        case 'ZIP':
-          return td.name === destinationZone.postalCode;
-        case 'CITY':
-          return td.name.toLowerCase() === destinationZone.city?.toLowerCase();
-        case 'PROVINCE':
-          return td.name.toLowerCase() === destinationZone.province?.toLowerCase();
-        case 'COUNTRY':
-          return td.name.toLowerCase() === destinationZone.countryCode?.toLowerCase();
-        default:
-          return false;
+  // Apply wine surcharge (per bottle)
+  const wineItems = cartItems.filter(item => 
+    item.category && item.category.toLowerCase().includes('wine')
+  );
+  if (wineItems.length > 0 && shippingConfig.surcharges?.wine) {
+    const totalWineBottles = wineItems.reduce((sum, item) => sum + item.quantity, 0);
+    finalRate += totalWineBottles * shippingConfig.surcharges.wine;
+  }
+
+  // Apply dry ice costs if needed
+  const dryIceItems = cartItems.filter(item => 
+    item.category && item.category.toLowerCase().includes('frozen')
+  );
+  if (dryIceItems.length > 0 && shippingConfig.dryIce?.costPerKg) {
+    const totalDryIceWeight = dryIceItems.reduce((sum, item) => sum + item.weight, 0);
+    const dryIceCost = totalDryIceWeight * shippingConfig.dryIce.costPerKg;
+    finalRate += dryIceCost;
+  }
+
+  // Apply VAT
+  if (shippingConfig.calculations?.vatPercentage) {
+    const vatAmount = finalRate * (shippingConfig.calculations.vatPercentage / 100);
+    finalRate += vatAmount;
+  }
+
+  return Math.round(finalRate * 100) / 100; // Round to 2 decimal places
+}
+
+/**
+ * Generic courier calculation function for backward compatibility
+ */
+export async function calculateShippingRates(courierName, cartItems, destination = null) {
+  try {
+    const courierModule = getCourierModule(courierName);
+    const { config } = await courierModule.loadConfigAndRates();
+    
+    // If destination is provided separately, add it to cart items
+    if (destination && cartItems.length > 0) {
+      cartItems = cartItems.map(item => ({
+        ...item,
+        countryCode: destination.countryCode,
+        city: destination.city,
+        postalCode: destination.postalCode,
+        province: destination.province
+      }));
+    }
+
+    return await courierModule.calculate({ cartItems, config });
+  } catch (error) {
+    console.error(`Error calculating ${courierName} rates:`, error);
+    return [];
+  }
+}
+
+/**
+ * Get all available couriers and their basic info
+ */
+export async function getAvailableCouriers() {
+  try {
+    const couriers = await prisma.courier.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        config: true,
+        isActive: true,
+        updatedAt: true
       }
     });
-    
-    if (match) return match;
+
+    return couriers.map(courier => ({
+      id: courier.id,
+      name: courier.name,
+      displayName: courier.config?.basicInfo?.name || courier.name,
+      description: courier.config?.basicInfo?.description || '',
+      isActive: courier.isActive,
+      lastUpdated: courier.updatedAt
+    }));
+  } catch (error) {
+    console.error('Error fetching available couriers:', error);
+    return [];
   }
-  
-  // Return first available or default
-  return transitDays[0] || { days: 3 };
+}
+
+/**
+ * Validate courier configuration
+ */
+export function validateCourierConfig(courierName, config) {
+  const errors = [];
+
+  if (!config) {
+    errors.push('Configuration is required');
+    return errors;
+  }
+
+  switch (courierName.toUpperCase()) {
+    case 'FEDEX':
+      // Validate FedEx specific configuration
+      if (!config.services || config.services.length === 0) {
+        errors.push('At least one service must be configured');
+      }
+      
+      if (!config.zoneSets || Object.keys(config.zoneSets).length === 0) {
+        errors.push('Zone sets must be configured');
+      }
+
+      // Validate each service has pricing structure
+      config.services?.forEach((service, index) => {
+        if (!service.pricingStructure?.brackets || service.pricingStructure.brackets.length === 0) {
+          errors.push(`Service "${service.name}" must have pricing brackets`);
+        }
+      });
+      break;
+
+    case 'TNT':
+    case 'BRT':
+      // Validate JSON-based courier configuration
+      if (!config.zones || config.zones.length === 0) {
+        errors.push('Zones must be configured');
+      }
+      
+      if (!config.pricingBrackets || config.pricingBrackets.length === 0) {
+        errors.push('Pricing brackets must be configured');
+      }
+      break;
+
+    default:
+      errors.push(`Unknown courier type: ${courierName}`);
+  }
+
+  return errors;
 }

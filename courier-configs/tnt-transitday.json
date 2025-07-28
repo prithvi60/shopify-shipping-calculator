@@ -1,2102 +1,2249 @@
 [
-    {
-      "zoneType": "PROVINCE",
-      "name": "AG",
-      "day": 72,
-      "createdAt": "1753267188810",
-      "updatedAt": "1753267188810"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "AL",
-      "day": 48,
-      "createdAt": "1753267188810",
-      "updatedAt": "1753267188810"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "AN",
-      "day": 48,
-      "createdAt": "1753267188810",
-      "updatedAt": "1753267188810"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "AO",
-      "day": 48,
-      "createdAt": "1753267188810",
-      "updatedAt": "1753267188810"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "AP",
-      "day": 48,
-      "createdAt": "1753267188810",
-      "updatedAt": "1753267188810"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "AV",
-      "day": 48,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BN",
-      "day": 48,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BI",
-      "day": 48,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BZ",
-      "day": 48,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BS",
-      "day": 48,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CL",
-      "day": 72,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CI",
-      "day": 72,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CO",
-      "day": 24,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CE",
-      "day": 48,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CS",
-      "day": 48,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "EN",
-      "day": 72,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "FG",
-      "day": 48,
-      "createdAt": "1753267188817",
-      "updatedAt": "1753267188817"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "FC",
-      "day": 24,
-      "createdAt": "1753267188822",
-      "updatedAt": "1753267188822"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "FR",
-      "day": 24,
-      "createdAt": "1753267188826",
-      "updatedAt": "1753267188826"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "GE",
-      "day": 24,
-      "createdAt": "1753267188832",
-      "updatedAt": "1753267188832"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "MO",
-      "day": 24,
-      "createdAt": "1753267188837",
-      "updatedAt": "1753267188837"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BR",
-      "day": 48,
-      "createdAt": "1753267188840",
-      "updatedAt": "1753267188840"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "MB",
-      "day": 24,
-      "createdAt": "1753267188840",
-      "updatedAt": "1753267188840"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CA",
-      "day": 72,
-      "createdAt": "1753267188840",
-      "updatedAt": "1753267188840"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "NA",
-      "day": 48,
-      "createdAt": "1753267188846",
-      "updatedAt": "1753267188846"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "NO",
-      "day": 24,
-      "createdAt": "1753267188854",
-      "updatedAt": "1753267188854"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "GO",
-      "day": 24,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "NU",
-      "day": 72,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "GR",
-      "day": 24,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "OT",
-      "day": 72,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "IM",
-      "day": 24,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "OR",
-      "day": 72,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "IS",
-      "day": 48,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PD",
-      "day": 48,
-      "createdAt": "1753267188858",
-      "updatedAt": "1753267188858"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "SP",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PA",
-      "day": 96,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "LT",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PR",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "LE",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PV",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "LC",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PG",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "LI",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PU",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "LO",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PE",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "LU",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PC",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "MC",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PI",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "MN",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PT",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "MS",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PN",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "MT",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PZ",
-      "day": 72,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "ME",
-      "day": 72,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "PO",
-      "day": 48,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "MI",
-      "day": 24,
-      "createdAt": "1753267188859",
-      "updatedAt": "1753267188859"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RG",
-      "day": 96,
-      "createdAt": "1753267188871",
-      "updatedAt": "1753267188871"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RA",
-      "day": 48,
-      "createdAt": "1753267188880",
-      "updatedAt": "1753267188880"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RC",
-      "day": 48,
-      "createdAt": "1753267188892",
-      "updatedAt": "1753267188892"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RE",
-      "day": 24,
-      "createdAt": "1753267188907",
-      "updatedAt": "1753267188907"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RI",
-      "day": 24,
-      "createdAt": "1753267188917",
-      "updatedAt": "1753267188917"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "AT",
-      "day": 48,
-      "createdAt": "1753267188917",
-      "updatedAt": "1753267188917"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RN",
-      "day": 24,
-      "createdAt": "1753267188922",
-      "updatedAt": "1753267188922"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RM",
-      "day": 24,
-      "createdAt": "1753267188931",
-      "updatedAt": "1753267188931"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "RO",
-      "day": 24,
-      "createdAt": "1753267188940",
-      "updatedAt": "1753267188940"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "SA",
-      "day": 48,
-      "createdAt": "1753267188962",
-      "updatedAt": "1753267188962"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "SS",
-      "day": 72,
-      "createdAt": "1753267188979",
-      "updatedAt": "1753267188979"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "SV",
-      "day": 24,
-      "createdAt": "1753267188991",
-      "updatedAt": "1753267188991"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "SI",
-      "day": 24,
-      "createdAt": "1753267189001",
-      "updatedAt": "1753267189001"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "SR",
-      "day": 72,
-      "createdAt": "1753267189012",
-      "updatedAt": "1753267189012"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "SO",
-      "day": 24,
-      "createdAt": "1753267189035",
-      "updatedAt": "1753267189035"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BA",
-      "day": 72,
-      "createdAt": "1753267189035",
-      "updatedAt": "1753267189035"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TA",
-      "day": 48,
-      "createdAt": "1753267189035",
-      "updatedAt": "1753267189035"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TE",
-      "day": 48,
-      "createdAt": "1753267189039",
-      "updatedAt": "1753267189039"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TR",
-      "day": 24,
-      "createdAt": "1753267189049",
-      "updatedAt": "1753267189049"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TO",
-      "day": 24,
-      "createdAt": "1753267189058",
-      "updatedAt": "1753267189058"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TP",
-      "day": 72,
-      "createdAt": "1753267189068",
-      "updatedAt": "1753267189068"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TN",
-      "day": 24,
-      "createdAt": "1753267189088",
-      "updatedAt": "1753267189088"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "AR",
-      "day": 48,
-      "createdAt": "1753267189088",
-      "updatedAt": "1753267189088"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TV",
-      "day": 24,
-      "createdAt": "1753267189088",
-      "updatedAt": "1753267189088"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "TS",
-      "day": 24,
-      "createdAt": "1753267189099",
-      "updatedAt": "1753267189099"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "UD",
-      "day": 24,
-      "createdAt": "1753267189108",
-      "updatedAt": "1753267189108"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VA",
-      "day": 24,
-      "createdAt": "1753267189118",
-      "updatedAt": "1753267189118"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VE",
-      "day": 24,
-      "createdAt": "1753267189127",
-      "updatedAt": "1753267189127"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VB",
-      "day": 48,
-      "createdAt": "1753267189140",
-      "updatedAt": "1753267189140"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VC",
-      "day": 48,
-      "createdAt": "1753267189151",
-      "updatedAt": "1753267189151"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VR",
-      "day": 24,
-      "createdAt": "1753267189161",
-      "updatedAt": "1753267189161"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VV",
-      "day": 48,
-      "createdAt": "1753267189174",
-      "updatedAt": "1753267189174"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VI",
-      "day": 24,
-      "createdAt": "1753267189184",
-      "updatedAt": "1753267189184"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "VT",
-      "day": 24,
-      "createdAt": "1753267189193",
-      "updatedAt": "1753267189193"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "92100",
-      "day": 72,
-      "createdAt": "1753267189197",
-      "updatedAt": "1753267189197"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "83100",
-      "day": 48,
-      "createdAt": "1753267189201",
-      "updatedAt": "1753267189201"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Avellino",
-      "day": 48,
-      "createdAt": "1753267189205",
-      "updatedAt": "1753267189205"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "40100",
-      "day": 24,
-      "createdAt": "1753267189209",
-      "updatedAt": "1753267189209"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "70100",
-      "day": 48,
-      "createdAt": "1753267189214",
-      "updatedAt": "1753267189214"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Bologna",
-      "day": 24,
-      "createdAt": "1753267189219",
-      "updatedAt": "1753267189219"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "39100",
-      "day": 24,
-      "createdAt": "1753267189223",
-      "updatedAt": "1753267189223"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "9017",
-      "day": 72,
-      "createdAt": "1753267189227",
-      "updatedAt": "1753267189227"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Bari",
-      "day": 48,
-      "createdAt": "1753267189230",
-      "updatedAt": "1753267189230"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Carbonia-Iglesias",
-      "day": 72,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "76100",
-      "day": 48,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "81100",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Barletta-Andria-Trani",
-      "day": 48,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Caserta",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "32100",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "95100",
-      "day": 72,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Belluno",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Catania",
-      "day": 72,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "82100",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "88100",
-      "day": 48,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Benevento",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Catanzaro",
-      "day": 48,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "24100",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "66100",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Bergamo",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Chieti",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "13900",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "22100",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Biella",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Como",
-      "day": 24,
-      "createdAt": "1753267189231",
-      "updatedAt": "1753267189231"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Bolzano",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "87100",
-      "day": 48,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "25100",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Cosenza",
-      "day": 48,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Brescia",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "26100",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "72100",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Cremona",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Brindisi",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "88900",
-      "day": 48,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "9100",
-      "day": 72,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Crotone",
-      "day": 48,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Cagliari",
-      "day": 72,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "12100",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "93100",
-      "day": 72,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Cuneo",
-      "day": 24,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Caltanissetta",
-      "day": 72,
-      "createdAt": "1753267189236",
-      "updatedAt": "1753267189236"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "94100",
-      "day": 72,
-      "createdAt": "1753267189237",
-      "updatedAt": "1753267189237"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "86100",
-      "day": 24,
-      "createdAt": "1753267189237",
-      "updatedAt": "1753267189237"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Enna",
-      "day": 72,
-      "createdAt": "1753267189237",
-      "updatedAt": "1753267189237"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Campobasso",
-      "day": 24,
-      "createdAt": "1753267189237",
-      "updatedAt": "1753267189237"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "63900",
-      "day": 24,
-      "createdAt": "1753267189237",
-      "updatedAt": "1753267189237"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Fermo",
-      "day": 24,
-      "createdAt": "1753267189244",
-      "updatedAt": "1753267189244"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "44100",
-      "day": 24,
-      "createdAt": "1753267189252",
-      "updatedAt": "1753267189252"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Ferrara",
-      "day": 24,
-      "createdAt": "1753267189261",
-      "updatedAt": "1753267189261"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "50100",
-      "day": 24,
-      "createdAt": "1753267189270",
-      "updatedAt": "1753267189270"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Firenze",
-      "day": 24,
-      "createdAt": "1753267189292",
-      "updatedAt": "1753267189292"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BG",
-      "day": 48,
-      "createdAt": "1753267189292",
-      "updatedAt": "1753267189292"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "71100",
-      "day": 24,
-      "createdAt": "1753267189292",
-      "updatedAt": "1753267189292"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Foggia",
-      "day": 24,
-      "createdAt": "1753267189302",
-      "updatedAt": "1753267189302"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "47100",
-      "day": 24,
-      "createdAt": "1753267189316",
-      "updatedAt": "1753267189316"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Forlì-Cesena",
-      "day": 24,
-      "createdAt": "1753267189328",
-      "updatedAt": "1753267189328"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "3100",
-      "day": 24,
-      "createdAt": "1753267189339",
-      "updatedAt": "1753267189339"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Frosinone",
-      "day": 24,
-      "createdAt": "1753267189350",
-      "updatedAt": "1753267189350"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "16100",
-      "day": 24,
-      "createdAt": "1753267189354",
-      "updatedAt": "1753267189354"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CR",
-      "day": 24,
-      "createdAt": "1753267189354",
-      "updatedAt": "1753267189354"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Genova",
-      "day": 24,
-      "createdAt": "1753267189354",
-      "updatedAt": "1753267189354"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "KR",
-      "day": 48,
-      "createdAt": "1753267189354",
-      "updatedAt": "1753267189354"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "34100",
-      "day": 24,
-      "createdAt": "1753267189354",
-      "updatedAt": "1753267189354"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CN",
-      "day": 48,
-      "createdAt": "1753267189354",
-      "updatedAt": "1753267189354"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Gorizia",
-      "day": 24,
-      "createdAt": "1753267189354",
-      "updatedAt": "1753267189354"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "58100",
-      "day": 24,
-      "createdAt": "1753267189362",
-      "updatedAt": "1753267189362"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Grosseto",
-      "day": 24,
-      "createdAt": "1753267189370",
-      "updatedAt": "1753267189370"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "18100",
-      "day": 24,
-      "createdAt": "1753267189381",
-      "updatedAt": "1753267189381"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Imperia",
-      "day": 24,
-      "createdAt": "1753267189389",
-      "updatedAt": "1753267189389"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "86071",
-      "day": 24,
-      "createdAt": "1753267189399",
-      "updatedAt": "1753267189399"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Isernia",
-      "day": 24,
-      "createdAt": "1753267189408",
-      "updatedAt": "1753267189408"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "19100",
-      "day": 24,
-      "createdAt": "1753267189420",
-      "updatedAt": "1753267189420"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "La Spezia",
-      "day": 24,
-      "createdAt": "1753267189429",
-      "updatedAt": "1753267189429"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "4100",
-      "day": 24,
-      "createdAt": "1753267189438",
-      "updatedAt": "1753267189438"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Latina",
-      "day": 24,
-      "createdAt": "1753267189448",
-      "updatedAt": "1753267189448"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "73100",
-      "day": 24,
-      "createdAt": "1753267189459",
-      "updatedAt": "1753267189459"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Lecce",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Agrigento",
-      "day": 72,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "23900",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "15100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Lecco",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Alessandria",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "57100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "60100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Livorno",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Ancona",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "26900",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "11100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Lodi",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Aosta",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "55100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "52100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Lucca",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Arezzo",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "62100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "63100",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Macerata",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Ascoli Piceno",
-      "day": 24,
-      "createdAt": "1753267189473",
-      "updatedAt": "1753267189473"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "46100",
-      "day": 24,
-      "createdAt": "1753267189474",
-      "updatedAt": "1753267189474"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "14100",
-      "day": 24,
-      "createdAt": "1753267189474",
-      "updatedAt": "1753267189474"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Mantova",
-      "day": 24,
-      "createdAt": "1753267189474",
-      "updatedAt": "1753267189474"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Asti",
-      "day": 24,
-      "createdAt": "1753267189474",
-      "updatedAt": "1753267189474"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "54100",
-      "day": 24,
-      "createdAt": "1753267189474",
-      "updatedAt": "1753267189474"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Massa-Carrara",
-      "day": 24,
-      "createdAt": "1753267189483",
-      "updatedAt": "1753267189483"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "75100",
-      "day": 48,
-      "createdAt": "1753267189492",
-      "updatedAt": "1753267189492"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Matera",
-      "day": 48,
-      "createdAt": "1753267189502",
-      "updatedAt": "1753267189502"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "98100",
-      "day": 72,
-      "createdAt": "1753267189512",
-      "updatedAt": "1753267189512"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Messina",
-      "day": 72,
-      "createdAt": "1753267189522",
-      "updatedAt": "1753267189522"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "20100",
-      "day": 24,
-      "createdAt": "1753267189531",
-      "updatedAt": "1753267189531"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Milano",
-      "day": 24,
-      "createdAt": "1753267189540",
-      "updatedAt": "1753267189540"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "41100",
-      "day": 24,
-      "createdAt": "1753267189549",
-      "updatedAt": "1753267189549"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Modena",
-      "day": 24,
-      "createdAt": "1753267189560",
-      "updatedAt": "1753267189560"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "20900",
-      "day": 24,
-      "createdAt": "1753267189570",
-      "updatedAt": "1753267189570"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Monza e della Brianza",
-      "day": 24,
-      "createdAt": "1753267189579",
-      "updatedAt": "1753267189579"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "80100",
-      "day": 24,
-      "createdAt": "1753267189586",
-      "updatedAt": "1753267189586"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Napoli",
-      "day": 24,
-      "createdAt": "1753267189594",
-      "updatedAt": "1753267189594"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "28100",
-      "day": 24,
-      "createdAt": "1753267189603",
-      "updatedAt": "1753267189603"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Novara",
-      "day": 24,
-      "createdAt": "1753267189612",
-      "updatedAt": "1753267189612"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CT",
-      "day": 72,
-      "createdAt": "1753267189612",
-      "updatedAt": "1753267189612"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "8100",
-      "day": 72,
-      "createdAt": "1753267189612",
-      "updatedAt": "1753267189612"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CZ",
-      "day": 48,
-      "createdAt": "1753267189612",
-      "updatedAt": "1753267189612"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Nuoro",
-      "day": 72,
-      "createdAt": "1753267189612",
-      "updatedAt": "1753267189612"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CH",
-      "day": 48,
-      "createdAt": "1753267189612",
-      "updatedAt": "1753267189612"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BT",
-      "day": 72,
-      "createdAt": "1753267188811",
-      "updatedAt": "1753267188811"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "7026",
-      "day": 72,
-      "createdAt": "1753267189612",
-      "updatedAt": "1753267189612"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Olbia-Tempio",
-      "day": 72,
-      "createdAt": "1753267189621",
-      "updatedAt": "1753267189621"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "9170",
-      "day": 72,
-      "createdAt": "1753267189631",
-      "updatedAt": "1753267189631"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Oristano",
-      "day": 72,
-      "createdAt": "1753267189638",
-      "updatedAt": "1753267189638"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "35100",
-      "day": 24,
-      "createdAt": "1753267189647",
-      "updatedAt": "1753267189647"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Padova",
-      "day": 24,
-      "createdAt": "1753267189655",
-      "updatedAt": "1753267189655"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "90100",
-      "day": 72,
-      "createdAt": "1753267189663",
-      "updatedAt": "1753267189663"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Palermo",
-      "day": 72,
-      "createdAt": "1753267189671",
-      "updatedAt": "1753267189671"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "43100",
-      "day": 24,
-      "createdAt": "1753267189680",
-      "updatedAt": "1753267189680"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Parma",
-      "day": 24,
-      "createdAt": "1753267189690",
-      "updatedAt": "1753267189690"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "CB",
-      "day": 48,
-      "createdAt": "1753267189699",
-      "updatedAt": "1753267189699"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "27100",
-      "day": 24,
-      "createdAt": "1753267189721",
-      "updatedAt": "1753267189721"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Pavia",
-      "day": 24,
-      "createdAt": "1753267189730",
-      "updatedAt": "1753267189730"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "6100",
-      "day": 24,
-      "createdAt": "1753267189742",
-      "updatedAt": "1753267189742"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Perugia",
-      "day": 24,
-      "createdAt": "1753267189750",
-      "updatedAt": "1753267189750"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "61100",
-      "day": 24,
-      "createdAt": "1753267189761",
-      "updatedAt": "1753267189761"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Pesaro e Urbino",
-      "day": 24,
-      "createdAt": "1753267189770",
-      "updatedAt": "1753267189770"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "65100",
-      "day": 48,
-      "createdAt": "1753267189780",
-      "updatedAt": "1753267189780"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Pescara",
-      "day": 48,
-      "createdAt": "1753267189788",
-      "updatedAt": "1753267189788"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "29100",
-      "day": 24,
-      "createdAt": "1753267189798",
-      "updatedAt": "1753267189798"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "BL",
-      "day": 48,
-      "createdAt": "1753267189803",
-      "updatedAt": "1753267189803"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Piacenza",
-      "day": 24,
-      "createdAt": "1753267189803",
-      "updatedAt": "1753267189803"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "56100",
-      "day": 24,
-      "createdAt": "1753267189806",
-      "updatedAt": "1753267189806"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Pisa",
-      "day": 24,
-      "createdAt": "1753267189816",
-      "updatedAt": "1753267189816"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "51100",
-      "day": 24,
-      "createdAt": "1753267189824",
-      "updatedAt": "1753267189824"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Pistoia",
-      "day": 24,
-      "createdAt": "1753267189833",
-      "updatedAt": "1753267189833"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "33100",
-      "day": 24,
-      "createdAt": "1753267189842",
-      "updatedAt": "1753267189842"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Pordenone",
-      "day": 24,
-      "createdAt": "1753267189851",
-      "updatedAt": "1753267189851"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "85100",
-      "day": 48,
-      "createdAt": "1753267189859",
-      "updatedAt": "1753267189859"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Potenza",
-      "day": 48,
-      "createdAt": "1753267189869",
-      "updatedAt": "1753267189869"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "59100",
-      "day": 24,
-      "createdAt": "1753267189877",
-      "updatedAt": "1753267189877"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Prato",
-      "day": 24,
-      "createdAt": "1753267189885",
-      "updatedAt": "1753267189885"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "97100",
-      "day": 72,
-      "createdAt": "1753267189893",
-      "updatedAt": "1753267189893"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Ragusa",
-      "day": 72,
-      "createdAt": "1753267189903",
-      "updatedAt": "1753267189903"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "48100",
-      "day": 24,
-      "createdAt": "1753267189914",
-      "updatedAt": "1753267189914"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Ravenna",
-      "day": 24,
-      "createdAt": "1753267189929",
-      "updatedAt": "1753267189929"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "89100",
-      "day": 48,
-      "createdAt": "1753267189938",
-      "updatedAt": "1753267189938"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Reggio Calabria",
-      "day": 48,
-      "createdAt": "1753267189946",
-      "updatedAt": "1753267189946"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "42100",
-      "day": 24,
-      "createdAt": "1753267189957",
-      "updatedAt": "1753267189957"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Reggio Emilia",
-      "day": 24,
-      "createdAt": "1753267189966",
-      "updatedAt": "1753267189966"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "2100",
-      "day": 24,
-      "createdAt": "1753267189988",
-      "updatedAt": "1753267189988"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Rieti",
-      "day": 24,
-      "createdAt": "1753267189993",
-      "updatedAt": "1753267189993"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "47900",
-      "day": 24,
-      "createdAt": "1753267189997",
-      "updatedAt": "1753267189997"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "45100",
-      "day": 24,
-      "createdAt": "1753267190001",
-      "updatedAt": "1753267190001"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Rovigo",
-      "day": 24,
-      "createdAt": "1753267190007",
-      "updatedAt": "1753267190007"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "7100",
-      "day": 72,
-      "createdAt": "1753267190011",
-      "updatedAt": "1753267190011"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "84100",
-      "day": 48,
-      "createdAt": "1753267190015",
-      "updatedAt": "1753267190015"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Sassari",
-      "day": 72,
-      "createdAt": "1753267190020",
-      "updatedAt": "1753267190020"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Rimini",
-      "day": 24,
-      "createdAt": "1753267190024",
-      "updatedAt": "1753267190024"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "17100",
-      "day": 24,
-      "createdAt": "1753267190024",
-      "updatedAt": "1753267190024"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "100",
-      "day": 24,
-      "createdAt": "1753267190024",
-      "updatedAt": "1753267190024"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Savona",
-      "day": 24,
-      "createdAt": "1753267190024",
-      "updatedAt": "1753267190024"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Roma",
-      "day": 24,
-      "createdAt": "1753267190024",
-      "updatedAt": "1753267190024"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "53100",
-      "day": 24,
-      "createdAt": "1753267190024",
-      "updatedAt": "1753267190024"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Salerno",
-      "day": 48,
-      "createdAt": "1753267190027",
-      "updatedAt": "1753267190027"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Siena",
-      "day": 24,
-      "createdAt": "1753267190027",
-      "updatedAt": "1753267190027"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "96100",
-      "day": 72,
-      "createdAt": "1753267190032",
-      "updatedAt": "1753267190032"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Siracusa",
-      "day": 72,
-      "createdAt": "1753267190040",
-      "updatedAt": "1753267190040"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "23100",
-      "day": 24,
-      "createdAt": "1753267190052",
-      "updatedAt": "1753267190052"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Sondrio",
-      "day": 24,
-      "createdAt": "1753267190060",
-      "updatedAt": "1753267190060"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "74100",
-      "day": 48,
-      "createdAt": "1753267190067",
-      "updatedAt": "1753267190067"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Taranto",
-      "day": 48,
-      "createdAt": "1753267190075",
-      "updatedAt": "1753267190075"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "64100",
-      "day": 48,
-      "createdAt": "1753267190085",
-      "updatedAt": "1753267190085"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Teramo",
-      "day": 48,
-      "createdAt": "1753267190089",
-      "updatedAt": "1753267190089"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Terni",
-      "day": 24,
-      "createdAt": "1753267190092",
-      "updatedAt": "1753267190092"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "5100",
-      "day": 24,
-      "createdAt": "1753267190096",
-      "updatedAt": "1753267190096"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "10100",
-      "day": 24,
-      "createdAt": "1753267190101",
-      "updatedAt": "1753267190101"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Torino",
-      "day": 24,
-      "createdAt": "1753267190105",
-      "updatedAt": "1753267190105"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "FM",
-      "day": 48,
-      "createdAt": "1753267190109",
-      "updatedAt": "1753267190109"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "91100",
-      "day": 72,
-      "createdAt": "1753267190113",
-      "updatedAt": "1753267190113"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "FE",
-      "day": 24,
-      "createdAt": "1753267190117",
-      "updatedAt": "1753267190117"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Trapani",
-      "day": 72,
-      "createdAt": "1753267190123",
-      "updatedAt": "1753267190123"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "38100",
-      "day": 24,
-      "createdAt": "1753267190128",
-      "updatedAt": "1753267190128"
-    },
-    {
-      "zoneType": "PROVINCE",
-      "name": "FI",
-      "day": 24,
-      "createdAt": "1753267190133",
-      "updatedAt": "1753267190133"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Trento",
-      "day": 24,
-      "createdAt": "1753267190133",
-      "updatedAt": "1753267190133"
-    },
-    {
-      "zoneType": "ZIP",
-      "name": "31100",
-      "day": 24,
-      "createdAt": "1753267190143",
-      "updatedAt": "1753267190143"
-    },
-    {
-      "zoneType": "CITY",
-      "name": "Treviso",
-      "day": 24,
-      "createdAt": "1753267190147",
-      "updatedAt": "1753267190147"
-    }
-  ]
+  {
+    "zoneType": "PROVINCE",
+    "name": "AG",
+    "days": 72,
+    "createdAt": "1753267188810",
+    "updatedAt": "1753267188810"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "AL",
+    "days": 48,
+    "createdAt": "1753267188810",
+    "updatedAt": "1753267188810"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "AN",
+    "days": 48,
+    "createdAt": "1753267188810",
+    "updatedAt": "1753267188810"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "AO",
+    "days": 48,
+    "createdAt": "1753267188810",
+    "updatedAt": "1753267188810"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "AP",
+    "days": 48,
+    "createdAt": "1753267188810",
+    "updatedAt": "1753267188810"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "AV",
+    "days": 48,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BN",
+    "days": 48,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BI",
+    "days": 48,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BZ",
+    "days": 48,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BS",
+    "days": 48,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CL",
+    "days": 72,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CI",
+    "days": 72,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CO",
+    "days": 24,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CE",
+    "days": 48,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CS",
+    "days": 48,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "EN",
+    "days": 72,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "FG",
+    "days": 48,
+    "createdAt": "1753267188817",
+    "updatedAt": "1753267188817"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "FC",
+    "days": 24,
+    "createdAt": "1753267188822",
+    "updatedAt": "1753267188822"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "FR",
+    "days": 24,
+    "createdAt": "1753267188826",
+    "updatedAt": "1753267188826"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "GE",
+    "days": 24,
+    "createdAt": "1753267188832",
+    "updatedAt": "1753267188832"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "MO",
+    "days": 24,
+    "createdAt": "1753267188837",
+    "updatedAt": "1753267188837"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BR",
+    "days": 48,
+    "createdAt": "1753267188840",
+    "updatedAt": "1753267188840"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "MB",
+    "days": 24,
+    "createdAt": "1753267188840",
+    "updatedAt": "1753267188840"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CA",
+    "days": 72,
+    "createdAt": "1753267188840",
+    "updatedAt": "1753267188840"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "NA",
+    "days": 48,
+    "createdAt": "1753267188846",
+    "updatedAt": "1753267188846"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "NO",
+    "days": 24,
+    "createdAt": "1753267188854",
+    "updatedAt": "1753267188854"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "GO",
+    "days": 24,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "NU",
+    "days": 72,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "GR",
+    "days": 24,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "OT",
+    "days": 72,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "IM",
+    "days": 24,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "OR",
+    "days": 72,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "IS",
+    "days": 48,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PD",
+    "days": 48,
+    "createdAt": "1753267188858",
+    "updatedAt": "1753267188858"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "SP",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PA",
+    "days": 96,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "LT",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PR",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "LE",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PV",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "LC",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PG",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "LI",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PU",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "LO",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PE",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "LU",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PC",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "MC",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PI",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "MN",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PT",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "MS",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PN",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "MT",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PZ",
+    "days": 72,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "ME",
+    "days": 72,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "PO",
+    "days": 48,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "MI",
+    "days": 24,
+    "createdAt": "1753267188859",
+    "updatedAt": "1753267188859"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RG",
+    "days": 96,
+    "createdAt": "1753267188871",
+    "updatedAt": "1753267188871"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RA",
+    "days": 48,
+    "createdAt": "1753267188880",
+    "updatedAt": "1753267188880"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RC",
+    "days": 48,
+    "createdAt": "1753267188892",
+    "updatedAt": "1753267188892"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RE",
+    "days": 24,
+    "createdAt": "1753267188907",
+    "updatedAt": "1753267188907"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RI",
+    "days": 24,
+    "createdAt": "1753267188917",
+    "updatedAt": "1753267188917"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "AT",
+    "days": 48,
+    "createdAt": "1753267188917",
+    "updatedAt": "1753267188917"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RN",
+    "days": 24,
+    "createdAt": "1753267188922",
+    "updatedAt": "1753267188922"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RM",
+    "days": 24,
+    "createdAt": "1753267188931",
+    "updatedAt": "1753267188931"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "RO",
+    "days": 24,
+    "createdAt": "1753267188940",
+    "updatedAt": "1753267188940"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "SA",
+    "days": 48,
+    "createdAt": "1753267188962",
+    "updatedAt": "1753267188962"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "SS",
+    "days": 72,
+    "createdAt": "1753267188979",
+    "updatedAt": "1753267188979"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "SV",
+    "days": 24,
+    "createdAt": "1753267188991",
+    "updatedAt": "1753267188991"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "SI",
+    "days": 24,
+    "createdAt": "1753267189001",
+    "updatedAt": "1753267189001"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "SR",
+    "days": 72,
+    "createdAt": "1753267189012",
+    "updatedAt": "1753267189012"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "SO",
+    "days": 24,
+    "createdAt": "1753267189035",
+    "updatedAt": "1753267189035"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BA",
+    "days": 72,
+    "createdAt": "1753267189035",
+    "updatedAt": "1753267189035"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TA",
+    "days": 48,
+    "createdAt": "1753267189035",
+    "updatedAt": "1753267189035"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TE",
+    "days": 48,
+    "createdAt": "1753267189039",
+    "updatedAt": "1753267189039"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TR",
+    "days": 24,
+    "createdAt": "1753267189049",
+    "updatedAt": "1753267189049"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TO",
+    "days": 24,
+    "createdAt": "1753267189058",
+    "updatedAt": "1753267189058"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TP",
+    "days": 72,
+    "createdAt": "1753267189068",
+    "updatedAt": "1753267189068"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TN",
+    "days": 24,
+    "createdAt": "1753267189088",
+    "updatedAt": "1753267189088"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "AR",
+    "days": 48,
+    "createdAt": "1753267189088",
+    "updatedAt": "1753267189088"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TV",
+    "days": 24,
+    "createdAt": "1753267189088",
+    "updatedAt": "1753267189088"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "TS",
+    "days": 24,
+    "createdAt": "1753267189099",
+    "updatedAt": "1753267189099"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "UD",
+    "days": 24,
+    "createdAt": "1753267189108",
+    "updatedAt": "1753267189108"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VA",
+    "days": 24,
+    "createdAt": "1753267189118",
+    "updatedAt": "1753267189118"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VE",
+    "days": 24,
+    "createdAt": "1753267189127",
+    "updatedAt": "1753267189127"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VB",
+    "days": 48,
+    "createdAt": "1753267189140",
+    "updatedAt": "1753267189140"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VC",
+    "days": 48,
+    "createdAt": "1753267189151",
+    "updatedAt": "1753267189151"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VR",
+    "days": 24,
+    "createdAt": "1753267189161",
+    "updatedAt": "1753267189161"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VV",
+    "days": 48,
+    "createdAt": "1753267189174",
+    "updatedAt": "1753267189174"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VI",
+    "days": 24,
+    "createdAt": "1753267189184",
+    "updatedAt": "1753267189184"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "VT",
+    "days": 24,
+    "createdAt": "1753267189193",
+    "updatedAt": "1753267189193"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "92100",
+    "days": 72,
+    "createdAt": "1753267189197",
+    "updatedAt": "1753267189197"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "83100",
+    "days": 48,
+    "createdAt": "1753267189201",
+    "updatedAt": "1753267189201"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Avellino",
+    "days": 48,
+    "createdAt": "1753267189205",
+    "updatedAt": "1753267189205"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "40100",
+    "days": 24,
+    "createdAt": "1753267189209",
+    "updatedAt": "1753267189209"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "70100",
+    "days": 48,
+    "createdAt": "1753267189214",
+    "updatedAt": "1753267189214"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Bologna",
+    "days": 24,
+    "createdAt": "1753267189219",
+    "updatedAt": "1753267189219"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "39100",
+    "days": 24,
+    "createdAt": "1753267189223",
+    "updatedAt": "1753267189223"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "9017",
+    "days": 72,
+    "createdAt": "1753267189227",
+    "updatedAt": "1753267189227"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Bari",
+    "days": 48,
+    "createdAt": "1753267189230",
+    "updatedAt": "1753267189230"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Carbonia-Iglesias",
+    "days": 72,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "76100",
+    "days": 48,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "81100",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Barletta-Andria-Trani",
+    "days": 48,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Caserta",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "32100",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "95100",
+    "days": 72,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Belluno",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Catania",
+    "days": 72,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "82100",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "88100",
+    "days": 48,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Benevento",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Catanzaro",
+    "days": 48,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "24100",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "66100",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Bergamo",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Chieti",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "13900",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "22100",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Biella",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Como",
+    "days": 24,
+    "createdAt": "1753267189231",
+    "updatedAt": "1753267189231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Bolzano",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "87100",
+    "days": 48,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "25100",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Cosenza",
+    "days": 48,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Brescia",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "26100",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "72100",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Cremona",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Brindisi",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "88900",
+    "days": 48,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "9100",
+    "days": 72,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Crotone",
+    "days": 48,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Cagliari",
+    "days": 72,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "12100",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "93100",
+    "days": 72,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Cuneo",
+    "days": 24,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Caltanissetta",
+    "days": 72,
+    "createdAt": "1753267189236",
+    "updatedAt": "1753267189236"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "94100",
+    "days": 72,
+    "createdAt": "1753267189237",
+    "updatedAt": "1753267189237"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "86100",
+    "days": 24,
+    "createdAt": "1753267189237",
+    "updatedAt": "1753267189237"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Enna",
+    "days": 72,
+    "createdAt": "1753267189237",
+    "updatedAt": "1753267189237"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Campobasso",
+    "days": 24,
+    "createdAt": "1753267189237",
+    "updatedAt": "1753267189237"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "63900",
+    "days": 24,
+    "createdAt": "1753267189237",
+    "updatedAt": "1753267189237"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Fermo",
+    "days": 24,
+    "createdAt": "1753267189244",
+    "updatedAt": "1753267189244"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "44100",
+    "days": 24,
+    "createdAt": "1753267189252",
+    "updatedAt": "1753267189252"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Ferrara",
+    "days": 24,
+    "createdAt": "1753267189261",
+    "updatedAt": "1753267189261"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "50100",
+    "days": 24,
+    "createdAt": "1753267189270",
+    "updatedAt": "1753267189270"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Firenze",
+    "days": 24,
+    "createdAt": "1753267189292",
+    "updatedAt": "1753267189292"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BG",
+    "days": 48,
+    "createdAt": "1753267189292",
+    "updatedAt": "1753267189292"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "71100",
+    "days": 24,
+    "createdAt": "1753267189292",
+    "updatedAt": "1753267189292"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Foggia",
+    "days": 24,
+    "createdAt": "1753267189302",
+    "updatedAt": "1753267189302"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "47100",
+    "days": 24,
+    "createdAt": "1753267189316",
+    "updatedAt": "1753267189316"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Forlì-Cesena",
+    "days": 24,
+    "createdAt": "1753267189328",
+    "updatedAt": "1753267189328"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "3100",
+    "days": 24,
+    "createdAt": "1753267189339",
+    "updatedAt": "1753267189339"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Frosinone",
+    "days": 24,
+    "createdAt": "1753267189350",
+    "updatedAt": "1753267189350"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "16100",
+    "days": 24,
+    "createdAt": "1753267189354",
+    "updatedAt": "1753267189354"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CR",
+    "days": 24,
+    "createdAt": "1753267189354",
+    "updatedAt": "1753267189354"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Genova",
+    "days": 24,
+    "createdAt": "1753267189354",
+    "updatedAt": "1753267189354"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "KR",
+    "days": 48,
+    "createdAt": "1753267189354",
+    "updatedAt": "1753267189354"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "34100",
+    "days": 24,
+    "createdAt": "1753267189354",
+    "updatedAt": "1753267189354"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CN",
+    "days": 48,
+    "createdAt": "1753267189354",
+    "updatedAt": "1753267189354"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Gorizia",
+    "days": 24,
+    "createdAt": "1753267189354",
+    "updatedAt": "1753267189354"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "58100",
+    "days": 24,
+    "createdAt": "1753267189362",
+    "updatedAt": "1753267189362"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Grosseto",
+    "days": 24,
+    "createdAt": "1753267189370",
+    "updatedAt": "1753267189370"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "18100",
+    "days": 24,
+    "createdAt": "1753267189381",
+    "updatedAt": "1753267189381"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Imperia",
+    "days": 24,
+    "createdAt": "1753267189389",
+    "updatedAt": "1753267189389"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "86071",
+    "days": 24,
+    "createdAt": "1753267189399",
+    "updatedAt": "1753267189399"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Isernia",
+    "days": 24,
+    "createdAt": "1753267189408",
+    "updatedAt": "1753267189408"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "19100",
+    "days": 24,
+    "createdAt": "1753267189420",
+    "updatedAt": "1753267189420"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "La Spezia",
+    "days": 24,
+    "createdAt": "1753267189429",
+    "updatedAt": "1753267189429"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "4100",
+    "days": 24,
+    "createdAt": "1753267189438",
+    "updatedAt": "1753267189438"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Latina",
+    "days": 24,
+    "createdAt": "1753267189448",
+    "updatedAt": "1753267189448"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "73100",
+    "days": 24,
+    "createdAt": "1753267189459",
+    "updatedAt": "1753267189459"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Lecce",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Agrigento",
+    "days": 72,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "23900",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "15100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Lecco",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Alessandria",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "57100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "60100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Livorno",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Ancona",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "26900",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "11100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Lodi",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Aosta",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "55100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "52100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Lucca",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Arezzo",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "62100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "63100",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Macerata",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Ascoli Piceno",
+    "days": 24,
+    "createdAt": "1753267189473",
+    "updatedAt": "1753267189473"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "46100",
+    "days": 24,
+    "createdAt": "1753267189474",
+    "updatedAt": "1753267189474"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "14100",
+    "days": 24,
+    "createdAt": "1753267189474",
+    "updatedAt": "1753267189474"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Mantova",
+    "days": 24,
+    "createdAt": "1753267189474",
+    "updatedAt": "1753267189474"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Asti",
+    "days": 24,
+    "createdAt": "1753267189474",
+    "updatedAt": "1753267189474"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "54100",
+    "days": 24,
+    "createdAt": "1753267189474",
+    "updatedAt": "1753267189474"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Massa-Carrara",
+    "days": 24,
+    "createdAt": "1753267189483",
+    "updatedAt": "1753267189483"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "75100",
+    "days": 48,
+    "createdAt": "1753267189492",
+    "updatedAt": "1753267189492"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Matera",
+    "days": 48,
+    "createdAt": "1753267189502",
+    "updatedAt": "1753267189502"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "98100",
+    "days": 72,
+    "createdAt": "1753267189512",
+    "updatedAt": "1753267189512"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Messina",
+    "days": 72,
+    "createdAt": "1753267189522",
+    "updatedAt": "1753267189522"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "20100",
+    "days": 24,
+    "createdAt": "1753267189531",
+    "updatedAt": "1753267189531"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Milano",
+    "days": 24,
+    "createdAt": "1753267189540",
+    "updatedAt": "1753267189540"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "41100",
+    "days": 24,
+    "createdAt": "1753267189549",
+    "updatedAt": "1753267189549"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Modena",
+    "days": 24,
+    "createdAt": "1753267189560",
+    "updatedAt": "1753267189560"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "20900",
+    "days": 24,
+    "createdAt": "1753267189570",
+    "updatedAt": "1753267189570"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Monza e della Brianza",
+    "days": 24,
+    "createdAt": "1753267189579",
+    "updatedAt": "1753267189579"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "80100",
+    "days": 24,
+    "createdAt": "1753267189586",
+    "updatedAt": "1753267189586"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Napoli",
+    "days": 24,
+    "createdAt": "1753267189594",
+    "updatedAt": "1753267189594"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "28100",
+    "days": 24,
+    "createdAt": "1753267189603",
+    "updatedAt": "1753267189603"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Novara",
+    "days": 24,
+    "createdAt": "1753267189612",
+    "updatedAt": "1753267189612"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CT",
+    "days": 72,
+    "createdAt": "1753267189612",
+    "updatedAt": "1753267189612"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "8100",
+    "days": 72,
+    "createdAt": "1753267189612",
+    "updatedAt": "1753267189612"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CZ",
+    "days": 48,
+    "createdAt": "1753267189612",
+    "updatedAt": "1753267189612"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Nuoro",
+    "days": 72,
+    "createdAt": "1753267189612",
+    "updatedAt": "1753267189612"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CH",
+    "days": 48,
+    "createdAt": "1753267189612",
+    "updatedAt": "1753267189612"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BT",
+    "days": 72,
+    "createdAt": "1753267188811",
+    "updatedAt": "1753267188811"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "7026",
+    "days": 72,
+    "createdAt": "1753267189612",
+    "updatedAt": "1753267189612"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Olbia-Tempio",
+    "days": 72,
+    "createdAt": "1753267189621",
+    "updatedAt": "1753267189621"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "9170",
+    "days": 72,
+    "createdAt": "1753267189631",
+    "updatedAt": "1753267189631"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Oristano",
+    "days": 72,
+    "createdAt": "1753267189638",
+    "updatedAt": "1753267189638"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "35100",
+    "days": 24,
+    "createdAt": "1753267189647",
+    "updatedAt": "1753267189647"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Padova",
+    "days": 24,
+    "createdAt": "1753267189655",
+    "updatedAt": "1753267189655"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "90100",
+    "days": 72,
+    "createdAt": "1753267189663",
+    "updatedAt": "1753267189663"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Palermo",
+    "days": 72,
+    "createdAt": "1753267189671",
+    "updatedAt": "1753267189671"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "43100",
+    "days": 24,
+    "createdAt": "1753267189680",
+    "updatedAt": "1753267189680"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Parma",
+    "days": 24,
+    "createdAt": "1753267189690",
+    "updatedAt": "1753267189690"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "CB",
+    "days": 48,
+    "createdAt": "1753267189699",
+    "updatedAt": "1753267189699"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "27100",
+    "days": 24,
+    "createdAt": "1753267189721",
+    "updatedAt": "1753267189721"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Pavia",
+    "days": 24,
+    "createdAt": "1753267189730",
+    "updatedAt": "1753267189730"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "6100",
+    "days": 24,
+    "createdAt": "1753267189742",
+    "updatedAt": "1753267189742"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Perugia",
+    "days": 24,
+    "createdAt": "1753267189750",
+    "updatedAt": "1753267189750"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "61100",
+    "days": 24,
+    "createdAt": "1753267189761",
+    "updatedAt": "1753267189761"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Pesaro e Urbino",
+    "days": 24,
+    "createdAt": "1753267189770",
+    "updatedAt": "1753267189770"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "65100",
+    "days": 48,
+    "createdAt": "1753267189780",
+    "updatedAt": "1753267189780"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Pescara",
+    "days": 48,
+    "createdAt": "1753267189788",
+    "updatedAt": "1753267189788"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "29100",
+    "days": 24,
+    "createdAt": "1753267189798",
+    "updatedAt": "1753267189798"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BL",
+    "days": 48,
+    "createdAt": "1753267189803",
+    "updatedAt": "1753267189803"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Piacenza",
+    "days": 24,
+    "createdAt": "1753267189803",
+    "updatedAt": "1753267189803"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "56100",
+    "days": 24,
+    "createdAt": "1753267189806",
+    "updatedAt": "1753267189806"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Pisa",
+    "days": 24,
+    "createdAt": "1753267189816",
+    "updatedAt": "1753267189816"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "51100",
+    "days": 24,
+    "createdAt": "1753267189824",
+    "updatedAt": "1753267189824"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Pistoia",
+    "days": 24,
+    "createdAt": "1753267189833",
+    "updatedAt": "1753267189833"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "33100",
+    "days": 24,
+    "createdAt": "1753267189842",
+    "updatedAt": "1753267189842"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Pordenone",
+    "days": 24,
+    "createdAt": "1753267189851",
+    "updatedAt": "1753267189851"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "85100",
+    "days": 48,
+    "createdAt": "1753267189859",
+    "updatedAt": "1753267189859"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Potenza",
+    "days": 48,
+    "createdAt": "1753267189869",
+    "updatedAt": "1753267189869"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "59100",
+    "days": 24,
+    "createdAt": "1753267189877",
+    "updatedAt": "1753267189877"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Prato",
+    "days": 24,
+    "createdAt": "1753267189885",
+    "updatedAt": "1753267189885"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "97100",
+    "days": 72,
+    "createdAt": "1753267189893",
+    "updatedAt": "1753267189893"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Ragusa",
+    "days": 72,
+    "createdAt": "1753267189903",
+    "updatedAt": "1753267189903"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "48100",
+    "days": 24,
+    "createdAt": "1753267189914",
+    "updatedAt": "1753267189914"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Ravenna",
+    "days": 24,
+    "createdAt": "1753267189929",
+    "updatedAt": "1753267189929"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "89100",
+    "days": 48,
+    "createdAt": "1753267189938",
+    "updatedAt": "1753267189938"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Reggio Calabria",
+    "days": 48,
+    "createdAt": "1753267189946",
+    "updatedAt": "1753267189946"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "42100",
+    "days": 24,
+    "createdAt": "1753267189957",
+    "updatedAt": "1753267189957"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Reggio Emilia",
+    "days": 24,
+    "createdAt": "1753267189966",
+    "updatedAt": "1753267189966"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "2100",
+    "days": 24,
+    "createdAt": "1753267189988",
+    "updatedAt": "1753267189988"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Rieti",
+    "days": 24,
+    "createdAt": "1753267189993",
+    "updatedAt": "1753267189993"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "47900",
+    "days": 24,
+    "createdAt": "1753267189997",
+    "updatedAt": "1753267189997"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "45100",
+    "days": 24,
+    "createdAt": "1753267190001",
+    "updatedAt": "1753267190001"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Rovigo",
+    "days": 24,
+    "createdAt": "1753267190007",
+    "updatedAt": "1753267190007"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "7100",
+    "days": 72,
+    "createdAt": "1753267190011",
+    "updatedAt": "1753267190011"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "84100",
+    "days": 48,
+    "createdAt": "1753267190015",
+    "updatedAt": "1753267190015"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Sassari",
+    "days": 72,
+    "createdAt": "1753267190020",
+    "updatedAt": "1753267190020"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Rimini",
+    "days": 24,
+    "createdAt": "1753267190024",
+    "updatedAt": "1753267190024"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "17100",
+    "days": 24,
+    "createdAt": "1753267190024",
+    "updatedAt": "1753267190024"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "100",
+    "days": 24,
+    "createdAt": "1753267190024",
+    "updatedAt": "1753267190024"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Savona",
+    "days": 24,
+    "createdAt": "1753267190024",
+    "updatedAt": "1753267190024"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Roma",
+    "days": 24,
+    "createdAt": "1753267190024",
+    "updatedAt": "1753267190024"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "53100",
+    "days": 24,
+    "createdAt": "1753267190024",
+    "updatedAt": "1753267190024"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Salerno",
+    "days": 48,
+    "createdAt": "1753267190027",
+    "updatedAt": "1753267190027"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Siena",
+    "days": 24,
+    "createdAt": "1753267190027",
+    "updatedAt": "1753267190027"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "96100",
+    "days": 72,
+    "createdAt": "1753267190032",
+    "updatedAt": "1753267190032"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Siracusa",
+    "days": 72,
+    "createdAt": "1753267190040",
+    "updatedAt": "1753267190040"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "23100",
+    "days": 24,
+    "createdAt": "1753267190052",
+    "updatedAt": "1753267190052"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Sondrio",
+    "days": 24,
+    "createdAt": "1753267190060",
+    "updatedAt": "1753267190060"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "74100",
+    "days": 48,
+    "createdAt": "1753267190067",
+    "updatedAt": "1753267190067"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Taranto",
+    "days": 48,
+    "createdAt": "1753267190075",
+    "updatedAt": "1753267190075"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "64100",
+    "days": 48,
+    "createdAt": "1753267190085",
+    "updatedAt": "1753267190085"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Teramo",
+    "days": 48,
+    "createdAt": "1753267190089",
+    "updatedAt": "1753267190089"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Terni",
+    "days": 24,
+    "createdAt": "1753267190092",
+    "updatedAt": "1753267190092"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "5100",
+    "days": 24,
+    "createdAt": "1753267190096",
+    "updatedAt": "1753267190096"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "10100",
+    "days": 24,
+    "createdAt": "1753267190101",
+    "updatedAt": "1753267190101"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Torino",
+    "days": 24,
+    "createdAt": "1753267190105",
+    "updatedAt": "1753267190105"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "FM",
+    "days": 48,
+    "createdAt": "1753267190109",
+    "updatedAt": "1753267190109"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "91100",
+    "days": 72,
+    "createdAt": "1753267190113",
+    "updatedAt": "1753267190113"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "FE",
+    "days": 24,
+    "createdAt": "1753267190117",
+    "updatedAt": "1753267190117"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Trapani",
+    "days": 72,
+    "createdAt": "1753267190123",
+    "updatedAt": "1753267190123"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "38100",
+    "days": 24,
+    "createdAt": "1753267190128",
+    "updatedAt": "1753267190128"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "FI",
+    "days": 24,
+    "createdAt": "1753267190133",
+    "updatedAt": "1753267190133"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Trento",
+    "days": 24,
+    "createdAt": "1753267190133",
+    "updatedAt": "1753267190133"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "31100",
+    "days": 24,
+    "createdAt": "1753267190143",
+    "updatedAt": "1753267190143"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Treviso",
+    "days": 24,
+    "createdAt": "1753267190147",
+    "updatedAt": "1753267190147"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "34121",
+    "days": 24,
+    "createdAt": "1753267190152",
+    "updatedAt": "1753267190152"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "33100",
+    "days": 24,
+    "createdAt": "1753267190155",
+    "updatedAt": "1753267190155"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Trieste",
+    "days": 24,
+    "createdAt": "1753267190160",
+    "updatedAt": "1753267190160"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Udine",
+    "days": 24,
+    "createdAt": "1753267190163",
+    "updatedAt": "1753267190163"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Varese",
+    "days": 24,
+    "createdAt": "1753267190167",
+    "updatedAt": "1753267190167"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "30100",
+    "days": 24,
+    "createdAt": "1753267190172",
+    "updatedAt": "1753267190172"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "21100",
+    "days": 24,
+    "createdAt": "1753267190176",
+    "updatedAt": "1753267190176"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Venezia",
+    "days": 24,
+    "createdAt": "1753267190176",
+    "updatedAt": "1753267190176"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "28900",
+    "days": 24,
+    "createdAt": "1753267190184",
+    "updatedAt": "1753267190184"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Verbano-Cusio-Ossola",
+    "days": 24,
+    "createdAt": "1753267190187",
+    "updatedAt": "1753267190187"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "13100",
+    "days": 24,
+    "createdAt": "1753267190191",
+    "updatedAt": "1753267190191"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Vercelli",
+    "days": 24,
+    "createdAt": "1753267190197",
+    "updatedAt": "1753267190197"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "37100",
+    "days": 24,
+    "createdAt": "1753267190201",
+    "updatedAt": "1753267190201"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Verona",
+    "days": 24,
+    "createdAt": "1753267190205",
+    "updatedAt": "1753267190205"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "89900",
+    "days": 48,
+    "createdAt": "1753267190209",
+    "updatedAt": "1753267190209"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Vibo Valentia",
+    "days": 48,
+    "createdAt": "1753267190214",
+    "updatedAt": "1753267190214"
+  },
+  {
+    "zoneType": "PROVINCE",
+    "name": "BO",
+    "days": 48,
+    "createdAt": "1753267190218",
+    "updatedAt": "1753267190218"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "36100",
+    "days": 24,
+    "createdAt": "1753267190222",
+    "updatedAt": "1753267190222"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Vicenza",
+    "days": 24,
+    "createdAt": "1753267190226",
+    "updatedAt": "1753267190226"
+  },
+  {
+    "zoneType": "ZIP",
+    "name": "1100",
+    "days": 24,
+    "createdAt": "1753267190231",
+    "updatedAt": "1753267190231"
+  },
+  {
+    "zoneType": "CITY",
+    "name": "Viterbo",
+    "days": 24,
+    "createdAt": "1753267190235",
+    "updatedAt": "1753267190235"
+  }
+]

@@ -1,255 +1,296 @@
-// app/shipping/couriers/json-based.js - JSON-based courier shipping calculations
+// app/shipping/couriers/json-based.js - JSON-based courier calculations (TNT, BRT, etc.)
 import prisma from '../../db.server.js';
 
-/**
- * Load courier configuration by code
- */
-export async function loadCourierConfig(code) {
-  const courier = await prisma.courier.findUnique({
-    where: { code: code.toUpperCase() }
-  });
-  
-  if (!courier || !courier.isActive) {
-    return null;
-  }
-  
-  return courier.config;
-}
+// Load courier configuration from JSON
+export async function loadConfigAndRates(courierName) {
+  try {
+    const courier = await prisma.courier.findUnique({
+      where: { name: courierName.toUpperCase() }
+    });
 
-/**
- * Calculate shipping rates for TNT using JSON configuration
- */
-export async function calculateTntRates({ cartItems, destinationZone }) {
-  const config = await loadCourierConfig('TNT');
-  if (!config) {
-    throw new Error('TNT configuration not found');
-  }
-
-  // Get basic calculations
-  const { totalWeight, totalVolume, volumetricWeight, shippingWeight } = calculateBasics(cartItems, config);
-  
-  // Find matching transit days entry
-  const transitEntry = findBestTransitMatch(destinationZone, config.transitDays);
-  const transitDays = transitEntry?.days || 3;
-
-  // Find price bracket
-  const bracket = config.pricingBrackets?.find(b => 
-    shippingWeight >= b.minWeightKg && shippingWeight <= b.maxWeightKg
-  );
-  
-  if (!bracket) {
-    throw new Error('No pricing bracket found for weight: ' + shippingWeight);
-  }
-
-  // Calculate additional costs
-  const { iceCost, wineCost } = calculateAdditionalCosts(cartItems, config, transitDays);
-  
-  // Build base cost
-  let subtotal = bracket.price + iceCost + wineCost;
-  
-  // Apply fuel surcharge
-  if (config.shippingConfig?.surcharges?.fuel?.percentage > 0) {
-    subtotal += subtotal * (config.shippingConfig.surcharges.fuel.percentage / 100);
-  }
-  
-  // Apply VAT
-  const vatRate = config.shippingConfig?.calculations?.vatPercentage || 21;
-  const total = subtotal * (1 + vatRate / 100);
-
-  return [{
-    name: config.basicInfo?.name || 'TNT Express',
-    code: 'TNT_STANDARD',
-    total: Math.round(total * 100) / 100,
-    currency: bracket.currency || 'EUR',
-    transitDays,
-    description: `Base €${bracket.price.toFixed(2)}, Ice €${iceCost.toFixed(2)}, Wine €${wineCost.toFixed(2)}, Fuel & VAT included`
-  }];
-}
-
-/**
- * Calculate shipping rates for FedEx using JSON configuration
- */
-export async function calculateFedexRates({ cartItems, destinationZone }) {
-  const config = await loadCourierConfig('FEDEX');
-  if (!config) {
-    throw new Error('FedEx configuration not found');
-  }
-
-  // Get basic calculations
-  const { totalWeight, totalVolume, volumetricWeight, shippingWeight } = calculateBasics(cartItems, config);
-  
-  // Find matching zone
-  const zone = config.zones?.find(z => 
-    z.name === destinationZone || z.code === destinationZone
-  );
-  
-  if (!zone) {
-    throw new Error('Destination zone not supported: ' + destinationZone);
-  }
-
-  // Find price bracket
-  const bracket = config.pricingBrackets?.find(b => 
-    shippingWeight >= b.minWeightKg && shippingWeight <= b.maxWeightKg
-  );
-  
-  if (!bracket) {
-    throw new Error('No pricing bracket found for weight: ' + shippingWeight);
-  }
-
-  // Get zone-specific rate
-  const zoneRate = bracket.zoneRates?.[zone.code] || bracket.zoneRates?.[zone.name.replace(' ', '_')];
-  if (!zoneRate) {
-    throw new Error('No rate found for zone: ' + zone.name);
-  }
-
-  // Calculate additional costs
-  const transitDays = config.shippingConfig?.transitDays || zone.transitDays || 3;
-  const { iceCost, wineCost } = calculateAdditionalCosts(cartItems, config, transitDays);
-  
-  // Build base cost
-  let subtotal = zoneRate + iceCost + wineCost;
-  
-  // Apply fuel surcharge
-  if (config.shippingConfig?.surcharges?.fuel?.percentage > 0) {
-    subtotal += subtotal * (config.shippingConfig.surcharges.fuel.percentage / 100);
-  }
-  
-  // Apply VAT
-  const vatRate = config.shippingConfig?.calculations?.vatPercentage || 22;
-  const baseTotal = subtotal * (1 + vatRate / 100);
-
-  // Generate service options
-  const quotes = [];
-  
-  // Standard service
-  quotes.push({
-    name: `${config.basicInfo?.name || 'FedEx'} Standard`,
-    code: 'FEDEX_STANDARD',
-    total: Math.round(baseTotal * 100) / 100,
-    currency: bracket.currency || 'EUR',
-    transitDays,
-    description: `Zone ${zone.name}, Base €${zoneRate.toFixed(2)}, Ice €${iceCost.toFixed(2)}, Wine €${wineCost.toFixed(2)}, Fuel & VAT included`
-  });
-
-  // Premium services
-  const services = config.services || [];
-  services.forEach(service => {
-    if (service.code !== 'FEDEX_STANDARD' && service.additionalCost > 0) {
-      quotes.push({
-        name: service.name,
-        code: service.code,
-        total: Math.round((baseTotal + service.additionalCost) * 100) / 100,
-        currency: bracket.currency || 'EUR',
-        transitDays: Math.max(1, transitDays - 1), // Premium services are usually faster
-        description: `${service.description} - Additional €${service.additionalCost.toFixed(2)}`
-      });
+    if (!courier) {
+      throw new Error(`Courier ${courierName} not found`);
     }
-  });
 
-  return quotes;
+    const config = courier.config;
+    
+    return {
+      config: {
+        courierType: config.courierType,
+        name: config.basicInfo?.name || courierName,
+        description: config.basicInfo?.description || '',
+        ...config.shippingConfig?.calculations,
+        ...config.shippingConfig?.surcharges,
+        dryIce: config.shippingConfig?.dryIce,
+        ice: config.shippingConfig?.ice,
+        zones: config.zones || [],
+        pricingBrackets: config.pricingBrackets || [],
+        transitDays: config.transitDays || [],
+        services: config.services || []
+      },
+      brackets: config.pricingBrackets || [],
+      zones: config.zones || [],
+      containers: [], // Not used in JSON system
+      timeSlotFees: config.services || []
+    };
+  } catch (error) {
+    console.error(`Error loading config for ${courierName}:`, error);
+    throw error;
+  }
 }
 
-/**
- * Calculate basic shipping metrics
- */
-function calculateBasics(cartItems, config) {
-  const totalWeight = cartItems.reduce((sum, item) => sum + (item.weight * item.quantity), 0);
-  const totalVolume = cartItems.reduce((sum, item) => {
-    const volume = item.dimensions?.volume || 
-      (item.dimensions?.depth * item.dimensions?.width * item.dimensions?.height / 1_000_000);
-    return sum + (volume * item.quantity);
-  }, 0);
+// Calculate shipping rates from JSON configuration
+export function calculate({ cartItems, config }) {
+  const courierType = config.courierType;
   
-  const volumetricDivisor = config.shippingConfig?.calculations?.volumetricDivisor || 5000;
-  const volumetricWeight = (totalVolume * 1_000_000) / volumetricDivisor;
-  const shippingWeight = Math.max(totalWeight, volumetricWeight);
-  
-  return { totalWeight, totalVolume, volumetricWeight, shippingWeight };
+  if (courierType === 'TNT') {
+    return calculateTNTFromJSON({ cartItems, config });
+  } else if (courierType === 'BRT') {
+    return calculateBRTFromJSON({ cartItems, config });
+  } else {
+    throw new Error(`Unknown courier type: ${courierType}`);
+  }
 }
 
-/**
- * Calculate additional costs (ice, wine, etc.)
- */
-function calculateAdditionalCosts(cartItems, config, transitDays) {
-  const weightByCategory = cartItems.reduce((acc, item) => {
-    const category = item.category || 'standard';
-    acc[category] = (acc[category] || 0) + (item.weight * item.quantity);
-    return acc;
-  }, {});
+// TNT calculation from JSON config
+function calculateTNTFromJSON({ cartItems, config }) {
+  try {
+    // Get destination info from first cart item
+    const firstItem = cartItems[0];
+    if (!firstItem) {
+      throw new Error('No cart items provided');
+    }
 
-  // Ice costs
-  const freshIceKg = (weightByCategory.fresh || 0) * 
-    (config.shippingConfig?.ice?.freshPerDay || 0) * transitDays;
-  const frozenIceKg = (weightByCategory.frozen || 0) * 
-    (config.shippingConfig?.ice?.frozenPerDay || 0) * transitDays;
-  const iceCost = (freshIceKg + frozenIceKg) * 
-    (config.shippingConfig?.dryIce?.costPerKg || 0);
+    const { countryCode, city, province, postalCode } = firstItem;
+    
+    // Create destination zone object
+    const destinationZone = {
+      countryCode,
+      city,
+      province,
+      postalCode
+    };
 
-  // Wine costs
-  const wineCost = (weightByCategory.wine || 0) * 
-    (config.shippingConfig?.surcharges?.wine || 0);
+    // Find best transit match
+    const transitEntry = findBestTransitMatch(destinationZone, config.transitDays || []);
+    const transitDays = transitEntry?.days || 3;
 
-  return { iceCost, wineCost };
+    // Calculate total weight
+    const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
+
+    // Find pricing bracket
+    let bracket = config.pricingBrackets?.find(b =>
+      totalWeight >= b.minWeightKg && totalWeight <= b.maxWeightKg
+    );
+
+    // If no exact bracket found, try to find the closest bracket for small weights
+    if (!bracket && config.pricingBrackets?.length > 0) {
+      // For weights smaller than the minimum bracket, use the first bracket
+      const sortedBrackets = config.pricingBrackets.sort((a, b) => a.minWeightKg - b.minWeightKg);
+      if (totalWeight < sortedBrackets[0].minWeightKg) {
+        bracket = sortedBrackets[0];
+        console.log(`⚠️  TNT: Weight ${totalWeight}kg below minimum bracket, using ${sortedBrackets[0].minWeightKg}kg bracket`);
+      } else {
+        // For weights larger than the maximum bracket, use the last bracket  
+        const maxBracket = sortedBrackets[sortedBrackets.length - 1];
+        if (totalWeight > maxBracket.maxWeightKg) {
+          bracket = maxBracket;
+          console.log(`⚠️  TNT: Weight ${totalWeight}kg above maximum bracket, using ${maxBracket.maxWeightKg}kg bracket`);
+        }
+      }
+    }
+
+    if (!bracket) {
+      throw new Error(`No pricing bracket found for weight ${totalWeight}kg`);
+    }
+
+    let subtotal = bracket.price || 0;
+
+    // Apply fuel surcharge
+    if (config.fuel?.percentage > 0) {
+      subtotal += subtotal * (config.fuel.percentage / 100);
+    }
+
+    // Apply VAT
+    const vatRate = config.vatPercentage || 21;
+    const total = subtotal * (1 + vatRate / 100);
+
+    // Return multiple TNT service options for testing
+    const tntServices = [
+      {
+        code: 'TNT_STANDARD',
+        name: 'TNT Standard',
+        description: 'Standard delivery service',
+        additionalCost: 0
+      },
+      {
+        code: 'TNT_EXPRESS',
+        name: 'TNT Express',
+        description: 'Express delivery service',
+        additionalCost: 6.50
+      },
+      {
+        code: 'TNT_ECONOMY',
+        name: 'TNT Economy',
+        description: 'Economy delivery service',
+        additionalCost: -2.50
+      },
+      {
+        code: 'TNT_BEFORE_9',
+        name: 'TNT Before 9:00',
+        description: 'Delivery before 9:00 AM',
+        additionalCost: 12.00
+      }
+    ];
+
+    return tntServices.map(service => ({
+      name: `${config.name} ${service.name} (${transitDays} days)`,
+      code: service.code,
+      total: Math.max(0, total + service.additionalCost),
+      currency: 'EUR',
+      description: `${service.description} - Delivery in ${transitDays} business days`,
+      transitDays
+    }));
+
+  } catch (error) {
+    console.error('TNT calculation error:', error);
+    throw error;
+  }
 }
 
-/**
- * Find best matching transit days entry for destination
- */
-function findBestTransitMatch(destinationZone, transitDaysEntries) {
-  if (!transitDaysEntries || transitDaysEntries.length === 0) {
-    return null;
+// BRT calculation from JSON config (similar to TNT but with different services)
+function calculateBRTFromJSON({ cartItems, config }) {
+  try {
+    // Get destination info from first cart item
+    const firstItem = cartItems[0];
+    if (!firstItem) {
+      throw new Error('No cart items provided');
+    }
+
+    const { countryCode, city, province, postalCode } = firstItem;
+    
+    // Create destination zone object
+    const destinationZone = {
+      countryCode,
+      city,
+      province,
+      postalCode
+    };
+
+    // Find best transit match
+    const transitEntry = findBestTransitMatch(destinationZone, config.transitDays || []);
+    const transitDays = transitEntry?.days || 2; // BRT is typically faster
+
+    // Calculate total weight
+    const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
+
+    // Find pricing bracket
+    let bracket = config.pricingBrackets?.find(b =>
+      totalWeight >= b.minWeightKg && totalWeight <= b.maxWeightKg
+    );
+
+    // If no exact bracket found, try to find the closest bracket
+    if (!bracket && config.pricingBrackets?.length > 0) {
+      const sortedBrackets = config.pricingBrackets.sort((a, b) => a.minWeightKg - b.minWeightKg);
+      if (totalWeight < sortedBrackets[0].minWeightKg) {
+        bracket = sortedBrackets[0];
+        console.log(`⚠️  BRT: Weight ${totalWeight}kg below minimum bracket, using ${sortedBrackets[0].minWeightKg}kg bracket`);
+      } else {
+        const maxBracket = sortedBrackets[sortedBrackets.length - 1];
+        if (totalWeight > maxBracket.maxWeightKg) {
+          bracket = maxBracket;
+          console.log(`⚠️  BRT: Weight ${totalWeight}kg above maximum bracket, using ${maxBracket.maxWeightKg}kg bracket`);
+        }
+      }
+    }
+
+    if (!bracket) {
+      throw new Error(`No pricing bracket found for weight ${totalWeight}kg`);
+    }
+
+    let subtotal = bracket.price || 0;
+
+    // Apply fuel surcharge
+    if (config.fuel?.percentage > 0) {
+      subtotal += subtotal * (config.fuel.percentage / 100);
+    }
+
+    // Apply VAT
+    const vatRate = config.vatPercentage || 22; // BRT uses higher VAT
+    const total = subtotal * (1 + vatRate / 100);
+
+    // Return multiple BRT service options
+    const brtServices = [
+      {
+        code: 'BRT_STANDARD',
+        name: 'BRT Standard',
+        description: 'Standard delivery service',
+        additionalCost: 0
+      },
+      {
+        code: 'BRT_EXPRESS',
+        name: 'BRT Express',
+        description: 'Express delivery service',
+        additionalCost: 5.00
+      },
+      {
+        code: 'BRT_NEXT_DAY',
+        name: 'BRT Next Day',
+        description: 'Next day delivery service',
+        additionalCost: 15.00
+      }
+    ];
+
+    return brtServices.map(service => ({
+      name: `${config.name} ${service.name} (${transitDays} days)`,
+      code: service.code,
+      total: Math.max(0, total + service.additionalCost),
+      currency: 'EUR',
+      description: `${service.description} - Delivery in ${transitDays} business days`,
+      transitDays
+    }));
+
+  } catch (error) {
+    console.error('BRT calculation error:', error);
+    throw error;
+  }
+}
+
+// Helper function to find best transit match
+function findBestTransitMatch(destinationZone, transitDays) {
+  if (!transitDays || transitDays.length === 0) {
+    return { days: 3 }; // Default
   }
 
-  // Priority order: ZIP > CITY > PROVINCE > REGION > COUNTRY
-  const priorityOrder = ['ZIP', 'CITY', 'PROVINCE', 'REGION', 'COUNTRY'];
+  // Try to match in order of specificity: ZIP > CITY > PROVINCE > REGION > COUNTRY
+  const priorities = ['ZIP', 'CITY', 'PROVINCE', 'REGION', 'COUNTRY'];
   
-  for (const priority of priorityOrder) {
-    const match = transitDaysEntries.find(entry => 
-      entry.zoneType === priority && 
-      entry.name.toLowerCase().includes(destinationZone.toLowerCase())
-    );
+  for (const priority of priorities) {
+    const match = transitDays.find(td => {
+      if (td.zoneType !== priority) return false;
+      
+      switch (priority) {
+        case 'ZIP':
+          return td.name === destinationZone.postalCode;
+        case 'CITY':
+          return td.name.toLowerCase() === destinationZone.city?.toLowerCase();
+        case 'PROVINCE':
+          return td.name.toLowerCase() === destinationZone.province?.toLowerCase();
+        case 'COUNTRY':
+          return td.name.toLowerCase() === destinationZone.countryCode?.toLowerCase();
+        default:
+          return false;
+      }
+    });
+    
     if (match) return match;
   }
   
-  // Fallback to first country-level entry
-  return transitDaysEntries.find(entry => entry.zoneType === 'COUNTRY') || transitDaysEntries[0];
+  // Return first available or default
+  return transitDays[0] || { days: 3 };
 }
 
-/**
- * Generic calculate function that routes to appropriate courier
- */
-export async function calculateJsonBasedRates(courierCode, params) {
-  switch (courierCode.toUpperCase()) {
-    case 'TNT':
-      return await calculateTntRates(params);
-    case 'FEDEX':
-      return await calculateFedexRates(params);
-    default:
-      throw new Error(`Courier ${courierCode} not supported`);
-  }
-}
-
-/**
- * Get all active couriers with their basic info
- */
-export async function getActiveCouriers() {
-  const couriers = await prisma.courier.findMany({
-    where: { isActive: true },
-    select: {
-      id: true,
-      code: true,
-      config: true,
-      updatedAt: true
-    }
-  });
-
-  return couriers.map(courier => ({
-    id: courier.id,
-    code: courier.code,
-    name: courier.config?.basicInfo?.name || courier.code,
-    description: courier.config?.basicInfo?.description || '',
-    displayOrder: courier.config?.ui?.displayOrder || 999,
-    color: courier.config?.ui?.color || '#666666',
-    lastUpdated: courier.updatedAt
-  })).sort((a, b) => a.displayOrder - b.displayOrder);
-} 
+export default {
+  loadConfigAndRates,
+  calculate
+}; 

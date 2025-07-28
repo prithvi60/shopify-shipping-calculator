@@ -76,7 +76,11 @@ export const loader = async () => {
         name: config.basicInfo?.name || defaultTntConfig.basicInfo.name,
         description: config.basicInfo?.description || defaultTntConfig.basicInfo.description,
         ...flattenShippingConfig(config.shippingConfig || defaultTntConfig.shippingConfig),
-        transitDaysEntries: config.transitDays || []
+        transitDaysEntries: (config.transitDays || []).map(entry => ({
+          zoneType: entry.zoneType,
+          name: entry.name,
+          days: String(entry.days || ''),
+        }))
       },
       rates: formatRatesForUI(config.pricingBrackets || [])
     };
@@ -129,11 +133,14 @@ export const action = async ({ request }) => {
           vatPercentage: parseFloat(updateData.vatPct) || 21
         }
       },
-      transitDays: updateData.transitDaysEntries?.map(entry => ({
-        zoneType: entry.zoneType,
-        name: entry.name,
-        days: parseInt(entry.day, 10) || 0,
-      })) || [],
+      transitDays: updateData.transitDaysEntries?.map(entry => {
+        const days = parseInt(entry.days, 10) || 0;
+        return {
+          zoneType: entry.zoneType,
+          name: entry.name,
+          days: days,
+        };
+      }) || [],
       pricingBrackets: updateData.rates ? formatRatesFromUI(updateData.rates) : []
     };
 
