@@ -139,6 +139,8 @@ export const action = async ({ request }) => {
         // Load config and rates using the unified function
         const { config, isActive } = await loadConfigAndRates();
 
+        console.log('🚚 Config:', config);
+
         // Skip inactive couriers
         if (isActive === false) {
           console.log(`⏭️ ${courierName}: Courier is inactive, skipping`);
@@ -182,9 +184,7 @@ export const action = async ({ request }) => {
       }
     }
 
-    // 🧪 Add additional test rates for comprehensive testing
-    const testRates = generateTestRates(cartItems);
-    allRates.push(...testRates);
+    console.log("allRates (full data):", JSON.stringify(allRates, null, 2));
 
     console.log(`📊 Total rates generated: ${allRates.length}`);
 
@@ -202,46 +202,4 @@ export const action = async ({ request }) => {
   }
 };
 
-// Generate additional test rates for testing purposes
-function generateTestRates(cartItems) {
-  const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
-  const basePrice = Math.max(15, totalWeight * 8); // Base calculation
-  
-  return [
-    {
-      service_name: "Economy Express (Test)",
-      service_code: "TEST_ECONOMY",
-      total_price: Math.round(basePrice * 0.8 * 100), // 20% cheaper
-      currency: "EUR",
-      description: "Test economy service - 5-7 business days"
-    },
-    {
-      service_name: "Standard Express (Test)",
-      service_code: "TEST_STANDARD", 
-      total_price: Math.round(basePrice * 100),
-      currency: "EUR",
-      description: "Test standard service - 3-5 business days"
-    },
-    {
-      service_name: "Priority Express (Test)",
-      service_code: "TEST_PRIORITY",
-      total_price: Math.round(basePrice * 1.5 * 100), // 50% more expensive
-      currency: "EUR",
-      description: "Test priority service - 1-2 business days"
-    },
-    {
-      service_name: "Overnight Express (Test)",
-      service_code: "TEST_OVERNIGHT",
-      total_price: Math.round(basePrice * 2.2 * 100), // 120% more expensive
-      currency: "EUR",
-      description: "Test overnight service - Next business day"
-    },
-    {
-      service_name: "Weekend Delivery (Test)",
-      service_code: "TEST_WEEKEND",
-      total_price: Math.round(basePrice * 1.8 * 100), // 80% more expensive
-      currency: "EUR",
-      description: "Test weekend delivery - Saturday delivery available"
-    }
-  ];
-}
+

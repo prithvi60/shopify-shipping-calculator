@@ -2,6 +2,175 @@
 import { json } from '@remix-run/node';
 import prisma from '../db.server';
 
+// Get default FedEx configuration from the updated config file
+const getDefaultFedexConfig = () => ({
+  courierType: "FEDEX",
+  version: "2.0",
+  basicInfo: {
+    name: "FedEx Express",
+    description: "FedEx Express international shipping",
+    isActive: true,
+    supportedRegions: ["EU", "WORLDWIDE"]
+  },
+  shippingConfig: {
+    dryIce: {
+      costPerKg: 12.0,
+      volumePerKg: 2.0
+    },
+    ice: {
+      freshPerDay: 1.0,
+      frozenPerDay: 2.0
+    },
+    surcharges: {
+      wine: 3.5,
+      fuel: {
+        percentage: 15.0
+      }
+    },
+    calculations: {
+      volumetricDivisor: 5000,
+      vatPercentage: 22.0
+    },
+    transitDays: 3
+  },
+  services: [
+    {
+      code: "IPE_INT",
+      name: "INT Priority Express",
+      description: "International Priority Express",
+      isActive: true,
+      zoneSet: "INTERNATIONAL",
+      transitDays: 1,
+      pricingStructure: {
+        fixedRates: [
+          {
+            weight: 0.5,
+            zoneRates: {
+              "ZONA_A": 23.05,
+              "ZONA_B": 31.1,
+              "ZONA_C": 26.72,
+              "ZONA_D": 33.03,
+              "ZONA_E": 37.61,
+              "ZONA_F": 28.79,
+              "ZONA_G": 34.95,
+              "ZONA_H": 21.95,
+              "ZONA_I": 31.1
+            }
+          }
+        ],
+        progressiveRates: [],
+        bulkRates: [],
+      }
+    }
+  ],
+  zoneSets: {
+    INTERNATIONAL: {
+      zones: [
+        {
+          code: "ZONA_A",
+          name: "ZONA A",
+          description: "North America",
+          countries: ["CA", "US"]
+        },
+        {
+          code: "ZONA_B", 
+          name: "ZONA B",
+          description: "Asia Pacific",
+          countries: ["KH", "KR", "PH", "ID", "LA", "MO", "MY", "TH", "TW", "VN", "TL"]
+        },
+        {
+          code: "ZONA_C",
+          name: "ZONA C", 
+          description: "Middle East & Africa",
+          countries: ["DZ", "SA", "AM", "AZ", "BH", "BD", "BT", "EG", "AE", "GE", "IL", "JO", "KW", "LB", "LY", "MA", "NP", "OM", "PK", "QA", "TN"]
+        },
+        {
+          code: "ZONA_D",
+          name: "ZONA D",
+          description: "Americas",
+          countries: ["AI", "AG", "AW", "BS", "BB", "BZ", "BQ", "BR", "CL", "CO", "CR", "CW", "DM", "EC", "SV", "JM", "GD", "GP", "GT", "GY", "GF", "HT", "HN", "KY", "TC", "VI", "VG", "MQ", "MX", "MS", "NI", "PA", "PY", "PE", "PR", "DO", "KN", "LC", "SX", "MF", "VC", "ZA", "SR", "TT", "UY", "VE"]
+        },
+        {
+          code: "ZONA_E",
+          name: "ZONA E",
+          description: "Africa",
+          countries: ["AO", "BJ", "BW", "BF", "BI", "CV", "TD", "CG", "CI", "ER", "ET", "GA", "GM", "DJ", "GH", "GN", "GY", "IQ", "RE", "FJ", "KE", "LS", "LR", "MG", "MW", "MV", "ML", "MR", "MU", "MZ", "NA", "NE", "NG", "NC", "PG", "PF", "CD", "RW", "MP", "WS", "SN", "SC", "SZ", "TZ", "TG", "TO", "UG", "ZM", "ZW"]
+        },
+        {
+          code: "ZONA_F",
+          name: "ZONA F",
+          description: "Asia Pacific",
+          countries: ["CN", "HK"]
+        },
+        {
+          code: "ZONA_G",
+          name: "ZONA G",
+          description: "Oceania",
+          countries: ["AU", "NZ"]
+        },
+        {
+          code: "ZONA_H",
+          name: "ZONA H",
+          description: "United States",
+          countries: ["US"]
+        },
+        {
+          code: "ZONA_I",
+          name: "ZONA I",
+          description: "Asia Pacific",
+          countries: ["JP", "SG"]
+        }
+      ]
+    },
+    EU: {
+      zones: [
+        {
+          code: "ZONA_R",
+          name: "ZONA R",
+          description: "Western Europe",
+          countries: ["AT", "FR", "DE", "MC", "SI", "NL", "IT"]
+        },
+        {
+          code: "ZONA_S",
+          name: "ZONA S",
+          description: "Western Europe",
+          countries: ["BE", "LU", "PT", "ES"]
+        },
+        {
+          code: "ZONA_T",
+          name: "ZONA T",
+          description: "Eastern Europe",
+          countries: ["BG", "PL", "CZ", "SK", "RO", "HU"]
+        },
+        {
+          code: "ZONA_U",
+          name: "ZONA U",
+          description: "Northern Europe",
+          countries: ["HR", "DK", "EE", "FI", "GR", "IE", "LV", "LT", "SE", "NO", "IS"]
+        },
+        {
+          code: "ZONA_V",
+          name: "ZONA V",
+          description: "Eastern Europe & Balkans",
+          countries: ["AL", "BY", "BA", "CY", "GI", "MK", "MT", "MD", "ME", "RS"]
+        },
+        {
+          code: "ZONA_W",
+          name: "ZONA W",
+          description: "Central Europe",
+          countries: ["LI", "CH"]
+        },
+        {
+          code: "ZONA_X",
+          name: "ZONA X",
+          description: "United Kingdom",
+          countries: ["GB"]
+        }
+      ]
+    }
+  }
+});
+
 export const loader = async () => {
   try {
     // Find FedEx courier with JSON config
@@ -9,19 +178,7 @@ export const loader = async () => {
       where: { name: 'FEDEX' }
     });
 
-    if (!courier || !courier.config) {
-      // Return empty configuration if no courier exists
-      return json({
-        config: {
-          name: "FedEx Express",
-          description: "FedEx Express international shipping"
-        },
-        services: [],
-        zoneSets: {}
-      });
-    }
-
-    const config = courier.config;
+    const config = courier?.config || getDefaultFedexConfig();
     
     // Transform JSON config to format expected by UI
     const response = {
@@ -90,8 +247,8 @@ export const action = async ({ request }) => {
         },
         transitDays: parseInt(updateData.transitDays) || 3
       },
-      services: services.length > 0 ? services : [],
-      zoneSets: updateData.zoneSets || {}
+      services: services.length > 0 ? services : getDefaultFedexConfig().services,
+      zoneSets: updateData.zoneSets || getDefaultFedexConfig().zoneSets
     };
 
     // Upsert courier with JSON config
@@ -134,17 +291,19 @@ function calculateServiceRate(service, weight, targetZone) {
   const { pricingStructure } = service;
   if (!pricingStructure) return 0;
 
-  // 1. Check for fixed rates - find the rate where minWeight <= weight <= maxWeight
+  const tolerance = 0.001;
+  const roundedWeight = Math.round(weight * 10) / 10;
+
+  // 1. Check for fixed rates
   if (pricingStructure.fixedRates) {
     for (const rate of pricingStructure.fixedRates) {
-      // Check if weight falls within the range
-      if (weight >= rate.minWeight && weight <= rate.maxWeight) {
+      if (Math.abs(rate.weight - roundedWeight) < tolerance) {
         return rate.zoneRates[targetZone] || 0;
       }
     }
   }
 
-  // 2. Check for progressive rates - find the rate where minWeight < weight <= maxWeight
+  // 2. Check for progressive rates
   if (pricingStructure.progressiveRates) {
     for (const rate of pricingStructure.progressiveRates) {
       if (weight > rate.minWeight && weight <= rate.maxWeight) {
@@ -160,7 +319,7 @@ function calculateServiceRate(service, weight, targetZone) {
     }
   }
   
-  // 3. Check for bulk rates (per kg multiplied) - find the rate where minWeight <= weight <= maxWeight
+  // 3. Check for bulk rates (per kg multiplied)
   if (pricingStructure.bulkRates) {
     for (const rate of pricingStructure.bulkRates) {
       if (weight >= rate.minWeight && weight <= rate.maxWeight) {
@@ -172,6 +331,7 @@ function calculateServiceRate(service, weight, targetZone) {
 
   return 0; // Return 0 if no matching rate is found
 }
+
 
 // Calculate shipping rate for given weight and destination
 export function calculateFedexRate(config, weight, countryCode, serviceCode = null) {
@@ -199,23 +359,10 @@ export function calculateFedexRate(config, weight, countryCode, serviceCode = nu
       throw new Error(`No zone found for country: ${countryCode}`);
     }
 
-    // Zone set mapping to handle zone set names
-    const zoneSetMapping = {
-      'INT': 'INTERNATIONAL',  // For INT PRIORITY EXPRESS
-      'EU': 'EU',             // For EU PRIORITY EXPRESS, EU INTERNATIONAL PRIORITY, REGIONAL ECONOMY
-      'IP': 'EU',             // Legacy mapping for backward compatibility
-      'IE': 'INTERNATIONAL',  // Legacy mapping for backward compatibility
-      'RE': 'EU'              // Legacy mapping for backward compatibility
-    };
-
     // Filter services by zone set and service code (if specified)
     const availableServices = config.services.filter(service => {
       if (!service.isActive) return false;
-      
-      // Map legacy zone set names to actual zone sets
-      const mappedZoneSet = zoneSetMapping[service.zoneSet] || service.zoneSet;
-      if (mappedZoneSet !== targetZoneSet) return false;
-      
+      if (service.zoneSet !== targetZoneSet) return false;
       if (serviceCode && service.code !== serviceCode) return false;
       return true;
     });
@@ -229,14 +376,13 @@ export function calculateFedexRate(config, weight, countryCode, serviceCode = nu
     for (const service of availableServices) {
       const rate = calculateServiceRate(service, weight, targetZone);
       if (rate > 0) {
-        const transitDays = service.transitDays || 3; // Default to 3 days if not specified
         quotes.push({
           code: service.code,
-          name: `FedEx ${service.name} (${transitDays} days)`,
+          name: service.name,
           description: service.description,
           total: rate,
           currency: 'EUR',
-          transitDays: transitDays
+          transitDays: service.transitDays
         });
       }
     }

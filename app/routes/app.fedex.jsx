@@ -101,38 +101,14 @@ export default function FedexRateEditor() {
     // Set services and zone sets
     setServices(svc);
     
-    // Create default zone sets if none exist
-    const defaultZoneSets = {
-      INTERNATIONAL: {
-        zones: [
-          { code: "ZONA_A", name: "ZONA A", description: "North America", countries: ["CA", "US"] },
-          { code: "ZONA_B", name: "ZONA B", description: "Asia Pacific", countries: ["KH", "KR", "PH", "ID", "LA", "MO", "MY", "TH", "TW", "VN", "TL"] },
-          { code: "ZONA_C", name: "ZONA C", description: "Middle East & Africa", countries: ["DZ", "SA", "AM", "AZ", "BH", "BD", "BT", "EG", "AE", "GE", "IL", "JO", "KW", "LB", "LY", "MA", "NP", "OM", "PK", "QA", "TN"] },
-          { code: "ZONA_D", name: "ZONA D", description: "Americas", countries: ["AI", "AG", "AW", "BS", "BB", "BZ", "BQ", "BR", "CL", "CO", "CR", "CW", "DM", "EC", "SV", "JM", "GD", "GP", "GT", "GY", "GF", "HT", "HN", "KY", "TC", "VI", "VG", "MQ", "MX", "MS", "NI", "PA", "PY", "PE", "PR", "DO", "KN", "LC", "SX", "MF", "VC", "ZA", "SR", "TT", "UY", "VE"] },
-          { code: "ZONA_E", name: "ZONA E", description: "Africa", countries: ["AO", "BJ", "BW", "BF", "BI", "CV", "TD", "CG", "CI", "ER", "ET", "GA", "GM", "DJ", "GH", "GN", "GY", "IQ", "RE", "FJ", "KE", "LS", "LR", "MG", "MW", "MV", "ML", "MR", "MU", "MZ", "NA", "NE", "NG", "NC", "PG", "PF", "CD", "RW", "MP", "WS", "SN", "SC", "SZ", "TZ", "TG", "TO", "UG", "ZM", "ZW"] },
-          { code: "ZONA_F", name: "ZONA F", description: "Asia Pacific", countries: ["CN", "HK"] },
-          { code: "ZONA_G", name: "ZONA G", description: "Oceania", countries: ["AU", "NZ"] },
-          { code: "ZONA_H", name: "ZONA H", description: "United States", countries: ["US"] },
-          { code: "ZONA_I", name: "ZONA I", description: "Asia Pacific", countries: ["JP", "SG"] }
-        ]
-      },
-      EU: {
-        zones: [
-          { code: "ZONA_R", name: "ZONA R", description: "Western Europe", countries: ["AT", "FR", "DE", "MC", "SI"] },
-          { code: "ZONA_S", name: "ZONA S", description: "Western Europe", countries: ["BE", "LU", "PT", "ES"] },
-          { code: "ZONA_T", name: "ZONA T", description: "Eastern Europe", countries: ["BG", "PL", "CZ", "SK", "RO", "HU"] },
-          { code: "ZONA_U", name: "ZONA U", description: "Northern Europe", countries: ["HR", "DK", "EE", "FI", "GR", "IE", "LV", "LT", "SE"] },
-          { code: "ZONA_V", name: "ZONA V", description: "Eastern Europe & Balkans", countries: ["AL", "BY", "BA", "CY", "GI", "IS", "MK", "MT", "MD", "ME", "NO", "RS"] },
-          { code: "ZONA_W", name: "ZONA W", description: "Central Europe", countries: ["LI", "CH"] },
-          { code: "ZONA_X", name: "ZONA X", description: "United Kingdom", countries: ["GB"] }
-        ]
-      }
-    };
-    
-    // Use loaded zone sets if they exist, otherwise use defaults
-    const finalZoneSets = Object.keys(zs).length > 0 ? zs : defaultZoneSets;
-    console.log('Setting zone sets:', finalZoneSets);
-    setZoneSets(finalZoneSets);
+    // Only use loaded zone sets if they exist
+    if (Object.keys(zs).length > 0) {
+      console.log('Setting zone sets from loaded data:', zs);
+      setZoneSets(zs);
+    } else {
+      console.log('No zone sets found in loaded data');
+      setZoneSets({});
+    }
     
     // Select first service by default
     if (svc.length > 0 && !selectedService) {
@@ -162,7 +138,6 @@ export default function FedexRateEditor() {
       try {
         const wb = XLSX.read(evt.target.result, { type: 'array' });
         
-        // Process multiple sheets for different services
         const newServices = [];
         
         wb.SheetNames.forEach(sheetName => {
@@ -171,99 +146,125 @@ export default function FedexRateEditor() {
           
           if (data.length === 0) return;
           
-          console.log(`Sheet: ${sheetName}`);
-          console.log('First 3 rows of data:', data.slice(0, 3));
-          console.log('Available columns:', Object.keys(data[0] || {}));
+          console.log('Processing sheet:', sheetName);
+          console.log('Sample row:', data[0]);
           
-          // Determine service type based on sheet name
+          const headerMap = Object.keys(data[0] || {}).reduce((map, h) => {
+            map[h.trim().toLowerCase()] = h;
+            return map;
+          }, {});
+          
+          console.log('Header map:', headerMap);
+          
+          const calcTypeHdr = headerMap['calculation type'] || 'Calculation Type';
+          const weightMinHdr = headerMap['weight min'] || 'Weight Min';
+          const weightMaxHdr = headerMap['weight max'] || 'Weight Max';
+          const unitHdr = headerMap['unit'] || 'Unit';
+
           let serviceCode, serviceName, zoneSet;
-          if (sheetName.includes('INT PRIORITY EXPRESS') || sheetName.includes('IPE')) {
-            serviceCode = 'IPE_INT';
-            serviceName = 'INT Priority Express';
-            zoneSet = 'INTERNATIONAL';
-          } else if (sheetName.includes('EU PRIORITY EXPRESS')) {
-            serviceCode = 'IPE_EU';
-            serviceName = 'EU Priority Express';
-            zoneSet = 'EU';
-          } else if (sheetName.includes('EU INTERNATIONAL PRIORITY')) {
-            serviceCode = 'IP_EU';
-            serviceName = 'EU International Priority';
-            zoneSet = 'EU';
-          } else if (sheetName.includes('INTERNATIONAL ECONOMY')) {
-            serviceCode = 'IE_INT';
-            serviceName = 'International Economy';
-            zoneSet = 'INTERNATIONAL';
-          } else if (sheetName.includes('REGIONAL ECONOMY')) {
-            serviceCode = 'RE_EU';
-            serviceName = 'Regional Economy';
-            zoneSet = 'EU';
+          const sheetNameMatch = sheetName.match(/(.+) \((.+)\)/);
+          if (sheetNameMatch) {
+            serviceName = sheetNameMatch[1].trim();
+            serviceCode = serviceName.replace(/ /g, '_').toUpperCase();
+            zoneSet = sheetNameMatch[2].trim().toUpperCase();
           } else {
-            return; // Skip unknown sheets
+            serviceName = sheetName;
+            serviceCode = sheetName.replace(/ /g, '_').toUpperCase();
+            zoneSet = 'INTERNATIONAL'; // Default for FedEx
           }
 
-          // Parse pricing brackets from sheet data
-          const brackets = data
-            .filter(row => {
-              // Get weight value from various possible column names
-              const weightValue = row['WEIGHT'] || row['PESO (KG)'] || row['PESO'] || row['Weight'] || row['Peso'];
-              if (!weightValue) return false;
-              
-              const weight = String(weightValue).trim();
-              // Match pure numbers (including decimals) and exclude text like "addizionali", "Tariffa al kg", etc.
-              return /^\d+([.,]\d+)?$/.test(weight) && !weight.includes('kg') && !weight.includes('Tariffa');
-            })
-            .map(row => {
-              // Get weight value from various possible column names
-              const weightValue = row['WEIGHT'] || row['PESO (KG)'] || row['PESO'] || row['Weight'] || row['Peso'];
-              const weight = parseFloat(String(weightValue || '0').replace(',', '.'));
-              const zoneRates = {};
-              
-              // Extract zone rates - check all columns for zone patterns
-              console.log(`Processing row for ${serviceName}, available columns:`, Object.keys(row));
-              
-              Object.keys(row).forEach(col => {
-                const cleanCol = col.trim();
-                
-                // Match zone patterns for both international and EU zones
-                // Support both "ZONA A" format and single letter format
-                const isInternationalZone = /^(\*\*)?ZONA [A-I](\*\*)?$/i.test(cleanCol) || /^[A-I]$/i.test(cleanCol);
-                const isEUZone = /^(\*\*)?ZONA [R-X](\*\*)?$/i.test(cleanCol) || /^[R-X]$/i.test(cleanCol);
-                
-                // Only include zones that match the service's zone set
-                const shouldInclude = (zoneSet === 'INTERNATIONAL' && isInternationalZone) ||
-                                     (zoneSet === 'EU' && isEUZone);
-                
-                if (shouldInclude) {
-                  const rate = parseFloat(String(row[col] || '0').replace(',', '.'));
-                  if (!isNaN(rate) && rate > 0) {
-                    // Clean up column name to match our zone codes
-                    let zoneCode;
-                    if (cleanCol.includes('ZONA')) {
-                      zoneCode = cleanCol.replace(/\*\*/g, '').replace(' ', '_').toUpperCase();
-                    } else {
-                      // Single letter zone - convert to ZONA_X format
-                      zoneCode = `ZONA_${cleanCol.toUpperCase()}`;
-                    }
-                    console.log(`Found zone rate: ${zoneCode} = ${rate} (from column: ${col})`);
-                    zoneRates[zoneCode] = rate;
-                  }
-                }
-              });
-              
-              return {
-                minWeight: weight,
-                maxWeight: weight,
-                zoneRates
-              };
-            })
-            .filter(bracket => Object.keys(bracket.zoneRates).length > 0); // Only include brackets with valid rates
+          // Zone set mapping to handle zone set names
+          const zoneSetMapping = {
+            'INT': 'INTERNATIONAL',  // For INT PRIORITY EXPRESS
+            'EU': 'EU',             // For EU PRIORITY EXPRESS, EU INTERNATIONAL PRIORITY, REGIONAL ECONOMY
+            'IP': 'EU',             // Legacy mapping for backward compatibility
+            'IE': 'INTERNATIONAL',  // Legacy mapping for backward compatibility
+            'RE': 'EU'              // Legacy mapping for backward compatibility
+          };
 
-          if (brackets.length > 0) {
-            // Validate that brackets have zone rates
-            const validBrackets = brackets.filter(b => Object.keys(b.zoneRates).length > 0);
+          // Map the zone set to the correct name
+          zoneSet = zoneSetMapping[zoneSet] || zoneSet;
+
+          console.log('Service info:', { serviceCode, serviceName, zoneSet });
+
+          const fixedRates = [];
+          const progressiveRates = [];
+          const bulkRates = [];
+          const tempFixedRatesByWeight = {};
+
+          data.forEach((row, index) => {
+            const calculationType = row[calcTypeHdr]?.trim().toUpperCase();
+            const minWeightStr = String(row[weightMinHdr] || '0').trim();
+            const maxWeightStr = String(row[weightMaxHdr] || '0').trim();
+            const zoneRates = {};
+
+            // Extract zone rates from all columns that start with ZONA
+            Object.keys(row).forEach(col => {
+                const cleanCol = col.trim().toUpperCase().replace(/ /g, '_');
+                if (cleanCol.startsWith('ZONA_')) {
+                    const rate = parseFloat(String(row[col] || '0').replace(',', '.'));
+                    if (!isNaN(rate) && rate > 0) {
+                        zoneRates[cleanCol] = rate;
+                    }
+                }
+            });
+
+            console.log(`Row ${index}:`, { calculationType, minWeightStr, maxWeightStr, zoneRates });
+
+            if (Object.keys(zoneRates).length === 0) {
+              console.log(`Row ${index}: No zone rates found, skipping`);
+              return;
+            }
+
+            if (calculationType === 'FIXED') {
+                const minWeight = parseFloat(minWeightStr.replace(',', '.'));
+                const maxWeight = parseFloat(maxWeightStr.replace(',', '.'));
+                if (!isNaN(minWeight) && !isNaN(maxWeight)) {
+                  // For FIXED rates, store min and max weight for range calculation
+                  const rateData = { 
+                    minWeight, 
+                    maxWeight, 
+                    zoneRates 
+                  };
+                  fixedRates.push(rateData);
+                  tempFixedRatesByWeight[minWeight] = zoneRates;
+                  console.log(`Added fixed rate for weight range ${minWeight}-${maxWeight}:`, rateData);
+                }
+            } else if (calculationType === 'PROGRESSIVE') {
+                const minWeight = parseFloat(minWeightStr.replace(',', '.'));
+                const maxWeight = parseFloat(maxWeightStr.replace(',', '.'));
+                const unitStr = String(row[unitHdr] || '0');
+                const unit = parseFloat(unitStr.replace(/[^\d.,]/g, '').replace(',', '.'));
+                
+                if (!isNaN(minWeight) && !isNaN(maxWeight)) {
+                  progressiveRates.push({
+                      minWeight,
+                      maxWeight,
+                      unit,
+                      baseWeight: minWeight,
+                      baseRates: tempFixedRatesByWeight[minWeight] || {},
+                      additionalRates: zoneRates,
+                  });
+                  console.log(`Added progressive rate for range ${minWeight}-${maxWeight}:`, zoneRates);
+                }
+            } else if (calculationType === 'MULTIPLIED') {
+                const minWeight = parseFloat(minWeightStr.replace(',', '.'));
+                const maxWeight = parseFloat(maxWeightStr.replace(',', '.'));
+                
+                if (!isNaN(minWeight) && !isNaN(maxWeight)) {
+                  bulkRates.push({
+                      minWeight,
+                      maxWeight: maxWeight || 99999,
+                      perKgRates: zoneRates,
+                  });
+                  console.log(`Added bulk rate for range ${minWeight}-${maxWeight}:`, zoneRates);
+                }
+            }
+          });
             
-            if (validBrackets.length > 0) {
-              console.log(`${serviceName}: Found ${validBrackets.length} valid pricing brackets`);
+          console.log('Parsed rates:', { fixedRates: fixedRates.length, progressiveRates: progressiveRates.length, bulkRates: bulkRates.length });
+            
+          if (fixedRates.length > 0 || progressiveRates.length > 0 || bulkRates.length > 0) {
               newServices.push({
                 code: serviceCode,
                 name: serviceName,
@@ -272,63 +273,29 @@ export default function FedexRateEditor() {
                 zoneSet,
                 transitDays: serviceCode.includes('EXPRESS') ? 1 : serviceCode.includes('PRIORITY') ? 2 : 5,
                 pricingStructure: {
-                  brackets: validBrackets
+                  fixedRates,
+                  progressiveRates,
+                  bulkRates
                 }
               });
-            } else {
-              console.warn(`${serviceName}: No valid pricing brackets found (no zone rates)`);
+              console.log('Added service:', serviceCode);
             }
-          } else {
-            console.warn(`${serviceName}: No pricing brackets found in sheet data`);
-          }
         });
 
+        console.log('Total services parsed:', newServices.length);
+        console.log('Sample service:', newServices[0]);
+
+        // Ensure Italy is included in EU zones
+        ensureItalyInEUZones(newServices);
+
+        // Validate the imported data
+        validateImportedData(newServices);
+
         if (newServices.length > 0) {
-          console.log('Parsed services from Excel:', newServices);
-          
-          // Create zone sets based on the imported services
-          const newZoneSets = {};
-          newServices.forEach(service => {
-            if (service.zoneSet && !newZoneSets[service.zoneSet]) {
-              // Create zone set based on the service type
-              if (service.zoneSet === 'INTERNATIONAL') {
-                newZoneSets[service.zoneSet] = {
-                  zones: [
-                    { code: "ZONA_A", name: "ZONA A", description: "North America", countries: ["CA", "US"] },
-                    { code: "ZONA_B", name: "ZONA B", description: "Asia Pacific", countries: ["KH", "KR", "PH", "ID", "LA", "MO", "MY", "TH", "TW", "VN", "TL"] },
-                    { code: "ZONA_C", name: "ZONA C", description: "Middle East & Africa", countries: ["DZ", "SA", "AM", "AZ", "BH", "BD", "BT", "EG", "AE", "GE", "IL", "JO", "KW", "LB", "LY", "MA", "NP", "OM", "PK", "QA", "TN"] },
-                    { code: "ZONA_D", name: "ZONA D", description: "Americas", countries: ["AI", "AG", "AW", "BS", "BB", "BZ", "BQ", "BR", "CL", "CO", "CR", "CW", "DM", "EC", "SV", "JM", "GD", "GP", "GT", "GY", "GF", "HT", "HN", "KY", "TC", "VI", "VG", "MQ", "MX", "MS", "NI", "PA", "PY", "PE", "PR", "DO", "KN", "LC", "SX", "MF", "VC", "ZA", "SR", "TT", "UY", "VE"] },
-                    { code: "ZONA_E", name: "ZONA E", description: "Africa", countries: ["AO", "BJ", "BW", "BF", "BI", "CV", "TD", "CG", "CI", "ER", "ET", "GA", "GM", "DJ", "GH", "GN", "GY", "IQ", "RE", "FJ", "KE", "LS", "LR", "MG", "MW", "MV", "ML", "MR", "MU", "MZ", "NA", "NE", "NG", "NC", "PG", "PF", "CD", "RW", "MP", "WS", "SN", "SC", "SZ", "TZ", "TG", "TO", "UG", "ZM", "ZW"] },
-                    { code: "ZONA_F", name: "ZONA F", description: "Asia Pacific", countries: ["CN", "HK"] },
-                    { code: "ZONA_G", name: "ZONA G", description: "Oceania", countries: ["AU", "NZ"] },
-                    { code: "ZONA_H", name: "ZONA H", description: "United States", countries: ["US"] },
-                    { code: "ZONA_I", name: "ZONA I", description: "Asia Pacific", countries: ["JP", "SG"] }
-                  ]
-                };
-              } else if (service.zoneSet === 'EU') {
-                newZoneSets[service.zoneSet] = {
-                  zones: [
-                    { code: "ZONA_R", name: "ZONA R", description: "Western Europe", countries: ["AT", "FR", "DE", "MC", "SI"] },
-                    { code: "ZONA_S", name: "ZONA S", description: "Western Europe", countries: ["BE", "LU", "PT", "ES"] },
-                    { code: "ZONA_T", name: "ZONA T", description: "Eastern Europe", countries: ["BG", "PL", "CZ", "SK", "RO", "HU"] },
-                    { code: "ZONA_U", name: "ZONA U", description: "Northern Europe", countries: ["HR", "DK", "EE", "FI", "GR", "IE", "LV", "LT", "SE"] },
-                    { code: "ZONA_V", name: "ZONA V", description: "Eastern Europe & Balkans", countries: ["AL", "BY", "BA", "CY", "GI", "IS", "MK", "MT", "MD", "ME", "NO", "RS"] },
-                    { code: "ZONA_W", name: "ZONA W", description: "Central Europe", countries: ["LI", "CH"] },
-                    { code: "ZONA_X", name: "ZONA X", description: "United Kingdom", countries: ["GB"] }
-                  ]
-                };
-              }
-            }
-          });
-          
-          // Update zone sets state
-          setZoneSets(prev => ({ ...prev, ...newZoneSets }));
-          
           setPending(newServices);
           setModalOpen(true);
         } else {
-          console.warn('No services parsed from Excel. Sheet names:', wb.SheetNames);
-          setToast('No valid pricing data found in Excel file. Please check sheet names and data format.');
+          setToast('No valid pricing data found in Excel file.');
         }
       } catch (error) {
         console.error('Excel parsing error:', error);
@@ -342,10 +309,8 @@ export default function FedexRateEditor() {
   const applyUpdates = useCallback(() => {
     const updatedServices = pending.length ? pending : services;
     
-    // Ensure we always have zone sets, either from state or from the loaded config
-    const currentZoneSets = Object.keys(zoneSets).length > 0 
-      ? zoneSets 
-      : fetcher.data?.zoneSets || {};
+    // Use zone sets from state if available, otherwise use empty object
+    const currentZoneSets = Object.keys(zoneSets).length > 0 ? zoneSets : {};
     
     const payload = {
       name: courierName.trim(),
@@ -369,7 +334,7 @@ export default function FedexRateEditor() {
     setServices(updatedServices);
     setPending([]);
     setModalOpen(false);
-  }, [courierName, courierDescription, config, services, pending, zoneSets, fetcher.data]);
+  }, [courierName, courierDescription, config, services, pending, zoneSets]);
 
   // Handle config field changes
   const handleConfigField = useCallback((field, value) => {
@@ -383,28 +348,7 @@ export default function FedexRateEditor() {
     ));
   }, []);
 
-  // Add new pricing bracket to service
-  const addPricingBracket = useCallback((serviceIndex) => {
-    const service = services[serviceIndex];
-    const currentZoneSet = zoneSets[service.zoneSet];
-    
-    if (!currentZoneSet) return;
-    
-    const newBracket = {
-      minWeight: 0,
-      maxWeight: 0,
-      zoneRates: Object.fromEntries(
-        currentZoneSet.zones.map(zone => [zone.code, 0])
-      )
-    };
-    
-    updateService(serviceIndex, {
-      pricingStructure: {
-        ...service.pricingStructure,
-        brackets: [...(service.pricingStructure?.brackets || []), newBracket]
-      }
-    });
-  }, [services, zoneSets, updateService]);
+
 
   // Get current service for editing
   const currentService = useMemo(() => {
@@ -414,6 +358,118 @@ export default function FedexRateEditor() {
   const currentServiceIndex = useMemo(() => {
     return services.findIndex(s => s.code === selectedService);
   }, [services, selectedService]);
+
+  // Function to ensure Italy is included in EU zones
+  const ensureItalyInEUZones = useCallback((services) => {
+    // Extract zone sets from services
+    const zoneSets = {};
+    
+    services.forEach(service => {
+      if ((service.zoneSet === 'EU' || service.zoneSet === 'INTERNATIONAL') && service.pricingStructure) {
+        // Create zone set if it doesn't exist
+        const targetZoneSet = service.zoneSet;
+        if (!zoneSets[targetZoneSet]) {
+          zoneSets[targetZoneSet] = { zones: [] };
+        }
+        
+        // Extract zones from pricing structure
+        const zones = new Set();
+        service.pricingStructure.fixedRates?.forEach(rate => {
+          Object.keys(rate.zoneRates || {}).forEach(zone => zones.add(zone));
+        });
+        service.pricingStructure.progressiveRates?.forEach(rate => {
+          Object.keys(rate.additionalRates || {}).forEach(zone => zones.add(zone));
+        });
+        service.pricingStructure.bulkRates?.forEach(rate => {
+          Object.keys(rate.perKgRates || {}).forEach(zone => zones.add(zone));
+        });
+        
+        // Create zone objects
+        zones.forEach(zoneCode => {
+          const existingZone = zoneSets[targetZoneSet].zones.find(z => z.code === zoneCode);
+          if (!existingZone) {
+            // Create zone with default countries
+            let countries = [];
+            
+            if (targetZoneSet === 'EU') {
+              // EU zone mappings
+              if (zoneCode === 'ZONA_R') {
+                countries = ["AT", "FR", "DE", "MC", "SI", "IT"];
+              } else if (zoneCode === 'ZONA_S') {
+                countries = ["BE", "LU", "PT", "ES"];
+              } else if (zoneCode === 'ZONA_T') {
+                countries = ["BG", "PL", "CZ", "SK", "RO", "HU"];
+              } else if (zoneCode === 'ZONA_U') {
+                countries = ["HR", "DK", "EE", "FI", "GR", "IE", "LV", "LT", "SE", "NO", "IS"];
+              } else if (zoneCode === 'ZONA_V') {
+                countries = ["AL", "BY", "BA", "CY", "GI", "MK", "MT", "MD", "ME", "RS"];
+              } else if (zoneCode === 'ZONA_W') {
+                countries = ["LI", "CH"];
+              } else if (zoneCode === 'ZONA_X') {
+                countries = ["GB"];
+              }
+            } else if (targetZoneSet === 'INTERNATIONAL') {
+              // INTERNATIONAL zone mappings
+              if (zoneCode === 'ZONA_A') {
+                countries = ["CA", "US"];
+              } else if (zoneCode === 'ZONA_B') {
+                countries = ["KH", "KR", "PH", "ID", "LA", "MO", "MY", "TH", "TW", "VN", "TL"];
+              } else if (zoneCode === 'ZONA_C') {
+                countries = ["DZ", "SA", "AM", "AZ", "BH", "BD", "BT", "EG", "AE", "GE", "IL", "JO", "KW", "LB", "LY", "MA", "NP", "OM", "PK", "QA", "TN"];
+              } else if (zoneCode === 'ZONA_D') {
+                countries = ["AI", "AG", "AW", "BS", "BB", "BZ", "BQ", "BR", "CL", "CO", "CR", "CW", "DM", "EC", "SV", "JM", "GD", "GP", "GT", "GY", "GF", "HT", "HN", "KY", "TC", "VI", "VG", "MQ", "MX", "MS", "NI", "PA", "PY", "PE", "PR", "DO", "KN", "LC", "SX", "MF", "VC", "ZA", "SR", "TT", "UY", "VE"];
+              } else if (zoneCode === 'ZONA_E') {
+                countries = ["AO", "BJ", "BW", "BF", "BI", "CV", "TD", "CG", "CI", "ER", "ET", "GA", "GM", "DJ", "GH", "GN", "GY", "IQ", "RE", "FJ", "KE", "LS", "LR", "MG", "MW", "MV", "ML", "MR", "MU", "MZ", "NA", "NE", "NG", "NC", "PG", "PF", "CD", "RW", "MP", "WS", "SN", "SC", "SZ", "TZ", "TG", "TO", "UG", "ZM", "ZW"];
+              } else if (zoneCode === 'ZONA_F') {
+                countries = ["CN", "HK"];
+              } else if (zoneCode === 'ZONA_G') {
+                countries = ["AU", "NZ"];
+              } else if (zoneCode === 'ZONA_H') {
+                countries = ["US"];
+              } else if (zoneCode === 'ZONA_I') {
+                countries = ["JP", "SG"];
+              }
+            }
+            
+            zoneSets[targetZoneSet].zones.push({
+              code: zoneCode,
+              name: zoneCode,
+              description: `${zoneCode} zone`,
+              countries
+            });
+          }
+        });
+      }
+    });
+    
+    // Update the zone sets in the state
+    if (Object.keys(zoneSets).length > 0) {
+      setZoneSets(zoneSets);
+    }
+  }, []);
+
+  // Debug function to validate imported data
+  const validateImportedData = useCallback((services) => {
+    console.log('=== VALIDATING IMPORTED DATA ===');
+    services.forEach((service, index) => {
+      console.log(`Service ${index + 1}: ${service.code} (${service.name})`);
+      console.log(`  Zone Set: ${service.zoneSet}`);
+      console.log(`  Fixed Rates: ${service.pricingStructure?.fixedRates?.length || 0}`);
+      console.log(`  Progressive Rates: ${service.pricingStructure?.progressiveRates?.length || 0}`);
+      console.log(`  Bulk Rates: ${service.pricingStructure?.bulkRates?.length || 0}`);
+      
+      if (service.pricingStructure?.fixedRates?.length > 0) {
+        console.log(`  Sample Fixed Rate:`, service.pricingStructure.fixedRates[0]);
+      }
+      if (service.pricingStructure?.progressiveRates?.length > 0) {
+        console.log(`  Sample Progressive Rate:`, service.pricingStructure.progressiveRates[0]);
+      }
+      if (service.pricingStructure?.bulkRates?.length > 0) {
+        console.log(`  Sample Bulk Rate:`, service.pricingStructure.bulkRates[0]);
+      }
+    });
+    console.log('=== END VALIDATION ===');
+  }, []);
 
   // Service options for selector
   const serviceOptions = useMemo(() => {
@@ -433,6 +489,38 @@ export default function FedexRateEditor() {
 
   const zoneSetCodes = useMemo(() => {
     const set = currentService?.zoneSet;
+    
+    // If the zone set doesn't exist, try to find zones from the pricing structure
+    if (!zoneSets[set]) {
+      console.log(`Zone set "${set}" not found in zoneSets:`, Object.keys(zoneSets));
+      
+      // Extract zones from the pricing structure if available
+      if (currentService?.pricingStructure) {
+        const zones = new Set();
+        
+        // Check fixed rates
+        currentService.pricingStructure.fixedRates?.forEach(rate => {
+          Object.keys(rate.zoneRates || {}).forEach(zone => zones.add(zone));
+        });
+        
+        // Check progressive rates
+        currentService.pricingStructure.progressiveRates?.forEach(rate => {
+          Object.keys(rate.additionalRates || {}).forEach(zone => zones.add(zone));
+        });
+        
+        // Check bulk rates
+        currentService.pricingStructure.bulkRates?.forEach(rate => {
+          Object.keys(rate.perKgRates || {}).forEach(zone => zones.add(zone));
+        });
+        
+        console.log('Extracted zones from pricing structure:', Array.from(zones));
+        return Array.from(zones).sort();
+      }
+      
+      // Return empty array if no zones found
+      return [];
+    }
+    
     return zoneSets[set]?.zones?.map(z => z.code) || [];
   }, [currentService, zoneSets]);
   
@@ -556,23 +644,38 @@ export default function FedexRateEditor() {
                     <BlockStack gap="500">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h3 style={headingStyles.h3}>Service Configuration</h3>
-                        <Button onClick={() => addPricingBracket(currentServiceIndex)}>
-                          Add Pricing Bracket
-                        </Button>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <Button onClick={() => {
+                            console.log('Current services:', services);
+                            console.log('Current zone sets:', zoneSets);
+                            validateImportedData(services);
+                          }}>
+                            Debug Data
+                          </Button>
+                          <Banner status="info">
+                            <p>Pricing data is imported from Excel files. Use the Excel Import tab to add new pricing structures.</p>
+                          </Banner>
+                        </div>
                       </div>
 
                       {services.length > 0 ? (
                         <>
                           <DataTable
                             columnContentTypes={['text', 'text', 'text', 'text', 'text']}
-                            headings={['Service Code', 'Service Name', 'Zone Set', 'Transit Days', 'Pricing Brackets']}
-                            rows={services.map(service => [
-                              service.code || 'N/A',
-                              service.name || 'N/A',
-                              service.zoneSet || 'N/A',
-                              String(service.transitDays || 'N/A'),
-                              String(service.pricingStructure?.brackets?.length || 0)
-                            ])}
+                            headings={['Service Code', 'Service Name', 'Zone Set', 'Transit Days', 'Pricing Structure']}
+                            rows={services.map(service => {
+                              const pricingStructure = service.pricingStructure || {};
+                              const totalRates = (pricingStructure.fixedRates?.length || 0) + 
+                                               (pricingStructure.progressiveRates?.length || 0) + 
+                                               (pricingStructure.bulkRates?.length || 0);
+                              return [
+                                service.code || 'N/A',
+                                service.name || 'N/A',
+                                service.zoneSet || 'N/A',
+                                String(service.transitDays || 'N/A'),
+                                `${totalRates} rates (${pricingStructure.fixedRates?.length || 0}F/${pricingStructure.progressiveRates?.length || 0}P/${pricingStructure.bulkRates?.length || 0}B)`
+                              ];
+                            })}
                           />
                           
                           <Select
@@ -614,28 +717,49 @@ export default function FedexRateEditor() {
                               />
                             </FormLayout>
 
-                            <h4 style={headingStyles.h4}>Pricing Brackets</h4>
+                            {/* Debug Information */}
+                            <div style={{ 
+                              padding: '12px', 
+                              backgroundColor: '#f6f6f7', 
+                              borderRadius: '6px', 
+                              fontSize: '12px',
+                              fontFamily: 'monospace'
+                            }}>
+                              <strong>Debug Info:</strong><br/>
+                              Service Code: {currentService.code}<br/>
+                              Zone Set: {currentService.zoneSet}<br/>
+                              Zone Sets Available: {Object.keys(zoneSets).join(', ')}<br/>
+                              Fixed Rates: {currentService.pricingStructure?.fixedRates?.length || 0}<br/>
+                              Progressive Rates: {currentService.pricingStructure?.progressiveRates?.length || 0}<br/>
+                              Bulk Rates: {currentService.pricingStructure?.bulkRates?.length || 0}<br/>
+                              Available Zones: {zoneSetCodes.join(', ')}<br/>
+                              Zone Count: {zoneSetCodes.length}
+                            </div>
 
-                            {/* Matrix View: Weight x Zones */}
-                            {currentService?.pricingStructure?.brackets?.length > 0 && (
+                            <h4 style={headingStyles.h4}>Pricing Structure</h4>
+
+                            {/* Fixed Rates Matrix View */}
+                            {currentService?.pricingStructure?.fixedRates?.length > 0 && (
                               <div style={{ overflowX: 'auto', marginTop: '20px' }}>
-                                <h4 style={{ ...headingStyles.h4, marginTop: '1rem' }}>Matrix View</h4>
+                                <h4 style={{ ...headingStyles.h4, marginTop: '1rem' }}>Fixed Rates Matrix</h4>
                                 <table style={{ borderCollapse: 'collapse', minWidth: '100%' }}>
                                   <thead>
                                     <tr>
-                                      <th style={matrixCellStyle}>Weight (kg)</th>
+                                      <th style={matrixCellStyle}>Weight Range (kg)</th>
                                       {zoneSetCodes.map(zone => (
                                         <th key={zone} style={matrixCellStyle}>{zone.replace('_', ' ')}</th>
                                       ))}
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {currentService.pricingStructure.brackets.map((bracket, idx) => (
+                                    {currentService.pricingStructure.fixedRates.map((rate, idx) => (
                                       <tr key={idx}>
-                                        <td style={matrixCellStyle}>{`${bracket.minWeight} - ${bracket.maxWeight}`}</td>
+                                        <td style={matrixCellStyle}>
+                                          {`${rate.minWeight} - ${rate.maxWeight}`}
+                                        </td>
                                         {zoneSetCodes.map(zone => (
                                           <td key={zone} style={matrixCellStyle}>
-                                            {bracket.zoneRates?.[zone] !== undefined ? bracket.zoneRates[zone].toFixed(2) : '-'}
+                                            {rate.zoneRates?.[zone] !== undefined ? rate.zoneRates[zone].toFixed(2) : '-'}
                                           </td>
                                         ))}
                                       </tr>
@@ -644,102 +768,118 @@ export default function FedexRateEditor() {
                                 </table>
                               </div>
                             )}
-                            
-                            {/* Summary table of all brackets */}
-                            {currentService.pricingStructure?.brackets && currentService.pricingStructure.brackets.length > 0 && (
-                              <DataTable
-                                columnContentTypes={['text', 'text', 'text']}
-                                headings={['Weight Range (kg)', 'Zones', 'Rate Range (€)']}
-                                rows={currentService.pricingStructure.brackets.map((bracket, index) => {
-                                  const zones = Object.keys(bracket.zoneRates || {});
-                                  const rates = Object.values(bracket.zoneRates || {}).filter(r => r > 0);
-                                  const minRate = rates.length > 0 ? Math.min(...rates) : 0;
-                                  const maxRate = rates.length > 0 ? Math.max(...rates) : 0;
-                                  
-                                  return [
-                                    `${bracket.minWeight || 0} - ${bracket.maxWeight || 0}`,
-                                    zones.join(', '),
-                                    rates.length > 0 ? `${minRate.toFixed(2)} - ${maxRate.toFixed(2)}` : 'N/A'
-                                  ];
-                                })}
-                              />
+
+                            {/* Progressive Rates Matrix View */}
+                            {currentService?.pricingStructure?.progressiveRates?.length > 0 && (
+                              <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+                                <h4 style={{ ...headingStyles.h4, marginTop: '1rem' }}>Progressive Rates Matrix</h4>
+                                <table style={{ borderCollapse: 'collapse', minWidth: '100%' }}>
+                                  <thead>
+                                    <tr>
+                                      <th style={matrixCellStyle}>Weight Range (kg)</th>
+                                      <th style={matrixCellStyle}>Unit (kg)</th>
+                                      {zoneSetCodes.map(zone => (
+                                        <th key={zone} style={matrixCellStyle}>{zone.replace('_', ' ')}</th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {currentService.pricingStructure.progressiveRates.map((rate, idx) => (
+                                      <tr key={idx}>
+                                        <td style={matrixCellStyle}>{`${rate.minWeight} - ${rate.maxWeight}`}</td>
+                                        <td style={matrixCellStyle}>{rate.unit}</td>
+                                        {zoneSetCodes.map(zone => (
+                                          <td key={zone} style={matrixCellStyle}>
+                                            {rate.additionalRates?.[zone] !== undefined ? rate.additionalRates[zone].toFixed(2) : '-'}
+                                          </td>
+                                        ))}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
                             )}
 
-                            {/* Detailed bracket editing */}
-                            {currentService.pricingStructure?.brackets?.map((bracket, bracketIndex) => (
-                              <Card key={bracketIndex} sectioned>
-                                <BlockStack gap="300">
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <h4 style={headingStyles.h4}>Bracket {bracketIndex + 1}</h4>
-                                    <Badge status="info">
-                                      {Object.keys(bracket.zoneRates || {}).length} zones
-                                    </Badge>
-                                  </div>
-                                  
-                                  <FormLayout.Group>
-                                    <TextField
-                                      label="Min Weight (kg)"
-                                      type="number"
-                                      value={String(bracket.minWeight || '')}
-                                      onChange={(value) => {
-                                        const brackets = [...currentService.pricingStructure.brackets];
-                                        brackets[bracketIndex] = {
-                                          ...brackets[bracketIndex],
-                                          minWeight: parseFloat(value) || 0
-                                        };
-                                        updateService(currentServiceIndex, {
-                                          pricingStructure: { ...currentService.pricingStructure, brackets }
-                                        });
-                                      }}
-                                    />
-                                    <TextField
-                                      label="Max Weight (kg)"
-                                      type="number"
-                                      value={String(bracket.maxWeight || '')}
-                                      onChange={(value) => {
-                                        const brackets = [...currentService.pricingStructure.brackets];
-                                        brackets[bracketIndex] = {
-                                          ...brackets[bracketIndex],
-                                          maxWeight: parseFloat(value) || 0
-                                        };
-                                        updateService(currentServiceIndex, {
-                                          pricingStructure: { ...currentService.pricingStructure, brackets }
-                                        });
-                                      }}
-                                    />
-                                  </FormLayout.Group>
-                                  
-                                  <h4 style={headingStyles.h4}>Zone Rates (€)</h4>
-                                  <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                                    gap: '16px'
-                                  }}>
-                                    {Object.entries(bracket.zoneRates || {}).map(([zoneCode, rate]) => (
-                                      <TextField
-                                        key={zoneCode}
-                                        label={zoneCode.replace('_', ' ')}
-                                        type="number"
-                                        value={String(rate || '')}
-                                        onChange={(value) => {
-                                          const brackets = [...currentService.pricingStructure.brackets];
-                                          brackets[bracketIndex] = {
-                                            ...brackets[bracketIndex],
-                                            zoneRates: {
-                                              ...brackets[bracketIndex].zoneRates,
-                                              [zoneCode]: parseFloat(value) || 0
-                                            }
-                                          };
-                                          updateService(currentServiceIndex, {
-                                            pricingStructure: { ...currentService.pricingStructure, brackets }
-                                          });
-                                        }}
-                                      />
+                            {/* Bulk Rates Matrix View */}
+                            {currentService?.pricingStructure?.bulkRates?.length > 0 && (
+                              <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+                                <h4 style={{ ...headingStyles.h4, marginTop: '1rem' }}>Bulk Rates Matrix</h4>
+                                <table style={{ borderCollapse: 'collapse', minWidth: '100%' }}>
+                                  <thead>
+                                    <tr>
+                                      <th style={matrixCellStyle}>Weight Range (kg)</th>
+                                      {zoneSetCodes.map(zone => (
+                                        <th key={zone} style={matrixCellStyle}>{zone.replace('_', ' ')}</th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {currentService.pricingStructure.bulkRates.map((rate, idx) => (
+                                      <tr key={idx}>
+                                        <td style={matrixCellStyle}>{`${rate.minWeight} - ${rate.maxWeight}`}</td>
+                                        {zoneSetCodes.map(zone => (
+                                          <td key={zone} style={matrixCellStyle}>
+                                            {rate.perKgRates?.[zone] !== undefined ? rate.perKgRates[zone].toFixed(2) : '-'}
+                                          </td>
+                                        ))}
+                                      </tr>
                                     ))}
-                                  </div>
-                                </BlockStack>
-                              </Card>
-                            ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+
+                            {/* Summary of pricing structure */}
+                            <div style={{ 
+                              padding: '16px', 
+                              backgroundColor: '#f6f6f7', 
+                              borderRadius: '8px', 
+                              marginTop: '16px' 
+                            }}>
+                              <h4 style={headingStyles.h4}>Pricing Structure Summary</h4>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
+                                <div>
+                                  <strong>Fixed Rates:</strong> {currentService.pricingStructure?.fixedRates?.length || 0}
+                                </div>
+                                <div>
+                                  <strong>Progressive Rates:</strong> {currentService.pricingStructure?.progressiveRates?.length || 0}
+                                </div>
+                                <div>
+                                  <strong>Bulk Rates:</strong> {currentService.pricingStructure?.bulkRates?.length || 0}
+                                </div>
+                                <div>
+                                  <strong>Total Zones:</strong> {zoneSetCodes.length}
+                                </div>
+                              </div>
+                              
+                              {/* Weight Range Summary */}
+                              {(() => {
+                                const allRates = [
+                                  ...(currentService.pricingStructure?.fixedRates || []),
+                                  ...(currentService.pricingStructure?.progressiveRates || []),
+                                  ...(currentService.pricingStructure?.bulkRates || [])
+                                ];
+                                
+                                if (allRates.length > 0) {
+                                  const weights = allRates.flatMap(rate => {
+                                    if (rate.minWeight !== undefined && rate.maxWeight !== undefined) {
+                                      return [rate.minWeight, rate.maxWeight]; // All rate types now use min/max
+                                    }
+                                    return [];
+                                  });
+                                  
+                                  const minWeight = Math.min(...weights);
+                                  const maxWeight = Math.max(...weights);
+                                  
+                                  return (
+                                    <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #e1e3e5' }}>
+                                      <strong>Weight Range:</strong> {minWeight} - {maxWeight} kg
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              })()}
+                            </div>
                           </BlockStack>
                         </Card>
                       )}
@@ -860,8 +1000,8 @@ export default function FedexRateEditor() {
                           </Tabs>
                         </>
                       ) : (
-                        <Banner status="warning">
-                          <p>No zone sets configured. Please configure zone sets in the basic configuration.</p>
+                        <Banner status="info">
+                          <p>No zone sets configured. Zone sets will be created when you import services from Excel files or configure them manually.</p>
                         </Banner>
                       )}
                     </BlockStack>

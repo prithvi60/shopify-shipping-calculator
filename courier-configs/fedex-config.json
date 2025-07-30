@@ -2,399 +2,1071 @@
   "courierType": "FEDEX",
   "version": "2.0",
   "basicInfo": {
-    "name": "FedEx Express",
-    "description": "FedEx Express international shipping",
-    "isActive": true,
-    "supportedRegions": ["EU", "WORLDWIDE"]
+      "name": "FedEx Express",
+      "description": "FedEx Express international shipping",
+      "isActive": true,
+      "supportedRegions": [
+          "EU",
+          "WORLDWIDE"
+      ]
   },
   "shippingConfig": {
-    "dryIce": {
-      "costPerKg": 12.0,
-      "volumePerKg": 2.0
-    },
-    "ice": {
-      "freshPerDay": 1.0,
-      "frozenPerDay": 2.0
-    },
-    "surcharges": {
-      "wine": 3.5,
-      "fuel": {
-        "percentage": 15.0
-      }
-    },
-    "calculations": {
-      "volumetricDivisor": 5000,
-      "vatPercentage": 22.0
-    },
-    "transitDays": 3
+      "dryIce": {
+          "costPerKg": 12,
+          "volumePerKg": 2
+      },
+      "ice": {
+          "freshPerDay": 1,
+          "frozenPerDay": 2
+      },
+      "surcharges": {
+          "wine": 3.5,
+          "fuel": {
+              "percentage": 15
+          }
+      },
+      "calculations": {
+          "volumetricDivisor": 5000,
+          "vatPercentage": 22
+      },
+      "transitDays": 3
   },
   "services": [
-    {
-      "code": "IPE_INT",
-      "name": "INT Priority Express",
-      "description": "International Priority Express",
-      "isActive": true,
-      "zoneSet": "INTERNATIONAL",
-      "transitDays": 1,
-      "pricingStructure": {
-        "brackets": [
-          {
-            "minWeight": 0.5,
-            "maxWeight": 0.5,
-            "zoneRates": {
-              "ZONA_A": 23.05,
-              "ZONA_B": 31.1,
-              "ZONA_C": 26.72,
-              "ZONA_D": 33.03,
-              "ZONA_E": 37.61,
-              "ZONA_F": 28.79,
-              "ZONA_G": 34.95,
-              "ZONA_H": 21.95,
-              "ZONA_I": 31.1
-            }
-          },
-          {
-            "minWeight": 1,
-            "maxWeight": 1,
-            "zoneRates": {
-              "ZONA_A": 26.57,
-              "ZONA_B": 35.84,
-              "ZONA_C": 30.79,
-              "ZONA_D": 37.99,
-              "ZONA_E": 43.28,
-              "ZONA_F": 33.17,
-              "ZONA_G": 40.18,
-              "ZONA_H": 25.31,
-              "ZONA_I": 35.84
-            }
+      {
+          "code": "IPE_INT",
+          "name": "INT Priority Express",
+          "description": "INT Priority Express service",
+          "isActive": true,
+          "zoneSet": "INTERNATIONAL",
+          "transitDays": 5,
+          "pricingStructure": {
+              "brackets": [
+                  {
+                      "minWeight": 0.5,
+                      "maxWeight": 0.5,
+                      "zoneRates": {
+                          "ZONA_A": 23.05,
+                          "ZONA_B": 31.1,
+                          "ZONA_C": 26.72,
+                          "ZONA_D": 33.03,
+                          "ZONA_E": 37.61,
+                          "ZONA_F": 28.79,
+                          "ZONA_G": 34.95,
+                          "ZONA_H": 21.95,
+                          "ZONA_I": 31.1
+                      }
+                  },
+                  {
+                      "minWeight": 1,
+                      "maxWeight": 1,
+                      "zoneRates": {
+                          "ZONA_A": 26.57,
+                          "ZONA_B": 35.84,
+                          "ZONA_C": 30.79,
+                          "ZONA_D": 37.99,
+                          "ZONA_E": 43.28,
+                          "ZONA_F": 33.17,
+                          "ZONA_G": 40.18,
+                          "ZONA_H": 25.31,
+                          "ZONA_I": 35.84
+                      }
+                  },
+                  {
+                      "minWeight": 1.5,
+                      "maxWeight": 1.5,
+                      "zoneRates": {
+                          "ZONA_A": 30.09,
+                          "ZONA_B": 40.58,
+                          "ZONA_C": 34.86,
+                          "ZONA_D": 42.96,
+                          "ZONA_E": 48.95,
+                          "ZONA_F": 37.55,
+                          "ZONA_G": 45.42,
+                          "ZONA_H": 28.66,
+                          "ZONA_I": 40.58
+                      }
+                  },
+                  {
+                      "minWeight": 2,
+                      "maxWeight": 2,
+                      "zoneRates": {
+                          "ZONA_A": 33.61,
+                          "ZONA_B": 45.33,
+                          "ZONA_C": 38.93,
+                          "ZONA_D": 47.92,
+                          "ZONA_E": 54.62,
+                          "ZONA_F": 41.92,
+                          "ZONA_G": 50.65,
+                          "ZONA_H": 32.01,
+                          "ZONA_I": 45.33
+                      }
+                  },
+                  {
+                      "minWeight": 2.5,
+                      "maxWeight": 2.5,
+                      "zoneRates": {
+                          "ZONA_A": 37.13,
+                          "ZONA_B": 50.07,
+                          "ZONA_C": 43,
+                          "ZONA_D": 52.89,
+                          "ZONA_E": 60.3,
+                          "ZONA_F": 46.3,
+                          "ZONA_G": 55.88,
+                          "ZONA_H": 35.36,
+                          "ZONA_I": 50.07
+                      }
+                  },
+                  {
+                      "minWeight": 3,
+                      "maxWeight": 3,
+                      "zoneRates": {
+                          "ZONA_A": 40.65,
+                          "ZONA_B": 54.81,
+                          "ZONA_C": 47.07,
+                          "ZONA_D": 57.85,
+                          "ZONA_E": 65.97,
+                          "ZONA_F": 50.67,
+                          "ZONA_G": 61.11,
+                          "ZONA_H": 38.72,
+                          "ZONA_I": 54.81
+                      }
+                  },
+                  {
+                      "minWeight": 3.5,
+                      "maxWeight": 3.5,
+                      "zoneRates": {
+                          "ZONA_A": 44.17,
+                          "ZONA_B": 59.55,
+                          "ZONA_C": 51.14,
+                          "ZONA_D": 62.81,
+                          "ZONA_E": 71.64,
+                          "ZONA_F": 55.05,
+                          "ZONA_G": 66.35,
+                          "ZONA_H": 42.07,
+                          "ZONA_I": 59.55
+                      }
+                  },
+                  {
+                      "minWeight": 4,
+                      "maxWeight": 4,
+                      "zoneRates": {
+                          "ZONA_A": 47.68,
+                          "ZONA_B": 64.3,
+                          "ZONA_C": 55.21,
+                          "ZONA_D": 67.78,
+                          "ZONA_E": 77.31,
+                          "ZONA_F": 59.43,
+                          "ZONA_G": 71.58,
+                          "ZONA_H": 45.42,
+                          "ZONA_I": 64.3
+                      }
+                  },
+                  {
+                      "minWeight": 4.5,
+                      "maxWeight": 4.5,
+                      "zoneRates": {
+                          "ZONA_A": 51.2,
+                          "ZONA_B": 69.04,
+                          "ZONA_C": 59.28,
+                          "ZONA_D": 72.74,
+                          "ZONA_E": 82.98,
+                          "ZONA_F": 63.8,
+                          "ZONA_G": 76.81,
+                          "ZONA_H": 48.77,
+                          "ZONA_I": 69.04
+                      }
+                  },
+                  {
+                      "minWeight": 5,
+                      "maxWeight": 5,
+                      "zoneRates": {
+                          "ZONA_A": 54.72,
+                          "ZONA_B": 73.78,
+                          "ZONA_C": 63.35,
+                          "ZONA_D": 77.71,
+                          "ZONA_E": 88.65,
+                          "ZONA_F": 68.18,
+                          "ZONA_G": 82.05,
+                          "ZONA_H": 52.13,
+                          "ZONA_I": 73.78
+                      }
+                  },
+                  {
+                      "minWeight": 5.5,
+                      "maxWeight": 5.5,
+                      "zoneRates": {
+                          "ZONA_A": 59.52,
+                          "ZONA_B": 80.27,
+                          "ZONA_C": 68.93,
+                          "ZONA_D": 84.47,
+                          "ZONA_E": 96.46,
+                          "ZONA_F": 74.18,
+                          "ZONA_G": 89.23,
+                          "ZONA_H": 56.69,
+                          "ZONA_I": 80.27
+                      }
+                  },
+                  {
+                      "minWeight": 6,
+                      "maxWeight": 6,
+                      "zoneRates": {
+                          "ZONA_A": 64.32,
+                          "ZONA_B": 86.75,
+                          "ZONA_C": 74.52,
+                          "ZONA_D": 91.23,
+                          "ZONA_E": 104.27,
+                          "ZONA_F": 80.19,
+                          "ZONA_G": 96.42,
+                          "ZONA_H": 61.26,
+                          "ZONA_I": 86.75
+                      }
+                  },
+                  {
+                      "minWeight": 6.5,
+                      "maxWeight": 6.5,
+                      "zoneRates": {
+                          "ZONA_A": 69.12,
+                          "ZONA_B": 93.23,
+                          "ZONA_C": 80.1,
+                          "ZONA_D": 97.98,
+                          "ZONA_E": 112.08,
+                          "ZONA_F": 86.2,
+                          "ZONA_G": 103.61,
+                          "ZONA_H": 65.83,
+                          "ZONA_I": 93.23
+                      }
+                  },
+                  {
+                      "minWeight": 7,
+                      "maxWeight": 7,
+                      "zoneRates": {
+                          "ZONA_A": 73.91,
+                          "ZONA_B": 99.72,
+                          "ZONA_C": 85.68,
+                          "ZONA_D": 104.74,
+                          "ZONA_E": 119.89,
+                          "ZONA_F": 92.21,
+                          "ZONA_G": 110.8,
+                          "ZONA_H": 70.4,
+                          "ZONA_I": 99.72
+                      }
+                  },
+                  {
+                      "minWeight": 7.5,
+                      "maxWeight": 7.5,
+                      "zoneRates": {
+                          "ZONA_A": 78.71,
+                          "ZONA_B": 106.2,
+                          "ZONA_C": 91.27,
+                          "ZONA_D": 111.5,
+                          "ZONA_E": 127.7,
+                          "ZONA_F": 98.22,
+                          "ZONA_G": 117.98,
+                          "ZONA_H": 74.97,
+                          "ZONA_I": 106.2
+                      }
+                  },
+                  {
+                      "minWeight": 8,
+                      "maxWeight": 8,
+                      "zoneRates": {
+                          "ZONA_A": 83.51,
+                          "ZONA_B": 112.69,
+                          "ZONA_C": 96.85,
+                          "ZONA_D": 118.26,
+                          "ZONA_E": 135.51,
+                          "ZONA_F": 104.22,
+                          "ZONA_G": 125.17,
+                          "ZONA_H": 79.54,
+                          "ZONA_I": 112.69
+                      }
+                  },
+                  {
+                      "minWeight": 8.5,
+                      "maxWeight": 8.5,
+                      "zoneRates": {
+                          "ZONA_A": 88.3,
+                          "ZONA_B": 119.17,
+                          "ZONA_C": 102.43,
+                          "ZONA_D": 125.02,
+                          "ZONA_E": 143.32,
+                          "ZONA_F": 110.23,
+                          "ZONA_G": 132.36,
+                          "ZONA_H": 84.11,
+                          "ZONA_I": 119.17
+                      }
+                  },
+                  {
+                      "minWeight": 9,
+                      "maxWeight": 9,
+                      "zoneRates": {
+                          "ZONA_A": 93.1,
+                          "ZONA_B": 125.65,
+                          "ZONA_C": 108.01,
+                          "ZONA_D": 131.78,
+                          "ZONA_E": 151.13,
+                          "ZONA_F": 116.24,
+                          "ZONA_G": 139.55,
+                          "ZONA_H": 88.68,
+                          "ZONA_I": 125.65
+                      }
+                  },
+                  {
+                      "minWeight": 9.5,
+                      "maxWeight": 9.5,
+                      "zoneRates": {
+                          "ZONA_A": 97.9,
+                          "ZONA_B": 132.14,
+                          "ZONA_C": 113.6,
+                          "ZONA_D": 138.54,
+                          "ZONA_E": 158.94,
+                          "ZONA_F": 122.25,
+                          "ZONA_G": 146.73,
+                          "ZONA_H": 93.25,
+                          "ZONA_I": 132.14
+                      }
+                  },
+                  {
+                      "minWeight": 10,
+                      "maxWeight": 10,
+                      "zoneRates": {
+                          "ZONA_A": 102.7,
+                          "ZONA_B": 138.62,
+                          "ZONA_C": 119.18,
+                          "ZONA_D": 145.3,
+                          "ZONA_E": 166.75,
+                          "ZONA_F": 128.25,
+                          "ZONA_G": 153.92,
+                          "ZONA_H": 97.82,
+                          "ZONA_I": 138.62
+                      }
+                  },
+                  {
+                      "minWeight": 10.5,
+                      "maxWeight": 10.5,
+                      "zoneRates": {
+                          "ZONA_A": 107.49,
+                          "ZONA_B": 145.11,
+                          "ZONA_C": 124.37,
+                          "ZONA_D": 152.06,
+                          "ZONA_E": 174.56,
+                          "ZONA_F": 134.02,
+                          "ZONA_G": 161.11,
+                          "ZONA_H": 102.39,
+                          "ZONA_I": 145.11
+                      }
+                  },
+                  {
+                      "minWeight": 21,
+                      "maxWeight": 21,
+                      "zoneRates": {
+                          "ZONA_A": 207.93,
+                          "ZONA_B": 280.4,
+                          "ZONA_C": 232.73,
+                          "ZONA_D": 293.16,
+                          "ZONA_E": 337.4,
+                          "ZONA_F": 254.59,
+                          "ZONA_G": 311.12,
+                          "ZONA_H": 198.06,
+                          "ZONA_I": 280.4
+                      }
+                  },
+                  {
+                      "minWeight": 30,
+                      "maxWeight": 30,
+                      "zoneRates": {
+                          "ZONA_A": 288.78,
+                          "ZONA_B": 381.56,
+                          "ZONA_C": 316.7,
+                          "ZONA_D": 399.65,
+                          "ZONA_E": 456.92,
+                          "ZONA_F": 347.55,
+                          "ZONA_G": 423.72,
+                          "ZONA_H": 275.05,
+                          "ZONA_I": 381.56
+                      }
+                  },
+                  {
+                      "minWeight": 30.5,
+                      "maxWeight": 30.5,
+                      "zoneRates": {
+                          "ZONA_A": 293.52,
+                          "ZONA_B": 387.04,
+                          "ZONA_C": 321.35,
+                          "ZONA_D": 405.42,
+                          "ZONA_E": 463.41,
+                          "ZONA_F": 352.18,
+                          "ZONA_G": 429.71,
+                          "ZONA_H": 279.57,
+                          "ZONA_I": 387.04
+                      }
+                  },
+                  {
+                      "minWeight": 45,
+                      "maxWeight": 45,
+                      "zoneRates": {
+                          "ZONA_A": 430.88,
+                          "ZONA_B": 544.98,
+                          "ZONA_C": 456.03,
+                          "ZONA_D": 571.99,
+                          "ZONA_E": 651.73,
+                          "ZONA_F": 486.21,
+                          "ZONA_G": 603.07,
+                          "ZONA_H": 410.42,
+                          "ZONA_I": 544.98
+                      }
+                  },
+                  {
+                      "minWeight": 70.5,
+                      "maxWeight": 70.5,
+                      "zoneRates": {
+                          "ZONA_A": 663.06,
+                          "ZONA_B": 788.09,
+                          "ZONA_C": 672.96,
+                          "ZONA_D": 823.08,
+                          "ZONA_E": 992.64,
+                          "ZONA_F": 714.06,
+                          "ZONA_G": 894.38,
+                          "ZONA_H": 631.51,
+                          "ZONA_I": 788.09
+                      }
+                  }
+              ]
           }
-        ],
-        "weightTiers": [
-          {
-            "range": "21-30",
-            "description": "Up to 21kg plus 0.5kg increments",
-            "baseWeightKg": 21,
-            "incrementalRates": {
-              "ZONA_A": 4.8,
-              "ZONA_B": 6.48,
-              "ZONA_C": 5.18,
-              "ZONA_D": 6.76,
-              "ZONA_E": 7.81,
-              "ZONA_F": 5.77,
-              "ZONA_G": 7.19,
-              "ZONA_H": 4.57,
-              "ZONA_I": 6.48
-            }
-          },
-          {
-            "range": "71-99",
-            "description": "Per kg rate",
-            "type": "PER_KG",
-            "rates": {
-              "ZONA_A": 10.81,
-              "ZONA_B": 12.45,
-              "ZONA_C": 9.84,
-              "ZONA_D": 13.07,
-              "ZONA_E": 14.88,
-              "ZONA_F": 10.5,
-              "ZONA_G": 13.67,
-              "ZONA_H": 10.29,
-              "ZONA_I": 12.45
-            }
-          },
-          {
-            "range": "100-299",
-            "description": "Per kg rate",
-            "type": "PER_KG",
-            "rates": {
-              "ZONA_A": 10.7,
-              "ZONA_B": 12.33,
-              "ZONA_C": 9.81,
-              "ZONA_D": 12.8,
-              "ZONA_E": 14.73,
-              "ZONA_F": 10.18,
-              "ZONA_G": 13.53,
-              "ZONA_H": 10.19,
-              "ZONA_I": 12.33
-            }
+      },
+      {
+          "code": "RE_EU",
+          "name": "Regional Economy",
+          "description": "Regional Economy service",
+          "isActive": true,
+          "zoneSet": "EU",
+          "transitDays": 5,
+          "pricingStructure": {
+              "brackets": [
+                  {
+                      "minWeight": 0.5,
+                      "maxWeight": 0.5,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 1,
+                      "maxWeight": 1,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 1.5,
+                      "maxWeight": 1.5,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 2,
+                      "maxWeight": 2,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 2.5,
+                      "maxWeight": 2.5,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 3,
+                      "maxWeight": 3,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 3.5,
+                      "maxWeight": 3.5,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 4,
+                      "maxWeight": 4,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 4.5,
+                      "maxWeight": 4.5,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 5,
+                      "maxWeight": 5,
+                      "zoneRates": {
+                          "ZONA_R": 20.27,
+                          "ZONA_S": 20.38,
+                          "ZONA_T": 21.44,
+                          "ZONA_U": 23.73,
+                          "ZONA_V": 36.5,
+                          "ZONA_W": 29.32,
+                          "ZONA_X": 23.3
+                      }
+                  },
+                  {
+                      "minWeight": 5.5,
+                      "maxWeight": 5.5,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 6,
+                      "maxWeight": 6,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 6.5,
+                      "maxWeight": 6.5,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 7,
+                      "maxWeight": 7,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 7.5,
+                      "maxWeight": 7.5,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 8,
+                      "maxWeight": 8,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 8.5,
+                      "maxWeight": 8.5,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 9,
+                      "maxWeight": 9,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 9.5,
+                      "maxWeight": 9.5,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 10,
+                      "maxWeight": 10,
+                      "zoneRates": {
+                          "ZONA_R": 24.21,
+                          "ZONA_S": 26.94,
+                          "ZONA_T": 29.2,
+                          "ZONA_U": 32.75,
+                          "ZONA_V": 54.27,
+                          "ZONA_W": 33.17,
+                          "ZONA_X": 31.06
+                      }
+                  },
+                  {
+                      "minWeight": 20,
+                      "maxWeight": 20,
+                      "zoneRates": {
+                          "ZONA_R": 30.79,
+                          "ZONA_S": 34.26,
+                          "ZONA_T": 36.4,
+                          "ZONA_U": 40.46,
+                          "ZONA_V": 64.53,
+                          "ZONA_W": 39.7,
+                          "ZONA_X": 38.26
+                      }
+                  },
+                  {
+                      "minWeight": 30,
+                      "maxWeight": 30,
+                      "zoneRates": {
+                          "ZONA_R": 38.1,
+                          "ZONA_S": 41.36,
+                          "ZONA_T": 43.36,
+                          "ZONA_U": 47.73,
+                          "ZONA_V": 75.08,
+                          "ZONA_W": 46.98,
+                          "ZONA_X": 45.22
+                      }
+                  },
+                  {
+                      "minWeight": 40,
+                      "maxWeight": 40,
+                      "zoneRates": {
+                          "ZONA_R": 46.27,
+                          "ZONA_S": 48.49,
+                          "ZONA_T": 57.3,
+                          "ZONA_U": 62.94,
+                          "ZONA_V": 123.25,
+                          "ZONA_W": 55.12,
+                          "ZONA_X": 59.16
+                      }
+                  },
+                  {
+                      "minWeight": 50,
+                      "maxWeight": 50,
+                      "zoneRates": {
+                          "ZONA_R": 54.06,
+                          "ZONA_S": 54.98,
+                          "ZONA_T": 63.94,
+                          "ZONA_U": 70.1,
+                          "ZONA_V": 133.33,
+                          "ZONA_W": 62.87,
+                          "ZONA_X": 65.79
+                      }
+                  },
+                  {
+                      "minWeight": 70,
+                      "maxWeight": 70,
+                      "zoneRates": {
+                          "ZONA_R": 72.61,
+                          "ZONA_S": 79.87,
+                          "ZONA_T": 89.65,
+                          "ZONA_U": 97.92,
+                          "ZONA_V": 158.91,
+                          "ZONA_W": 81.36,
+                          "ZONA_X": 91.5
+                      }
+                  }
+              ]
           }
-        ]
       }
-    },
-    {
-      "code": "IPE_EU",
-      "name": "EU Priority Express", 
-      "description": "EU Priority Express",
-      "isActive": true,
-      "zoneSet": "EU",
-      "transitDays": 1,
-      "pricingStructure": {
-        "brackets": [
-          {
-            "minWeight": 0.5,
-            "maxWeight": 0.5,
-            "zoneRates": {
-              "ZONA_R": 14.63,
-              "ZONA_S": 15.66,
-              "ZONA_T": 18.81,
-              "ZONA_U": 18.88,
-              "ZONA_V": 27.66,
-              "ZONA_W": 22.6,
-              "ZONA_X": 22.35
-            }
-          }
-        ],
-        "weightTiers": [
-          {
-            "range": "71-99",
-            "description": "Per kg rate",
-            "type": "PER_KG",
-            "rates": {
-              "ZONA_R": 5.85,
-              "ZONA_S": 6.55,
-              "ZONA_T": 8.36,
-              "ZONA_U": 8.72,
-              "ZONA_V": 13.53,
-              "ZONA_W": 5.91,
-              "ZONA_X": 8.54
-            }
-          }
-        ]
-      }
-    },
-    {
-      "code": "IP_EU",
-      "name": "EU International Priority",
-      "description": "EU International Priority",
-      "isActive": true,
-      "zoneSet": "EU",
-      "transitDays": 2,
-      "pricingStructure": {
-        "brackets": [
-          {
-            "minWeight": 0.5,
-            "maxWeight": 0.5,
-            "zoneRates": {
-              "ZONA_R": 13.93,
-              "ZONA_S": 14.92,
-              "ZONA_T": 17.91,
-              "ZONA_U": 17.98,
-              "ZONA_V": 26.35,
-              "ZONA_W": 21.53,
-              "ZONA_X": 21.29
-            }
-          }
-        ]
-      }
-    },
-    {
-      "code": "IE_INT",
-      "name": "International Economy",
-      "description": "International Economy Service", 
-      "isActive": true,
-      "zoneSet": "INTERNATIONAL",
-      "transitDays": 5,
-      "pricingStructure": {
-        "brackets": [
-          {
-            "minWeight": 0.5,
-            "maxWeight": 0.5,
-            "zoneRates": {
-              "ZONA_A": 18.7,
-              "ZONA_B": 25.21,
-              "ZONA_C": 21.66,
-              "ZONA_D": 26.39,
-              "ZONA_E": 30.15,
-              "ZONA_F": 23.18,
-              "ZONA_G": 27.77,
-              "ZONA_H": 18.7,
-              "ZONA_I": 25.21
-            }
-          }
-        ]
-      }
-    },
-    {
-      "code": "RE_EU",
-      "name": "Regional Economy",
-      "description": "Regional Economy Service",
-      "isActive": true,
-      "zoneSet": "EU", 
-      "transitDays": 7,
-      "pricingStructure": {
-        "brackets": [
-          {
-            "minWeight": 0.5,
-            "maxWeight": 5,
-            "zoneRates": {
-              "ZONA_R": 20.27,
-              "ZONA_S": 20.38,
-              "ZONA_T": 21.44,
-              "ZONA_U": 23.73,
-              "ZONA_V": 36.5,
-              "ZONA_W": 29.32,
-              "ZONA_X": 23.3
-            }
-          }
-        ]
-      }
-    }
   ],
   "zoneSets": {
-    "INTERNATIONAL": {
-      "zones": [
-        {
-          "code": "ZONA_A",
-          "name": "ZONA A",
-          "description": "North America",
-          "countries": ["CA", "US"]
-        },
-        {
-          "code": "ZONA_B", 
-          "name": "ZONA B",
-          "description": "Asia Pacific",
-          "countries": ["KH", "KR", "PH", "ID", "LA", "MO", "MY", "TH", "TW", "VN", "TL"]
-        },
-        {
-          "code": "ZONA_C",
-          "name": "ZONA C",
-          "description": "Middle East & North Africa",
-          "countries": ["DZ", "SA", "AM", "AZ", "BH", "BD", "BT", "BN", "EG", "AE", "GE", "JO", "IN", "IQ", "IL", "KZ", "KG", "KW", "LB", "LY", "MV", "MA", "NP", "OM", "PK", "QA", "LK", "TN"]
-        },
-        {
-          "code": "ZONA_D",
-          "name": "ZONA D", 
-          "description": "Central & South America",
-          "countries": ["AI", "AG", "AR", "AW", "BS", "BB", "BZ", "BO", "BQ", "BR", "CL", "CO", "CR", "CW", "DM", "EC", "SV", "GD", "GP", "GT", "GY", "GF", "HT", "HN", "JM", "KY", "MQ", "MX", "MS", "NI", "PA", "PY", "PE", "PR", "DO", "KN", "LC", "SX", "MF", "VC", "ZA", "SR", "TT", "UY", "VE", "VI", "VG"]
-        },
-        {
-          "code": "ZONA_E",
-          "name": "ZONA E",
-          "description": "Africa",
-          "countries": ["AO", "BJ", "BW", "BF", "BI", "CM", "CV", "TD", "CG", "CI", "ER", "ET", "GA", "GM", "GH", "DJ", "GN", "KE", "LS", "LR", "MG", "MW", "ML", "MR", "MU", "MN", "MZ", "NA", "NE", "NG", "NC", "PG", "PF", "CD", "RW", "MP", "WS", "SN", "SC", "SZ", "TZ", "TG", "TO", "UG", "UZ", "ZM", "ZW", "GU", "FJ", "IQ", "RE"]
-        },
-        {
-          "code": "ZONA_F",
-          "name": "ZONA F",
-          "description": "China & Hong Kong",
-          "countries": ["CN", "HK"]
-        },
-        {
-          "code": "ZONA_G",
-          "name": "ZONA G",
-          "description": "Australia & New Zealand", 
-          "countries": ["AU", "NZ"]
-        },
-        {
-          "code": "ZONA_H",
-          "name": "ZONA H",
-          "description": "United States",
-          "countries": ["US"]
-        },
-        {
-          "code": "ZONA_I",
-          "name": "ZONA I", 
-          "description": "Japan & Singapore",
-          "countries": ["JP", "SG"]
-        }
-      ]
-    },
-    "EU": {
-      "zones": [
-        {
-          "code": "ZONA_R",
-          "name": "ZONA R",
-          "description": "Core EU",
-          "countries": ["AT", "FR", "DE", "SI", "MC"]
-        },
-        {
-          "code": "ZONA_S",
-          "name": "ZONA S", 
-          "description": "Western EU",
-          "countries": ["BE", "LU", "PT", "IE", "ES"]
-        },
-        {
-          "code": "ZONA_T",
-          "name": "ZONA T",
-          "description": "Eastern EU",
-          "countries": ["BG", "CZ", "SK", "RO", "HU", "PL"]
-        },
-        {
-          "code": "ZONA_U",
-          "name": "ZONA U",
-          "description": "Northern EU",
-          "countries": ["DK", "EE", "FI", "GR", "IE", "LV", "LT", "SE", "HR"]
-        },
-        {
-          "code": "ZONA_V",
-          "name": "ZONA V",
-          "description": "Extended EU",
-          "countries": ["AL", "BY", "BA", "CY", "GI", "IS", "MK", "MT", "MD", "ME", "NO", "RS", "TR"]
-        },
-        {
-          "code": "ZONA_W",
-          "name": "ZONA W",
-          "description": "Switzerland & Liechtenstein",
-          "countries": ["CH", "LI"]
-        },
-        {
-          "code": "ZONA_X",
-          "name": "ZONA X",
-          "description": "United Kingdom", 
-          "countries": ["GB"]
-        }
-      ]
-    }
-  },
-  "features": {
-    "supportsRealTimeTracking": true,
-    "supportsInsurance": true,
-    "supportsDryIce": true,
-    "supportsPickup": true,
-    "supportsZoneBased": true,
-    "maxDimensions": {
-      "length": 274,
-      "width": 172,
-      "height": 157,
-      "unit": "cm"
-    },
-    "maxWeight": {
-      "value": 68,
-      "unit": "kg"
-    }
-  },
-  "apiConfig": {
-    "endpoints": {
-      "rates": "/api/fedex/rates",
-      "tracking": "/api/fedex/track",
-      "pickup": "/api/fedex/pickup"
-    },
-    "authentication": {
-      "type": "oauth",
-      "required": true
-    }
-  },
-  "ui": {
-    "displayOrder": 2,
-    "color": "#4B0082",
-    "logo": "/images/couriers/fedex.png",
-    "showInQuickQuote": true
-  },
-  "businessRules": {
-    "minimumOrder": 15.00,
-    "freeShippingThreshold": 150.00,
-    "allowedPaymentMethods": ["prepaid", "cod"],
-    "restrictedCountries": ["IR", "KP", "SY"],
-    "specialHandling": {
-      "fragile": {
-        "surcharge": 8.00,
-        "maxWeight": 25
+      "INTERNATIONAL": {
+          "zones": [
+              {
+                  "code": "ZONA_A",
+                  "name": "ZONA A",
+                  "description": "North America",
+                  "countries": [
+                      "CA",
+                      "US"
+                  ]
+              },
+              {
+                  "code": "ZONA_B",
+                  "name": "ZONA B",
+                  "description": "Asia Pacific",
+                  "countries": [
+                      "KH",
+                      "KR",
+                      "PH",
+                      "ID",
+                      "LA",
+                      "MO",
+                      "MY",
+                      "TH",
+                      "TW",
+                      "VN",
+                      "TL"
+                  ]
+              },
+              {
+                  "code": "ZONA_C",
+                  "name": "ZONA C",
+                  "description": "Middle East & Africa",
+                  "countries": [
+                      "DZ",
+                      "SA",
+                      "AM",
+                      "AZ",
+                      "BH",
+                      "BD",
+                      "BT",
+                      "EG",
+                      "AE",
+                      "GE",
+                      "IL",
+                      "JO",
+                      "KW",
+                      "LB",
+                      "LY",
+                      "MA",
+                      "NP",
+                      "OM",
+                      "PK",
+                      "QA",
+                      "TN"
+                  ]
+              },
+              {
+                  "code": "ZONA_D",
+                  "name": "ZONA D",
+                  "description": "Americas",
+                  "countries": [
+                      "AI",
+                      "AG",
+                      "AW",
+                      "BS",
+                      "BB",
+                      "BZ",
+                      "BQ",
+                      "BR",
+                      "CL",
+                      "CO",
+                      "CR",
+                      "CW",
+                      "DM",
+                      "EC",
+                      "SV",
+                      "JM",
+                      "GD",
+                      "GP",
+                      "GT",
+                      "GY",
+                      "GF",
+                      "HT",
+                      "HN",
+                      "KY",
+                      "TC",
+                      "VI",
+                      "VG",
+                      "MQ",
+                      "MX",
+                      "MS",
+                      "NI",
+                      "PA",
+                      "PY",
+                      "PE",
+                      "PR",
+                      "DO",
+                      "KN",
+                      "LC",
+                      "SX",
+                      "MF",
+                      "VC",
+                      "ZA",
+                      "SR",
+                      "TT",
+                      "UY",
+                      "VE"
+                  ]
+              },
+              {
+                  "code": "ZONA_E",
+                  "name": "ZONA E",
+                  "description": "Africa",
+                  "countries": [
+                      "AO",
+                      "BJ",
+                      "BW",
+                      "BF",
+                      "BI",
+                      "CV",
+                      "TD",
+                      "CG",
+                      "CI",
+                      "ER",
+                      "ET",
+                      "GA",
+                      "GM",
+                      "DJ",
+                      "GH",
+                      "GN",
+                      "GY",
+                      "IQ",
+                      "RE",
+                      "FJ",
+                      "KE",
+                      "LS",
+                      "LR",
+                      "MG",
+                      "MW",
+                      "MV",
+                      "ML",
+                      "MR",
+                      "MU",
+                      "MZ",
+                      "NA",
+                      "NE",
+                      "NG",
+                      "NC",
+                      "PG",
+                      "PF",
+                      "CD",
+                      "RW",
+                      "MP",
+                      "WS",
+                      "SN",
+                      "SC",
+                      "SZ",
+                      "TZ",
+                      "TG",
+                      "TO",
+                      "UG",
+                      "ZM",
+                      "ZW"
+                  ]
+              },
+              {
+                  "code": "ZONA_F",
+                  "name": "ZONA F",
+                  "description": "Asia Pacific",
+                  "countries": [
+                      "CN",
+                      "HK"
+                  ]
+              },
+              {
+                  "code": "ZONA_G",
+                  "name": "ZONA G",
+                  "description": "Oceania",
+                  "countries": [
+                      "AU",
+                      "NZ"
+                  ]
+              },
+              {
+                  "code": "ZONA_H",
+                  "name": "ZONA H",
+                  "description": "United States",
+                  "countries": [
+                      "US"
+                  ]
+              },
+              {
+                  "code": "ZONA_I",
+                  "name": "ZONA I",
+                  "description": "Asia Pacific",
+                  "countries": [
+                      "JP",
+                      "SG"
+                  ]
+              }
+          ]
       },
-      "hazardous": {
-        "allowed": true,
-        "surcharge": 15.00,
-        "restrictions": ["DG_CATEGORY_1", "DG_CATEGORY_2"]
+      "EU": {
+          "zones": [
+              {
+                  "code": "ZONA_R",
+                  "name": "ZONA R",
+                  "description": "Western Europe",
+                  "countries": [
+                      "AT",
+                      "FR",
+                      "DE",
+                      "MC",
+                      "SI"
+                  ]
+              },
+              {
+                  "code": "ZONA_S",
+                  "name": "ZONA S",
+                  "description": "Western Europe",
+                  "countries": [
+                      "BE",
+                      "LU",
+                      "PT",
+                      "ES"
+                  ]
+              },
+              {
+                  "code": "ZONA_T",
+                  "name": "ZONA T",
+                  "description": "Eastern Europe",
+                  "countries": [
+                      "BG",
+                      "PL",
+                      "CZ",
+                      "SK",
+                      "RO",
+                      "HU"
+                  ]
+              },
+              {
+                  "code": "ZONA_U",
+                  "name": "ZONA U",
+                  "description": "Northern Europe",
+                  "countries": [
+                      "HR",
+                      "DK",
+                      "EE",
+                      "FI",
+                      "GR",
+                      "IE",
+                      "LV",
+                      "LT",
+                      "SE"
+                  ]
+              },
+              {
+                  "code": "ZONA_V",
+                  "name": "ZONA V",
+                  "description": "Eastern Europe & Balkans",
+                  "countries": [
+                      "AL",
+                      "BY",
+                      "BA",
+                      "CY",
+                      "GI",
+                      "IS",
+                      "MK",
+                      "MT",
+                      "MD",
+                      "ME",
+                      "NO",
+                      "RS"
+                  ]
+              },
+              {
+                  "code": "ZONA_W",
+                  "name": "ZONA W",
+                  "description": "Central Europe",
+                  "countries": [
+                      "LI",
+                      "CH"
+                  ]
+              },
+              {
+                  "code": "ZONA_X",
+                  "name": "ZONA X",
+                  "description": "United Kingdom",
+                  "countries": [
+                      "GB"
+                  ]
+              }
+          ]
       }
-    }
   }
-} 
+}
