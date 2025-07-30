@@ -73,7 +73,8 @@ function calculateTNTFromJSON({ cartItems, config }) {
 
     // Find best transit match
     const transitEntry = findBestTransitMatch(destinationZone, config.transitDays || []);
-    const transitDays = transitEntry?.days || 3;
+    // Convert hours to days for API response
+    const transitDays = Math.round((transitEntry?.days || 72) / 24); // Default 3 days if no match
 
     // Calculate total weight
     const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
@@ -179,7 +180,8 @@ function calculateBRTFromJSON({ cartItems, config }) {
 
     // Find best transit match
     const transitEntry = findBestTransitMatch(destinationZone, config.transitDays || []);
-    const transitDays = transitEntry?.days || 2; // BRT is typically faster
+    // Convert hours to days for API response
+    const transitDays = Math.round((transitEntry?.days || 48) / 24); // Default 2 days if no match
 
     // Calculate total weight
     const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);

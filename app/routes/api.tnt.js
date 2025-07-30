@@ -36,7 +36,7 @@ const defaultTntConfig = {
     {
       zoneType: "COUNTRY",
       name: "Netherlands",
-      days: 1
+      days: 24 // Store in hours (1 day = 24 hours)
     }
   ],
   pricingBrackets: [
@@ -62,7 +62,7 @@ export const loader = async () => {
           name: defaultTntConfig.basicInfo.name,
           description: defaultTntConfig.basicInfo.description,
           ...flattenShippingConfig(defaultTntConfig.shippingConfig),
-          transitDaysEntries: defaultTntConfig.transitDays
+          transitDaysEntries: convertHoursToDays(defaultTntConfig.transitDays)
         },
         rates: formatRatesForUI(defaultTntConfig.pricingBrackets)
       });
@@ -76,11 +76,7 @@ export const loader = async () => {
         name: config.basicInfo?.name || defaultTntConfig.basicInfo.name,
         description: config.basicInfo?.description || defaultTntConfig.basicInfo.description,
         ...flattenShippingConfig(config.shippingConfig || defaultTntConfig.shippingConfig),
-        transitDaysEntries: (config.transitDays || []).map(entry => ({
-          zoneType: entry.zoneType,
-          name: entry.name,
-          days: String(entry.days || ''),
-        }))
+        transitDaysEntries: convertHoursToDays(config.transitDays || [])
       },
       rates: formatRatesForUI(config.pricingBrackets || [])
     };
@@ -133,14 +129,7 @@ export const action = async ({ request }) => {
           vatPercentage: parseFloat(updateData.vatPct) || 21
         }
       },
-      transitDays: updateData.transitDaysEntries?.map(entry => {
-        const days = parseInt(entry.days, 10) || 0;
-        return {
-          zoneType: entry.zoneType,
-          name: entry.name,
-          days: days,
-        };
-      }) || [],
+      transitDays: convertDaysToHours(updateData.transitDaysEntries || []),
       pricingBrackets: updateData.rates ? formatRatesFromUI(updateData.rates) : []
     };
 
@@ -177,6 +166,27 @@ function flattenShippingConfig(shippingConfig) {
     fuelSurchargePct: shippingConfig?.surcharges?.fuel?.percentage || 0,
     vatPct: shippingConfig?.calculations?.vatPercentage || 21
   };
+}
+
+// Convert hours to days for UI display
+function convertHoursToDays(transitDays) {
+  return transitDays.map(entry => ({
+    zoneType: entry.zoneType,
+    name: entry.name,
+    days: String(Math.round((entry.days || 0) / 24)), // Convert hours to days
+  }));
+}
+
+// Convert days to hours for database storage
+function convertDaysToHours(transitDaysEntries) {
+  return transitDaysEntries.map(entry => {
+    const days = parseInt(entry.days, 10) || 0;
+    return {
+      zoneType: entry.zoneType,
+      name: entry.name,
+      days: days * 24, // Convert days to hours
+    };
+  });
 }
 
 function formatRatesForUI(pricingBrackets) {
