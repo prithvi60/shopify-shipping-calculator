@@ -104,14 +104,19 @@ async function calculateFedexQuote({ cartItems, config }) {
  * Apply FedEx-specific surcharges and adjustments
  */
 function applyFedexSurcharges(baseRate, cartItems, config) {
+  console.log(`\n💰 FedEx Surcharge Calculation for base rate €${baseRate.toFixed(2)}:`);
+  
   let finalRate = baseRate;
   const shippingConfig = config.shippingConfig || {};
 
   // Apply fuel surcharge
   if (shippingConfig.surcharges?.fuel?.percentage) {
     const fuelSurcharge = finalRate * (shippingConfig.surcharges.fuel.percentage / 100);
+    console.log(`⛽ Fuel surcharge: ${shippingConfig.surcharges.fuel.percentage}% of €${finalRate.toFixed(2)} = €${fuelSurcharge.toFixed(2)}`);
     finalRate += fuelSurcharge;
   }
+
+  console.log(`📊 Subtotal after fuel: €${finalRate.toFixed(2)}`);
 
   // Apply wine surcharge (per bottle)
   const wineItems = cartItems.filter(item => 
@@ -119,7 +124,9 @@ function applyFedexSurcharges(baseRate, cartItems, config) {
   );
   if (wineItems.length > 0 && shippingConfig.surcharges?.wine) {
     const totalWineBottles = wineItems.reduce((sum, item) => sum + item.quantity, 0);
-    finalRate += totalWineBottles * shippingConfig.surcharges.wine;
+    const wineSurcharge = totalWineBottles * shippingConfig.surcharges.wine;
+    console.log(`🍷 Wine surcharge: ${totalWineBottles} bottles × €${shippingConfig.surcharges.wine} = €${wineSurcharge.toFixed(2)}`);
+    finalRate += wineSurcharge;
   }
 
   // Apply dry ice costs if needed
@@ -129,16 +136,28 @@ function applyFedexSurcharges(baseRate, cartItems, config) {
   if (dryIceItems.length > 0 && shippingConfig.dryIce?.costPerKg) {
     const totalDryIceWeight = dryIceItems.reduce((sum, item) => sum + item.weight, 0);
     const dryIceCost = totalDryIceWeight * shippingConfig.dryIce.costPerKg;
+    console.log(`🧊 Dry ice cost: ${totalDryIceWeight}kg × €${shippingConfig.dryIce.costPerKg}/kg = €${dryIceCost.toFixed(2)}`);
     finalRate += dryIceCost;
   }
 
+  console.log(`📊 Subtotal after surcharges: €${finalRate.toFixed(2)}`);
+
   // Apply VAT
   if (shippingConfig.calculations?.vatPercentage) {
-    const vatAmount = finalRate * (shippingConfig.calculations.vatPercentage / 100);
-    finalRate += vatAmount;
+    const vatRate = shippingConfig.calculations.vatPercentage;
+    const vatMultiplier = 1 + (vatRate / 100);
+    const totalWithVat = finalRate * vatMultiplier;
+    const vatAmount = totalWithVat - finalRate;
+    
+    console.log(`🏛️  VAT calculation: €${finalRate.toFixed(2)} × ${vatMultiplier} = €${totalWithVat.toFixed(2)}`);
+    console.log(`🏛️  VAT amount: €${vatAmount.toFixed(2)} (${vatRate}%)`);
+    finalRate = totalWithVat;
   }
 
-  return Math.round(finalRate * 100) / 100; // Round to 2 decimal places
+  const roundedRate = Math.round(finalRate * 100) / 100;
+  console.log(`💯 Final FedEx rate: €${roundedRate}`);
+  
+  return roundedRate; // Round to 2 decimal places
 }
 
 /**

@@ -394,7 +394,7 @@ export default function FedexRateEditor() {
             if (targetZoneSet === 'EU') {
               // EU zone mappings
               if (zoneCode === 'ZONA_R') {
-                countries = ["AT", "FR", "DE", "MC", "SI"];
+                countries = ["AT", "FR", "DE", "MC", "SI", "IT"];
               } else if (zoneCode === 'ZONA_S') {
                 countries = ["BE", "LU", "PT", "ES"];
               } else if (zoneCode === 'ZONA_T') {

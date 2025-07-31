@@ -168,9 +168,12 @@ function calculateTNTFromJSON({ cartItems, config }) {
 
     // Apply VAT
     const vatRate = config.vatPercentage || 21;
-    const vatAmount = subtotal * (vatRate / 100);
-    const total = subtotal + vatAmount;
-    console.log(`🏛️  VAT: ${vatRate}% of €${subtotal.toFixed(2)} = €${vatAmount.toFixed(2)}`);
+    const vatMultiplier = 1 + (vatRate / 100);
+    const total = subtotal * vatMultiplier;
+    const vatAmount = total - subtotal;
+    
+    console.log(`🏛️  VAT calculation: €${subtotal.toFixed(2)} × ${vatMultiplier} = €${total.toFixed(2)}`);
+    console.log(`🏛️  VAT amount: €${vatAmount.toFixed(2)} (${vatRate}%)`);
     console.log(`💯 Base total with VAT: €${total.toFixed(2)}`);
 
     // Return multiple TNT service options for testing
@@ -201,9 +204,13 @@ function calculateTNTFromJSON({ cartItems, config }) {
       }
     ];
 
+    console.log(`\n🚚 FINAL SERVICE CALCULATIONS:`);
+    console.log(`📐 Formula: (Base Price + Fuel Surcharge) × (1 + VAT%) + Service Additional Cost`);
+    
     return tntServices.map(service => {
       const finalTotal = Math.max(0, total + service.additionalCost);
-      console.log(`🚚 ${service.name}: €${total.toFixed(2)} + €${service.additionalCost} = €${finalTotal.toFixed(2)}`);
+      const sign = service.additionalCost >= 0 ? '+' : '';
+      console.log(`🚚 ${service.name}: €${total.toFixed(2)} ${sign} €${service.additionalCost} = €${finalTotal.toFixed(2)}`);
       
       return {
         name: `${service.name}`,

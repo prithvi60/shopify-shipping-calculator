@@ -134,12 +134,16 @@ function calculateServiceRate(service, weight, targetZone) {
   const { pricingStructure } = service;
   if (!pricingStructure) return 0;
 
+  console.log(`   📦 Calculating rate for ${service.name} (Zone ${targetZone}):`);
+
   // 1. Check for fixed rates - find the rate where minWeight <= weight <= maxWeight
   if (pricingStructure.fixedRates) {
     for (const rate of pricingStructure.fixedRates) {
       // Check if weight falls within the range
       if (weight >= rate.minWeight && weight <= rate.maxWeight) {
-        return rate.zoneRates[targetZone] || 0;
+        const finalRate = rate.zoneRates[targetZone] || 0;
+        console.log(`   ✅ Fixed rate: ${rate.minWeight}-${rate.maxWeight}kg → €${finalRate}`);
+        return finalRate;
       }
     }
   }
@@ -154,8 +158,11 @@ function calculateServiceRate(service, weight, targetZone) {
         const additionalWeight = weight - rate.baseWeight;
         const additionalUnits = Math.ceil(additionalWeight / rate.unit);
         const additionalCost = additionalUnits * (rate.additionalRates[targetZone] || 0);
+        const finalRate = baseRate + additionalCost;
         
-        return baseRate + additionalCost;
+        console.log(`   ✅ Progressive rate: Base €${baseRate} + ${additionalUnits} units × €${rate.additionalRates[targetZone]} = €${finalRate}`);
+        console.log(`      (Additional weight: ${additionalWeight}kg, Unit: ${rate.unit}kg)`);
+        return finalRate;
       }
     }
   }
@@ -165,17 +172,22 @@ function calculateServiceRate(service, weight, targetZone) {
     for (const rate of pricingStructure.bulkRates) {
       if (weight >= rate.minWeight && weight <= rate.maxWeight) {
         const perKgRate = rate.perKgRates[targetZone] || 0;
-        return weight * perKgRate;
+        const finalRate = weight * perKgRate;
+        console.log(`   ✅ Bulk rate: ${weight}kg × €${perKgRate}/kg = €${finalRate}`);
+        return finalRate;
       }
     }
   }
 
+  console.log(`   ❌ No matching rate found for ${weight}kg`);
   return 0; // Return 0 if no matching rate is found
 }
 
 // Calculate shipping rate for given weight and destination
 export function calculateFedexRate(config, weight, countryCode, serviceCode = null) {
   try {
+    console.log(`💰 FedEx Price Calculation for ${weight}kg to ${countryCode}:`);
+    
     if (!config.services || !config.zoneSets) {
       throw new Error('Invalid FedEx configuration');
     }
@@ -189,6 +201,7 @@ export function calculateFedexRate(config, weight, countryCode, serviceCode = nu
         if (zone.countries.includes(countryCode)) {
           targetZone = zone.code;
           targetZoneSet = zoneSetName;
+          console.log(`🌍 Zone mapping: ${countryCode} → Zone ${targetZone} (${zoneSetName})`);
           break;
         }
       }
@@ -226,10 +239,15 @@ export function calculateFedexRate(config, weight, countryCode, serviceCode = nu
 
     const quotes = [];
 
+    console.log(`\n🚚 FEDEX SERVICE CALCULATIONS:`);
+    
     for (const service of availableServices) {
       const rate = calculateServiceRate(service, weight, targetZone);
       if (rate > 0) {
         const transitDays = service.transitDays || 3; // Default to 3 days if not specified
+        console.log(`🚚 ${service.name}: Base rate €${rate.toFixed(2)} (${transitDays} days)`);
+        console.log(`   ⚠️  Note: Surcharges (fuel, wine, dry ice) and VAT applied separately`);
+        
         quotes.push({
           code: service.code,
           name: `FedEx ${service.name} (${transitDays} days)`,
@@ -241,6 +259,7 @@ export function calculateFedexRate(config, weight, countryCode, serviceCode = nu
       }
     }
 
+    console.log(`📊 Total FedEx services found: ${quotes.length}`);
     return quotes;
   } catch (error) {
     console.error('FedEx rate calculation error:', error);
