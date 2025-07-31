@@ -3,7 +3,7 @@
 client_id = "420046e9e72ecb9790d6749bd5114f26"
 name = "box-shipping-calculator"
 handle = "box-shipping-calculator-2"
-application_url = "https://fully-sole-symposium-nirvana.trycloudflare.com"
+application_url = "https://fine-tune-renaissance-considered.trycloudflare.com"
 embedded = true
 
 [build]
@@ -26,7 +26,7 @@ api_version = "2025-07"
 scopes = "read_orders,read_products,read_shipping,write_products,write_shipping"
 
 [auth]
-redirect_urls = ["https://fully-sole-symposium-nirvana.trycloudflare.com/auth/callback", "https://fully-sole-symposium-nirvana.trycloudflare.com/auth/shopify/callback", "https://fully-sole-symposium-nirvana.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://fine-tune-renaissance-considered.trycloudflare.com/auth/callback", "https://fine-tune-renaissance-considered.trycloudflare.com/auth/shopify/callback", "https://fine-tune-renaissance-considered.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

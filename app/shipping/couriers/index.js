@@ -73,6 +73,12 @@ async function calculateFedexQuote({ cartItems, config }) {
       throw new Error('Destination country not specified');
     }
 
+    // Check if FedEx can serve this destination (international only, not Italy)
+    if (destination.countryCode === 'IT') {
+      console.log('❌ FedEx: Does not serve Italy (international only)');
+      return [];
+    }
+
     // Use the new FedEx calculation function
     const quotes = calculateFedexRate(config, totalWeight, destination.countryCode);
     

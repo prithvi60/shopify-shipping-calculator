@@ -124,11 +124,19 @@ export const action = async ({ request }) => {
 
     console.log('🛒 Processed cart items:', cartItems.length);
 
-    // 4️⃣ Get rates from all active couriers using unified system
+    // 4️⃣ Get rates from all active couriers that can serve this destination
     const allRates = [];
-    const courierNames = ['TNT', 'FEDEX']; // Add more as needed
+    
+    // Get all active couriers from database
+    const activeCouriers = await prisma.courier.findMany({
+      where: { isActive: true },
+      select: { name: true, config: true }
+    });
 
-    for (const courierName of courierNames) {
+    console.log(`📦 Found ${activeCouriers.length} active couriers for ${countryCode}, ${city}`);
+
+    for (const courierRecord of activeCouriers) {
+      const courierName = courierRecord.name;
       try {
         console.log(`🚚 Processing ${courierName}...`);
         
@@ -158,21 +166,36 @@ export const action = async ({ request }) => {
           continue;
         }
 
+        // Helper function to calculate arrival date
+        const getArrivalDate = (transitDays) => {
+          const today = new Date();
+          const arrivalDate = new Date(today);
+          arrivalDate.setDate(today.getDate() + (transitDays || 3)); // Default 3 days if not specified
+          return arrivalDate.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric' 
+          });
+        };
+
         // Format the quote into the expected Shopify Carrier Service API response format
         const formatted = Array.isArray(quote)
-          ? quote.map(r => ({
-              service_name: r.name || `${courierName} Service`,
-              service_code: r.code || `${courierName}_STANDARD`,
-              total_price: Math.round((r.total || 0) * 100), // Prices in cents for Shopify
-              currency: r.currency || 'EUR',
-              description: r.description || `${courierName} shipping service`,
-            }))
+          ? quote.map(r => {
+              const transitDays = r.transitDays || config.transitDays || (courierName === 'TNT' ? 2 : 3);
+              const arrivalDate = getArrivalDate(transitDays);
+              return {
+                service_name: r.name || `${courierName} EXPRESS`,
+                service_code: r.code || `${courierName}_STANDARD`,
+                total_price: Math.round((r.total || 0) * 100), // Prices in cents for Shopify
+                currency: r.currency || 'EUR',
+                description: `Arrival on ${arrivalDate}`,
+              };
+            })
           : [{
-              service_name: quote.name || `${courierName} Service`,
+              service_name: quote.name || `${courierName} EXPRESS`,
               service_code: quote.code || `${courierName}_STANDARD`,
               total_price: Math.round((quote.total || 0) * 100),
               currency: quote.currency || 'EUR',
-              description: quote.description || `${courierName} shipping service`,
+              description: `Arrival on ${getArrivalDate(quote.transitDays || config.transitDays || (courierName === 'TNT' ? 2 : 3))}`,
             }];
 
         allRates.push(...formatted);

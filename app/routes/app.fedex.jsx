@@ -285,8 +285,8 @@ export default function FedexRateEditor() {
         console.log('Total services parsed:', newServices.length);
         console.log('Sample service:', newServices[0]);
 
-        // Ensure Italy is included in EU zones
-        ensureItalyInEUZones(newServices);
+        // Process zone sets for imported services
+        processZoneSetsFromServices(newServices);
 
         // Validate the imported data
         validateImportedData(newServices);
@@ -359,8 +359,8 @@ export default function FedexRateEditor() {
     return services.findIndex(s => s.code === selectedService);
   }, [services, selectedService]);
 
-  // Function to ensure Italy is included in EU zones
-  const ensureItalyInEUZones = useCallback((services) => {
+  // Function to process zone sets from services
+  const processZoneSetsFromServices = useCallback((services) => {
     // Extract zone sets from services
     const zoneSets = {};
     
@@ -394,7 +394,7 @@ export default function FedexRateEditor() {
             if (targetZoneSet === 'EU') {
               // EU zone mappings
               if (zoneCode === 'ZONA_R') {
-                countries = ["AT", "FR", "DE", "MC", "SI", "IT"];
+                countries = ["AT", "FR", "DE", "MC", "SI"];
               } else if (zoneCode === 'ZONA_S') {
                 countries = ["BE", "LU", "PT", "ES"];
               } else if (zoneCode === 'ZONA_T') {

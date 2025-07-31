@@ -43,6 +43,13 @@ export async function loadConfigAndRates(courierName) {
 export function calculate({ cartItems, config }) {
   const courierType = config.courierType;
   
+  // Check if courier can serve the destination
+  const canServeDestination = checkDestinationSupport(cartItems, config);
+  if (!canServeDestination) {
+    console.log(`❌ ${courierType}: Cannot serve this destination`);
+    return []; // Return empty array if cannot serve destination
+  }
+  
   if (courierType === 'TNT') {
     return calculateTNTFromJSON({ cartItems, config });
   } else if (courierType === 'BRT') {
@@ -50,6 +57,47 @@ export function calculate({ cartItems, config }) {
   } else {
     throw new Error(`Unknown courier type: ${courierType}`);
   }
+}
+
+// Check if courier can serve the destination based on configuration
+function checkDestinationSupport(cartItems, config) {
+  if (!cartItems || cartItems.length === 0) {
+    return false;
+  }
+
+  const destination = cartItems[0];
+  const countryCode = destination.countryCode;
+  const province = destination.province;
+
+  // For TNT, check if destination is supported by transit days configuration
+  if (config.courierType === 'TNT') {
+    // TNT serves Italy - check if we have transit day info for this destination
+    if (countryCode !== 'IT') {
+      console.log(`❌ TNT: Does not serve ${countryCode} (Italy only)`);
+      return false;
+    }
+    
+    // Check if we have transit days for this province/city
+    const transitDays = config.transitDays || [];
+    const hasTransitInfo = transitDays.some(transit => 
+      transit.name === province || 
+      transit.name === destination.city ||
+      transit.name === destination.postalCode
+    );
+    
+    if (!hasTransitInfo) {
+      console.log(`⚠️ TNT: No transit info for ${province}/${destination.city}, allowing anyway`);
+    }
+    
+    return true; // TNT serves all of Italy
+  }
+  
+  // For BRT, similar logic
+  if (config.courierType === 'BRT') {
+    return countryCode === 'IT'; // BRT also serves Italy only
+  }
+
+  return true; // Default to true for unknown courier types
 }
 
 // TNT calculation from JSON config
@@ -78,6 +126,7 @@ function calculateTNTFromJSON({ cartItems, config }) {
 
     // Calculate total weight
     const totalWeight = cartItems.reduce((sum, item) => sum + item.weight, 0);
+    console.log(`💰 TNT Price Calculation for ${totalWeight}kg:`);
 
     // Find pricing bracket
     let bracket = config.pricingBrackets?.find(b =>
@@ -105,16 +154,24 @@ function calculateTNTFromJSON({ cartItems, config }) {
       throw new Error(`No pricing bracket found for weight ${totalWeight}kg`);
     }
 
+    console.log(`📦 Base pricing bracket: ${bracket.minWeightKg}-${bracket.maxWeightKg}kg = €${bracket.price}`);
     let subtotal = bracket.price || 0;
 
     // Apply fuel surcharge
     if (config.fuel?.percentage > 0) {
-      subtotal += subtotal * (config.fuel.percentage / 100);
+      const fuelSurcharge = subtotal * (config.fuel.percentage / 100);
+      console.log(`⛽ Fuel surcharge: ${config.fuel.percentage}% of €${subtotal} = €${fuelSurcharge.toFixed(2)}`);
+      subtotal += fuelSurcharge;
     }
+
+    console.log(`📊 Subtotal after fuel: €${subtotal.toFixed(2)}`);
 
     // Apply VAT
     const vatRate = config.vatPercentage || 21;
-    const total = subtotal * (1 + vatRate / 100);
+    const vatAmount = subtotal * (vatRate / 100);
+    const total = subtotal + vatAmount;
+    console.log(`🏛️  VAT: ${vatRate}% of €${subtotal.toFixed(2)} = €${vatAmount.toFixed(2)}`);
+    console.log(`💯 Base total with VAT: €${total.toFixed(2)}`);
 
     // Return multiple TNT service options for testing
     const tntServices = [
@@ -144,14 +201,19 @@ function calculateTNTFromJSON({ cartItems, config }) {
       }
     ];
 
-    return tntServices.map(service => ({
-      name: `${config.name} ${service.name} (${transitDays} days)`,
-      code: service.code,
-      total: Math.max(0, total + service.additionalCost),
-      currency: 'EUR',
-      description: `${service.description} - Delivery in ${transitDays} business days`,
-      transitDays
-    }));
+    return tntServices.map(service => {
+      const finalTotal = Math.max(0, total + service.additionalCost);
+      console.log(`🚚 ${service.name}: €${total.toFixed(2)} + €${service.additionalCost} = €${finalTotal.toFixed(2)}`);
+      
+      return {
+        name: `${service.name}`,
+        code: service.code,
+        total: finalTotal,
+        currency: 'EUR',
+        description: `${service.description} - Delivery in ${transitDays} business days`,
+        transitDays
+      };
+    });
 
   } catch (error) {
     console.error('TNT calculation error:', error);
